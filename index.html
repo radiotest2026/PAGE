@@ -218,6 +218,7 @@
             align-items: center;
             gap: 8px;
             transition: all 0.25s ease;
+            position: relative;
         }
 
         .btn-fb-primary {
@@ -238,6 +239,32 @@
             color: var(--text-main);
             border: 1px solid var(--border-color);
             position: relative;
+        }
+
+        /* 🔴 شارة عدد الرسائل غير المقروءة الحمراء */
+        .msg-unread-badge {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            background: linear-gradient(135deg, #ff0055, #ff4757);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 900;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 12px rgba(255, 0, 85, 0.85);
+            font-family: monospace, 'Cairo', sans-serif;
+            border: 2px solid var(--card-bg);
+            animation: pulseUnread 1.8s infinite;
+        }
+
+        @keyframes pulseUnread {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(255, 0, 85, 0.8); }
+            50% { transform: scale(1.18); box-shadow: 0 0 16px rgba(255, 0, 85, 1); }
         }
 
         .profile-text h1 {
@@ -284,14 +311,25 @@
             gap: 12px;
         }
 
-        .post-trigger-avatar {
+        .post-trigger-avatar-wrap {
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            object-fit: cover;
             border: 2px solid var(--primary);
             flex-shrink: 0;
             background: var(--card-sub);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .post-trigger-avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .post-trigger-btn {
@@ -417,6 +455,7 @@
             color: var(--primary);
             overflow: hidden;
             flex-shrink: 0;
+            font-size: 1.2rem;
         }
 
         .avatar-preview-circle img { width: 100%; height: 100%; object-fit: cover; }
@@ -1167,8 +1206,10 @@
                         <button id="followBtn" class="btn-fb btn-fb-primary" onclick="toggleRealFollow()">
                             <i class="fas fa-plus"></i> <span>متابعة</span>
                         </button>
-                        <button class="btn-fb btn-fb-secondary" onclick="toggleMessengerWidget()">
-                            <i class="fas fa-comments"></i> رسالة
+                        <button class="btn-fb btn-fb-secondary" onclick="toggleMessengerWidget()" id="headerMsgBtn">
+                            <i class="fas fa-comments"></i> <span>رسالة</span>
+                            <!-- 🔴 شارة عدد الرسائل غير المقروءة السحابية -->
+                            <span class="msg-unread-badge" id="visitorUnreadMsgBadge">0</span>
                         </button>
                     </div>
                 </div>
@@ -1186,9 +1227,12 @@
             </div>
         </section>
 
-        <!-- شريط النشر -->
+        <!-- شريط النشر - أيقونة ساتلايت افتراضية معممة -->
         <section class="post-trigger-card">
-            <img src="https://e.top4top.io/p_3878z3lii0.jpg" id="barVisitorAvatarPreview" class="post-trigger-avatar" alt="Avatar">
+            <div class="post-trigger-avatar-wrap">
+                <i class="fas fa-satellite-dish" id="barVisitorAvatarIcon"></i>
+                <img id="barVisitorAvatarPreview" src="" alt="Avatar" style="display: none;">
+            </div>
             <button class="post-trigger-btn" onclick="openPostModal()">
                 <span>لديك استفسار؟ اضغط هنا لعرض مشكلتك على المهندس محمد السعيد...</span>
                 <i class="fas fa-images" style="color: var(--success); font-size: 1.1rem;"></i>
@@ -1214,7 +1258,7 @@
 
                 <div class="avatar-uploader-row" onclick="document.getElementById('visitorProfileImgFile').click()">
                     <div class="avatar-preview-circle">
-                        <i class="fas fa-user" id="visitorAvatarIcon"></i>
+                        <i class="fas fa-satellite-dish" id="visitorAvatarIcon"></i>
                         <img id="visitorAvatarPreviewImg" src="" style="display:none;" alt="Avatar">
                     </div>
                     <div style="flex:1;">
@@ -1456,14 +1500,35 @@
             return true;
         }
 
-        // صورة البروفايل
+        // إعداد صورة البروفايل (تجاهل الروابط القديمة غير المرغوبة والبدء بأيقونة الساتلايت)
         let visitorAvatarBase64 = localStorage.getItem("saved_user_avatar") || "";
-        if (visitorAvatarBase64) {
-            document.getElementById('visitorAvatarPreviewImg').src = visitorAvatarBase64;
-            document.getElementById('visitorAvatarPreviewImg').style.display = 'block';
-            document.getElementById('visitorAvatarIcon').style.display = 'none';
-            document.getElementById('barVisitorAvatarPreview').src = visitorAvatarBase64;
-            document.getElementById('avatarStatusLabel').innerText = "تم حفظ صورتك الشخصية ✅";
+        
+        // تنظيف الكاش القديم إذا كان يحتوي على روابط معينة
+        if (visitorAvatarBase64 && (visitorAvatarBase64.includes('top4top.io') || !visitorAvatarBase64.startsWith('data:image'))) {
+            visitorAvatarBase64 = "";
+            localStorage.removeItem("saved_user_avatar");
+        }
+
+        function updateAvatarUI() {
+            const barImg = document.getElementById('barVisitorAvatarPreview');
+            const barIcon = document.getElementById('barVisitorAvatarIcon');
+            const modalImg = document.getElementById('visitorAvatarPreviewImg');
+            const modalIcon = document.getElementById('visitorAvatarIcon');
+            const statusLabel = document.getElementById('avatarStatusLabel');
+
+            if (visitorAvatarBase64) {
+                if (barImg) { barImg.src = visitorAvatarBase64; barImg.style.display = 'block'; }
+                if (barIcon) { barIcon.style.display = 'none'; }
+                if (modalImg) { modalImg.src = visitorAvatarBase64; modalImg.style.display = 'block'; }
+                if (modalIcon) { modalIcon.style.display = 'none'; }
+                if (statusLabel) { statusLabel.innerText = "تم حفظ صورتك الشخصية ✅"; }
+            } else {
+                if (barImg) { barImg.style.display = 'none'; }
+                if (barIcon) { barIcon.style.display = 'block'; }
+                if (modalImg) { modalImg.style.display = 'none'; }
+                if (modalIcon) { modalIcon.style.display = 'block'; }
+                if (statusLabel) { statusLabel.innerText = "اضغط هنا لتحديد صورتك من الجهاز"; }
+            }
         }
 
         async function handleVisitorProfileImage(event) {
@@ -1471,11 +1536,7 @@
             if (!file) return;
             visitorAvatarBase64 = await compressImage(file, 200, 0.75);
             localStorage.setItem("saved_user_avatar", visitorAvatarBase64);
-            document.getElementById('visitorAvatarPreviewImg').src = visitorAvatarBase64;
-            document.getElementById('visitorAvatarPreviewImg').style.display = 'block';
-            document.getElementById('visitorAvatarIcon').style.display = 'none';
-            document.getElementById('barVisitorAvatarPreview').src = visitorAvatarBase64;
-            document.getElementById('avatarStatusLabel').innerText = "تم اختيار الصورة بنجاح ✅";
+            updateAvatarUI();
             showToast("تم اختيار صورة البروفايل بنجاح!");
         }
 
@@ -1693,7 +1754,6 @@
             const authorImg = postData.authorAvatar || 'https://e.top4top.io/p_3878z3lii0.jpg';
             const isOfficial = !postData.isVisitorPost;
 
-            // يظهر بادج نوع الجهاز فقط إذا كان المنشور من أحد الزوار
             let deviceBadge = '';
             if (postData.isVisitorPost && postData.deviceType) {
                 deviceBadge = `<div class="device-badge-tag"><i class="fas fa-tv"></i> نوع الجهاز: ${escapeHtml(postData.deviceType)}</div>`;
@@ -1716,11 +1776,9 @@
             const totalReactions = Number(postData.totalReactions || 0).toLocaleString('en-US');
             const commentsCount = Number(postData.commentsCount || 0).toLocaleString('en-US');
 
-            // فحص تفاعل الزائر الحالي
             const userReactionsMap = postData.userReactionsMap || {};
             const currentUserReact = userReactionsMap[visitorId];
 
-            // حل الإدارة المعتمد لمنشورات الزوار
             let exclusiveCommentHtml = '';
             if (postData.adminSolutionComment) {
                 exclusiveCommentHtml = `
@@ -1734,7 +1792,6 @@
                 `;
             }
 
-            // أزرار التفاعل وقسم التعليقات
             let commentButtonHtml = '';
             let commentsSectionBlock = '';
 
@@ -1994,12 +2051,11 @@
                 });
         }
 
-        // الاستماع الحقيقي المباشر لعداد المتابعين وحالة متابعة هذا الزائر بدقة 100%
+        // الاستماع الحقيقي المباشر لعداد المتابعين وحالة متابعة هذا الزائر
         let isUserFollowing = false;
         let isFollowProcessing = false;
 
         function listenToFollowers() {
-            // الاستماع المباشر لإجمالي المتابعين الحقيقيين
             db.collection("page_meta").doc("stats").onSnapshot((doc) => {
                 let count = 0;
                 if (doc.exists && doc.data().followersCount !== undefined) {
@@ -2008,7 +2064,6 @@
                 document.getElementById('followersCountDisplay').textContent = Number(count).toLocaleString('en-US');
             });
 
-            // الاستماع المباشر لحالة المتابعة لهذا الجهاز عبر الـ visitorId الثابت
             db.collection("followers").doc(visitorId).onSnapshot((doc) => {
                 const btn = document.getElementById("followBtn");
                 if (!btn) return;
@@ -2027,7 +2082,7 @@
 
         // نظام المتابعة المحمي الحقيقي الصارم بدون أي تكرار
         async function toggleRealFollow() {
-            if (isFollowProcessing) return; // منع الضغط السريع المتكرر
+            if (isFollowProcessing) return;
             isFollowProcessing = true;
 
             const btn = document.getElementById("followBtn");
@@ -2037,14 +2092,12 @@
             try {
                 const doc = await followerRef.get();
                 if (doc.exists) {
-                    // إلغاء المتابعة الحقيقي
                     await followerRef.delete();
                     await statsRef.set({
                         followersCount: firebase.firestore.FieldValue.increment(-1)
                     }, { merge: true });
                     showToast("تم إلغاء المتابعة");
                 } else {
-                    // تسجيل متابعة جديدة وفريدة للمستخدم
                     await followerRef.set({
                         visitorId: visitorId,
                         followedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -2062,24 +2115,62 @@
             }
         }
 
+        let isChatOpen = false;
+
         function toggleMessengerWidget() {
             const chat = document.getElementById('messengerWidget');
-            chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
+            isChatOpen = (chat.style.display !== 'flex');
+            chat.style.display = isChatOpen ? 'flex' : 'none';
+
+            if (isChatOpen) {
+                markMessagesAsReadByVisitor();
+            }
+        }
+
+        function markMessagesAsReadByVisitor() {
+            const badge = document.getElementById('visitorUnreadMsgBadge');
+            if (badge) badge.style.display = 'none';
+            localStorage.setItem(`last_read_time_${visitorId}`, new Date().toISOString());
         }
 
         function listenToVisitorMessages() {
             db.collection("messages").doc(visitorId).onSnapshot((doc) => {
                 const container = document.getElementById('chatMessagesContainer');
+                const badge = document.getElementById('visitorUnreadMsgBadge');
+                
                 if (doc.exists && doc.data().messages) {
-                    const msgs = doc.data().messages;
+                    const msgs = doc.data().messages || [];
                     container.innerHTML = '';
+                    
+                    const lastReadTime = localStorage.getItem(`last_read_time_${visitorId}`) || '1970-01-01T00:00:00.000Z';
+                    let unreadCount = 0;
+
                     msgs.forEach(m => {
                         const div = document.createElement('div');
                         div.className = `chat-bubble ${m.sender === 'admin' ? 'bubble-admin' : 'bubble-visitor'}`;
                         div.innerHTML = `<strong>${escapeHtml(m.senderName)}:</strong><br>${escapeHtml(m.text)}`;
                         container.appendChild(div);
+
+                        if (m.sender === 'admin') {
+                            const msgTime = m.time || new Date().toISOString();
+                            if (new Date(msgTime) > new Date(lastReadTime)) {
+                                unreadCount++;
+                            }
+                        }
                     });
+
                     container.scrollTop = container.scrollHeight;
+
+                    if (isChatOpen) {
+                        markMessagesAsReadByVisitor();
+                    } else if (badge) {
+                        if (unreadCount > 0) {
+                            badge.textContent = unreadCount > 99 ? '+99' : unreadCount;
+                            badge.style.display = 'flex';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
                 }
             });
         }
@@ -2131,6 +2222,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initTheme();
+            updateAvatarUI();
             listenToFollowers();
             listenToVisitorMessages();
             listenToCloudPosts();
