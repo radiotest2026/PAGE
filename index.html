@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO & Open Graph Meta Tags -->
+    <meta property="og:title" content="المهندس محمد السعيد - الصفحة الرسمية">
+    <meta property="og:description" content="الصفحة الرسمية للمهندس محمد السعيد المشرف العام بشركة ستار نت لمستلزمات الدش والريسيفرات على منصة سات دوت كوم">
+    <meta property="og:type" content="website">
+    
+    <title>المهندس محمد السعيد - المشرف العام بشركة ستار نت</title>
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #0c0d11;
+            --card-bg: #181920;
+            --card-sub: #22242e;
+            --primary: #ff0055;
+            --primary-hover: #e0004c;
+            --secondary: #7928ca;
+            --accent-glow: rgba(255, 0, 85, 0.4);
+            --fb-blue: #1877f2;
+            --text-main: #f0f2f5;
+            --text-muted: #9fa4b2;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --gold: #ffc107;
+            --success: #00ff66;
+            --danger: #ff4757;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+        }
+
+        /* Top Header */
+        header {
+            padding: 14px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 15, 20, 0.85);
+            backdrop-filter: blur(14px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dish-logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.35rem;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            position: relative;
+            animation: dishFloat 4s ease-in-out infinite alternate, dishGlow 2.5s ease-in-out infinite alternate;
+        }
+
+        .dish-logo-icon i {
+            transform: rotate(-12deg);
+        }
+
+        @keyframes dishFloat {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-3px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        @keyframes dishGlow {
+            0% { box-shadow: 0 0 10px rgba(255, 0, 85, 0.3); }
+            100% { box-shadow: 0 0 20px rgba(121, 40, 202, 0.6), 0 0 10px rgba(255, 0, 85, 0.5); }
+        }
+
+        .brand-title {
+            font-size: 1.3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff0055, #ff6b8b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(24, 25, 32, 0.8);
+            border: 1px solid var(--border-color);
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .pulse-dot-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 10px;
+            height: 10px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .pulse-wave {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: rgba(0, 255, 102, 0.4);
+            border-radius: 50%;
+            animation: pulseWave 1.8s infinite ease-out;
+            z-index: 1;
+        }
+
+        @keyframes pulseWave {
+            0% { transform: scale(0.5); opacity: 0.9; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .viewers-number {
+            font-weight: 800;
+            color: var(--success);
+            font-family: monospace, 'Cairo', sans-serif;
+            font-size: 1.05rem;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 950px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        /* Profile Card */
+        .page-profile-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .cover-photo-wrapper {
+            height: 220px;
+            width: 100%;
+            background: linear-gradient(135deg, #1f112e, #111424, #270f20);
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .cover-photo-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent, rgba(24, 25, 32, 0.95));
+        }
+
+        .profile-info-section {
+            padding: 0 25px 25px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin-top: -65px;
+            gap: 15px;
+        }
+
+        .avatar-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .profile-avatar-container {
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid var(--card-bg);
+            object-fit: cover;
+            background: #111;
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.35);
+        }
+
+        .profile-badge-verified {
+            position: absolute;
+            bottom: 8px;
+            left: 5px;
+            background: var(--fb-blue);
+            color: #fff;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            border: 2px solid var(--card-bg);
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .btn-fb {
+            padding: 9px 18px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+
+        .btn-fb-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3);
+        }
+
+        .btn-fb-primary.followed {
+            background: var(--card-sub);
+            color: var(--success);
+            border: 1px solid var(--border-color);
+            box-shadow: none;
+        }
+
+        .btn-fb-secondary {
+            background: var(--card-sub);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .btn-fb-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-text h1 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .profile-text p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 6px;
+            line-height: 1.6;
+        }
+
+        .page-stats-bar {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            margin-top: 5px;
+        }
+
+        .page-stats-bar strong {
+            color: var(--text-main);
+        }
+
+        /* Feed Posts */
+        .feed-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            transition: border-color 0.3s;
+            position: relative;
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .post-author-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .post-author-img {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+
+        .author-meta h3 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .author-meta span {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .post-admin-actions {
+            display: none;
+            gap: 6px;
+        }
+
+        .admin-authenticated .post-admin-actions {
+            display: flex;
+        }
+
+        .post-action-btn-sm {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px 9px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .btn-edit-post { color: var(--gold); }
+        .btn-edit-post:hover { background: rgba(255, 193, 7, 0.15); }
+        .btn-delete-post { color: var(--danger); }
+        .btn-delete-post:hover { background: rgba(255, 71, 87, 0.15); }
+
+        .post-body-text {
+            color: #e5e7eb;
+            font-size: 1rem;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            margin-bottom: 16px;
+        }
+
+        /* Image Grids */
+        .post-images-grid {
+            display: grid;
+            gap: 6px;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            max-height: 480px;
+        }
+
+        .post-images-grid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .grid-1 { grid-template-columns: 1fr; max-height: 450px; }
+        .grid-2 { grid-template-columns: 1fr 1fr; height: 320px; }
+        .grid-3 { grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; height: 360px; }
+        .grid-3 img:first-child { grid-row: span 2; }
+        .grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; height: 360px; }
+        .grid-multi { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 140px; }
+
+        .more-images-overlay-box { position: relative; overflow: hidden; }
+        .more-count-tag {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        /* Metrics & Reactions */
+        .post-metrics-bar {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .post-interactions-row {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 8px;
+            position: relative;
+        }
+
+        .interaction-btn-wrap {
+            position: relative;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .interaction-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .interaction-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-main);
+        }
+
+        .reactions-box {
+            position: absolute;
+            bottom: 45px;
+            right: 10px;
+            background: #242531;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 35px;
+            padding: 6px 12px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+            z-index: 50;
+            animation: reactPop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .interaction-btn-wrap:hover .reactions-box,
+        .reactions-box.active { display: flex; }
+
+        @keyframes reactPop {
+            from { transform: translateY(10px) scale(0.8); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .reaction-icon {
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .reaction-icon:hover { transform: scale(1.35) translateY(-5px); }
+
+        /* Comments */
+        .comments-section {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .comments-section.open { display: block; }
+
+        .comment-input-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .comment-name-field, .comment-text-field {
+            background: var(--card-sub);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .comment-send-btn {
+            align-self: flex-end;
+            background: var(--primary);
+            border: none;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .comment-item {
+            background: var(--card-sub);
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .comment-author-name {
+            font-weight: 800;
+            font-size: 0.88rem;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .comment-body {
+            font-size: 0.9rem;
+            color: #d1d5db;
+            line-height: 1.4;
+        }
+
+        .comment-time {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Messenger Live Chat Widget */
+        .messenger-widget {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            width: 330px;
+            background: #181924;
+            border: 1px solid rgba(24, 119, 242, 0.4);
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            z-index: 999;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: chatSlide 0.3s ease-out;
+        }
+
+        @keyframes chatSlide {
+            from { transform: translateY(50px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .messenger-header {
+            background: linear-gradient(135deg, #1877f2, #7928ca);
+            padding: 12px 16px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        .messenger-body {
+            height: 280px;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #111218;
+        }
+
+        .chat-bubble {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .bubble-visitor {
+            align-self: flex-start;
+            background: var(--card-sub);
+            color: #fff;
+            border-bottom-right-radius: 2px;
+        }
+
+        .bubble-admin {
+            align-self: flex-end;
+            background: var(--fb-blue);
+            color: #fff;
+            border-bottom-left-radius: 2px;
+        }
+
+        .messenger-footer {
+            padding: 10px;
+            background: #181924;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .chat-input {
+            background: #22242e;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        /* Admin & Comment Modals */
+        .admin-modal-overlay, .comment-action-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .admin-modal-overlay.active, .comment-action-modal.show { display: flex; }
+
+        .admin-box {
+            background: #161720;
+            border: 1px solid rgba(255, 0, 85, 0.3);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 680px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 26px;
+            box-shadow: 0 10px 40px rgba(255, 0, 85, 0.25);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.3rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-modal-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.3rem;
+            cursor: pointer;
+        }
+
+        /* Admin Tabs */
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-weight: 700;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .tab-badge {
+            background: #ff4757;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        /* Admin Posts List Manager */
+        .admin-posts-manager-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .admin-post-item {
+            background: var(--card-sub);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-post-preview-text {
+            font-size: 0.9rem;
+            color: #e5e7eb;
+            line-height: 1.4;
+            max-width: 70%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .admin-post-ctrls {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Notification Banner Inside Admin Only */
+        .admin-notif-banner {
+            display: none;
+            background: linear-gradient(135deg, rgba(255, 0, 85, 0.15), rgba(121, 40, 202, 0.15));
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            align-items: center;
+            justify-content: space-between;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .admin-notif-banner.show { display: flex; }
+
+        /* Password Screen */
+        #passwordView { text-align: center; padding: 30px 10px; }
+
+        .lock-icon-wrap {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 0, 85, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary);
+            margin: 0 auto 20px;
+            border: 1px solid rgba(255, 0, 85, 0.3);
+        }
+
+        .pin-input {
+            width: 100%;
+            max-width: 280px;
+            background: var(--card-sub);
+            border: 2px solid var(--border-color);
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            letter-spacing: 6px;
+            text-align: center;
+            color: #fff;
+            margin: 18px 0;
+            outline: none;
+        }
+
+        .pin-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
+        }
+
+        .modal-action-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: #fff;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .form-group { margin-bottom: 18px; text-align: right; }
+        .form-group label { display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; color: #d1d5db; }
+        .form-control { width: 100%; background: var(--card-sub); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; color: #fff; font-size: 0.95rem; outline: none; }
+        .image-upload-zone { border: 2px dashed rgba(255, 0, 85, 0.35); background: rgba(255, 0, 85, 0.03); border-radius: 14px; padding: 20px; text-align: center; cursor: pointer; margin-bottom: 15px; }
+        .image-preview-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-top: 12px; }
+        .preview-thumb-box { position: relative; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); }
+        .preview-thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+        .remove-img-btn { position: absolute; top: 3px; right: 3px; background: rgba(255, 0, 0, 0.85); color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 0.7rem; cursor: pointer; }
+
+        /* Inbox list */
+        .inbox-list { display: flex; flex-direction: column; gap: 12px; max-height: 380px; overflow-y: auto; }
+        .inbox-card { 
+            background: var(--card-sub); 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 14px 16px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .inbox-card.unread {
+            border-right: 4px solid var(--primary);
+            background: rgba(255, 0, 85, 0.05);
+        }
+        .inbox-header { display: flex; justify-content: space-between; font-weight: 800; color: #fff; align-items: center; }
+        .inbox-time { font-size: 0.75rem; color: var(--text-muted); font-weight: normal; }
+        .inbox-msg { font-size: 0.9rem; color: #e5e7eb; line-height: 1.4; }
+        .unread-tag {
+            background: var(--primary);
+            color: #fff;
+            font-size: 0.68rem;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+        .reply-input-row { display: flex; gap: 8px; margin-top: 6px; }
+        .reply-field { flex: 1; background: #181920; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 0.85rem; outline: none; }
+        .reply-btn { background: var(--fb-blue); border: none; color: #fff; padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.82rem; }
+
+        /* Comment Action modal */
+        .action-box { background: var(--card-bg); border: 1px solid var(--primary); border-radius: 18px; padding: 20px; width: 100%; max-width: 400px; text-align: center; }
+        .action-box button { width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; }
+
+        /* Toast */
+        .toast-notification {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1f1f2e;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: 1px solid var(--primary);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            font-weight: 700;
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        footer { text-align: center; padding: 22px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; margin-top: 30px; }
+        @media (max-width: 650px) { .profile-info-section { margin-top: -50px; } .profile-avatar { width: 95px; height: 95px; } .cover-photo-wrapper { height: 160px; } .profile-text h1 { font-size: 1.3rem; } .messenger-widget { left: 10px; right: 10px; width: auto; } }
+    </style>
+</head>
+<body>
+
+    <!-- Header (اضغط 5 مرات متتالية لفتح لوحة الأدمن) -->
+    <header id="mainHeader" title="المهندس محمد السعيد - المشرف العام بشركة ستار نت">
+        <div class="header-brand">
+            <!-- Animated Dish Logo -->
+            <div class="dish-logo-icon" title="المهندس محمد السعيد - ستار نت">
+                <i class="fas fa-satellite-dish"></i>
+            </div>
+            <div class="brand-title">المهندس محمد السعيد</div>
+        </div>
+
+        <div class="header-stats">
+            <div class="pulse-dot-wrapper">
+                <div class="pulse-dot"></div>
+                <div class="pulse-wave"></div>
+            </div>
+            <span>المشاهدات المباشرة: <strong id="liveViewersCount" class="viewers-number">60,240</strong></span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        
+        <!-- Profile Section -->
+        <section class="page-profile-card">
+            <div class="cover-photo-wrapper" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80');">
+                <div class="cover-photo-overlay"></div>
+            </div>
+            
+            <div class="profile-info-section">
+                <div class="avatar-row">
+                    <div class="profile-avatar-container">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="المهندس محمد السعيد" class="profile-avatar">
+                        <div class="profile-badge-verified"><i class="fas fa-check"></i></div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <button id="followBtn" class="btn-fb btn-fb-primary" onclick="toggleRealFollow()">
+                            <i class="fas fa-plus"></i> <span>متابعة</span>
+                        </button>
+                        <button class="btn-fb btn-fb-secondary" onclick="toggleMessengerWidget()">
+                            <i class="fab fa-facebook-messenger"></i> رسالة
+                        </button>
+                    </div>
+                </div>
+
+                <div class="profile-text">
+                    <h1>المهندس محمد السعيد <i class="fas fa-check-circle" style="color: var(--fb-blue); font-size: 1.1rem;"></i></h1>
+                    <p>الصفحة الرسمية للمهندس محمد السعيد المشرف العام بشركة ستار نت لمستلزمات الدش والريسيفرات على منصة سات دوت كوم.</p>
+                </div>
+
+                <div class="page-stats-bar">
+                    <div><strong id="followersCountDisplay">0</strong> متابع</div>
+                    <div><strong>0</strong> يتابعهم</div>
+                    <div><strong>100%</strong> معدل الاستجابة</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Cloud Feed Posts -->
+        <section class="feed-container" id="feedContainer">
+            <div class="loading-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>جاري مزامنة المنشورات والتفاعلات سحابياً...</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Messenger Live Chat Widget for Visitors -->
+    <div class="messenger-widget" id="messengerWidget">
+        <div class="messenger-header">
+            <div><i class="fab fa-facebook-messenger"></i> رسائل المهندس محمد السعيد</div>
+            <i class="fas fa-times" style="cursor: pointer;" onclick="toggleMessengerWidget()"></i>
+        </div>
+        <div class="messenger-body" id="chatMessagesContainer">
+            <div class="chat-bubble bubble-admin">مرحباً بك! تواصل معنا عبر إرسال رسالتك وسيرد عليك المهندس محمد السعيد هنا فوراً. 👋</div>
+        </div>
+        <div class="messenger-footer">
+            <input type="text" id="chatSenderName" class="chat-input" placeholder="اسمك الكريم...">
+            <div style="display: flex; gap: 6px;">
+                <input type="text" id="chatMessageText" class="chat-input" style="flex: 1;" placeholder="اكتب رسالتك هنا..." onkeypress="if(event.key==='Enter') sendVisitorMessage()">
+                <button class="comment-send-btn" onclick="sendVisitorMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div class="admin-modal-overlay" id="adminModal">
+        <div class="admin-box">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-shield"></i> لوحة إدارة الصفحة</h2>
+                <button class="close-modal-btn" onclick="closeAdminModal()"><i class="fas fa-times"></i></button>
+            </div>
+
+            <!-- Password View -->
+            <div id="passwordView">
+                <div class="lock-icon-wrap"><i class="fas fa-lock"></i></div>
+                <h3 style="margin-bottom: 8px;">اللوحة محمية بكلمة مرور</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">يرجى كتابة رمز المرور للمتابعة</p>
+                <input type="password" id="adminPinInput" class="pin-input" placeholder="••••" maxlength="6" autofocus>
+                <button class="modal-action-btn" onclick="verifyPassword()"><i class="fas fa-key"></i> تأكيد الدخول</button>
+            </div>
+
+            <!-- Admin Control View -->
+            <div id="publisherView" style="display: none;">
+                
+                <!-- Live Notification Alert Banner -->
+                <div class="admin-notif-banner" id="adminNotifBanner">
+                    <div><i class="fas fa-bell" style="color: var(--gold); margin-left: 8px;"></i> لديك <strong id="unreadMsgsCount">0</strong> رسائل جديدة غير مقروءة من الزوار!</div>
+                    <button style="background: var(--primary); border: none; color: #fff; padding: 4px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.78rem;" onclick="switchAdminTab('inbox')">عرض الآن</button>
+                </div>
+
+                <div class="admin-tabs">
+                    <button class="tab-btn active" id="tabPostBtn" onclick="switchAdminTab('posts')">
+                        <i class="fas fa-pen-alt"></i> نشر منشور جديد
+                    </button>
+                    <button class="tab-btn" id="tabManagePostsBtn" onclick="switchAdminTab('manage_posts')">
+                        <i class="fas fa-tasks"></i> إدارة وتعديل المنشورات
+                    </button>
+                    <button class="tab-btn" id="tabInboxBtn" onclick="switchAdminTab('inbox')">
+                        <i class="fas fa-inbox"></i> صندوق الرسائل 
+                        <span class="tab-badge" id="inboxTabBadge">0</span>
+                    </button>
+                </div>
+
+                <!-- Tab 1: Create / Edit Post -->
+                <div id="adminPostsSection">
+                    <form id="postPublishForm" onsubmit="handlePostSubmit(event)">
+                        <input type="hidden" id="editPostTargetId" value="">
+                        <div class="form-group">
+                            <label id="formPostActionTitle"><i class="fas fa-pen"></i> نص المنشور (الكلام):</label>
+                            <textarea id="postContentInput" class="form-control" rows="4" placeholder="اكتب ما يدور في خاطرك هنا..." required></textarea>
+                        </div>
+
+                        <div class="form-group" id="imageUploadGroup">
+                            <label><i class="fas fa-camera"></i> إضافة أو تعديل الصور (اختياري - حتى 10 صور):</label>
+                            <div class="image-upload-zone" onclick="document.getElementById('postImagesInput').click()">
+                                <div style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"><i class="fas fa-cloud-upload-alt"></i></div>
+                                <p style="font-weight: 700; font-size: 0.95rem;">اضغط لاختيار الصور من جهازك</p>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">يمكنك اختيار صورة، اثنتين أو حتى 10 صور</span>
+                            </div>
+                            <input type="file" id="postImagesInput" accept="image/*" multiple style="display: none;" onchange="handleImageSelection(event)">
+                            <div class="image-preview-strip" id="imagesPreviewContainer"></div>
+                        </div>
+
+                        <button type="submit" id="submitPostBtn" class="modal-action-btn"><i class="fas fa-paper-plane"></i> نشر وحفظ سحابياً</button>
+                        <button type="button" id="cancelEditBtn" style="display:none; width: 100%; background: var(--card-sub); border: 1px solid var(--border-color); color: #fff; padding: 10px; border-radius: 12px; margin-top: 8px; cursor: pointer; font-weight:700;" onclick="resetPostForm()">إلغاء وضع التعديل</button>
+                    </form>
+                </div>
+
+                <!-- Tab 2: Manage All Posts (Edit / Delete from Admin) -->
+                <div id="adminManagePostsSection" style="display: none;">
+                    <div class="admin-posts-manager-list" id="adminPostsManagerList">
+                        <p style="text-align: center; color: var(--text-muted);">جاري تحميل قائمة المنشورات...</p>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Inbox & Replies -->
+                <div id="adminInboxSection" style="display: none;">
+                    <div class="inbox-list" id="adminInboxList">
+                        <p style="text-align: center; color: var(--text-muted);">جاري تحميل الرسائل...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Comment Context Modal -->
+    <div class="comment-action-modal" id="commentActionModal">
+        <div class="action-box">
+            <h3 style="margin-bottom: 12px;"><i class="fas fa-user-shield" style="color: var(--primary);"></i> إدارة التعليق (أدمن)</h3>
+            <p id="targetCommentPreview" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;"></p>
+            <button style="background: var(--gold); color: #000;" onclick="promptEditComment()"><i class="fas fa-edit"></i> تعديل نص التعليق</button>
+            <button style="background: var(--danger); color: #fff;" onclick="confirmDeleteComment()"><i class="fas fa-trash"></i> حذف التعليق نهائياً</button>
+            <button style="background: var(--card-sub); color: #fff;" onclick="closeCommentModal()">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-notification" id="toastBox">تم بنجاح!</div>
+
+    <footer>
+        <p>جميع الحقوق محفوظة &copy; 2026 • صفحة المهندس محمد السعيد الرسمية - شركة ستار نت</p>
+    </footer>
+
+    <!-- Scripts Logic -->
+    <script>
+        // 1. Dynamic Live Viewers Counter around 60,000
+        (function initDynamicViewersCounter() {
+            const viewersEl = document.getElementById('liveViewersCount');
+            let currentViewers = Math.floor(Math.random() * (62500 - 58500 + 1)) + 58500;
+            viewersEl.textContent = currentViewers.toLocaleString('en-US');
+
+            function updateCounter() {
+                const change = Math.floor(Math.random() * 260) + 35;
+                const increase = Math.random() > 0.49;
+
+                if (increase) {
+                    currentViewers += change;
+                } else {
+                    currentViewers -= change;
+                }
+
+                if (currentViewers > 64200) currentViewers = 61800;
+                if (currentViewers < 57800) currentViewers = 59400;
+
+                viewersEl.textContent = currentViewers.toLocaleString('en-US');
+                const nextInterval = Math.floor(Math.random() * (4000 - 2000 + 1)) + 2000;
+                setTimeout(updateCounter, nextInterval);
+            }
+
+            setTimeout(updateCounter, 3000);
+        })();
+
+        // 2. Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBa2TuKhZf4i3sMWOo7m11OXjZ8h02YTFY",
+            authDomain: "home-page-2d0db.firebaseapp.com",
+            projectId: "home-page-2d0db",
+            storageBucket: "home-page-2d0db.firebasestorage.app",
+            messagingSenderId: "594207181685",
+            appId: "1:594207181685:web:e30c976bdbd4089d5fe13c",
+            measurementId: "G-LRX1EEM2RH"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // 3. Visitor ID
+        let visitorId = localStorage.getItem("fb_visitor_id");
+        if (!visitorId) {
+            visitorId = "usr_" + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem("fb_visitor_id", visitorId);
+        }
+
+        // 4. Real Follow System
+        function listenToFollowers() {
+            db.collection("page_meta").doc("stats").onSnapshot((doc) => {
+                const count = (doc.exists && doc.data().followersCount) ? doc.data().followersCount : 0;
+                document.getElementById('followersCountDisplay').textContent = count.toLocaleString('ar-EG');
+            });
+
+            db.collection("followers").doc(visitorId).get().then((doc) => {
+                const btn = document.getElementById("followBtn");
+                if (doc.exists) {
+                    btn.classList.add("followed");
+                    btn.innerHTML = '<i class="fas fa-check"></i> <span>متابَع</span>';
+                }
+            });
+        }
+
+        async function toggleRealFollow() {
+            const btn = document.getElementById("followBtn");
+            const followerRef = db.collection("followers").doc(visitorId);
+            const statsRef = db.collection("page_meta").doc("stats");
+
+            const doc = await followerRef.get();
+            if (doc.exists) {
+                await followerRef.delete();
+                await statsRef.set({
+                    followersCount: firebase.firestore.FieldValue.increment(-1)
+                }, { merge: true });
+
+                btn.classList.remove("followed");
+                btn.innerHTML = '<i class="fas fa-plus"></i> <span>متابعة</span>';
+                showToast("تم إلغاء المتابعة");
+            } else {
+                await followerRef.set({
+                    followedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                await statsRef.set({
+                    followersCount: firebase.firestore.FieldValue.increment(1)
+                }, { merge: true });
+
+                btn.classList.add("followed");
+                btn.innerHTML = '<i class="fas fa-check"></i> <span>متابَع</span>';
+                showToast("شكراً لمتابعتك صفحة المهندس محمد السعيد! 🎉");
+            }
+        }
+
+        // 5. Live Messenger System
+        function toggleMessengerWidget() {
+            const chat = document.getElementById('messengerWidget');
+            chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function listenToVisitorMessages() {
+            db.collection("messages").doc(visitorId).onSnapshot((doc) => {
+                const container = document.getElementById('chatMessagesContainer');
+                if (doc.exists && doc.data().messages) {
+                    const msgs = doc.data().messages;
+                    container.innerHTML = '';
+                    msgs.forEach(m => {
+                        const div = document.createElement('div');
+                        div.className = `chat-bubble ${m.sender === 'admin' ? 'bubble-admin' : 'bubble-visitor'}`;
+                        div.innerHTML = `<strong>${escapeHtml(m.senderName)}:</strong><br>${escapeHtml(m.text)}`;
+                        container.appendChild(div);
+                    });
+                    container.scrollTop = container.scrollHeight;
+                }
+            });
+        }
+
+        async function sendVisitorMessage() {
+            const nameInput = document.getElementById('chatSenderName');
+            const textInput = document.getElementById('chatMessageText');
+            const text = textInput.value.trim();
+            const senderName = nameInput.value.trim() || 'زائر';
+
+            if (!text) return;
+
+            const msgData = {
+                sender: 'visitor',
+                senderName: senderName,
+                text: text,
+                time: new Date().toISOString()
+            };
+
+            const docRef = db.collection("messages").doc(visitorId);
+            await docRef.set({
+                visitorId: visitorId,
+                visitorName: senderName,
+                lastMessage: text,
+                isReadByAdmin: false,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                messages: firebase.firestore.FieldValue.arrayUnion(msgData)
+            }, { merge: true });
+
+            textInput.value = '';
+            showToast("تم إرسال رسالتك للمهندس محمد السعيد!");
+        }
+
+        // 6. Admin Panel Logic (5 Clicks + 108 PIN)
+        let headerClickCount = 0;
+        let headerClickTimer = null;
+        const mainHeader = document.getElementById('mainHeader');
+
+        mainHeader.addEventListener('click', function () {
+            headerClickCount++;
+            clearTimeout(headerClickTimer);
+            if (headerClickCount >= 5) {
+                headerClickCount = 0;
+                openAdminModal();
+            } else {
+                headerClickTimer = setTimeout(() => { headerClickCount = 0; }, 1500);
+            }
+        });
+
+        const adminModal = document.getElementById('adminModal');
+        const passwordView = document.getElementById('passwordView');
+        const publisherView = document.getElementById('publisherView');
+        const adminPinInput = document.getElementById('adminPinInput');
+        let isAuthorized = false;
+
+        function openAdminModal() {
+            adminModal.classList.add('active');
+            if (isAuthorized) {
+                passwordView.style.display = 'none';
+                publisherView.style.display = 'block';
+                listenToAdminInbox();
+                renderAdminPostsManager();
+            } else {
+                passwordView.style.display = 'block';
+                publisherView.style.display = 'none';
+                adminPinInput.value = '';
+                setTimeout(() => adminPinInput.focus(), 150);
+            }
+        }
+
+        function closeAdminModal() { adminModal.classList.remove('active'); }
+
+        function verifyPassword() {
+            const pin = adminPinInput.value.trim();
+            if (pin === '108') {
+                isAuthorized = true;
+                document.body.classList.add('admin-authenticated');
+                passwordView.style.display = 'none';
+                publisherView.style.display = 'block';
+                listenToAdminInbox();
+                renderAdminPostsManager();
+                showToast('أهلاً بك يا باشمهندس محمد! تم تفعيل لوحة الإدارة');
+            } else {
+                showToast('رمز المرور غير صحيح!');
+                adminPinInput.value = '';
+            }
+        }
+
+        adminPinInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') verifyPassword();
+        });
+
+        function switchAdminTab(tab) {
+            const postSection = document.getElementById('adminPostsSection');
+            const managePostsSection = document.getElementById('adminManagePostsSection');
+            const inboxSection = document.getElementById('adminInboxSection');
+            
+            const postBtn = document.getElementById('tabPostBtn');
+            const managePostsBtn = document.getElementById('tabManagePostsBtn');
+            const inboxBtn = document.getElementById('tabInboxBtn');
+
+            postSection.style.display = 'none';
+            managePostsSection.style.display = 'none';
+            inboxSection.style.display = 'none';
+            
+            postBtn.classList.remove('active');
+            managePostsBtn.classList.remove('active');
+            inboxBtn.classList.remove('active');
+
+            if (tab === 'posts') {
+                postSection.style.display = 'block';
+                postBtn.classList.add('active');
+            } else if (tab === 'manage_posts') {
+                managePostsSection.style.display = 'block';
+                managePostsBtn.classList.add('active');
+                renderAdminPostsManager();
+            } else if (tab === 'inbox') {
+                inboxSection.style.display = 'block';
+                inboxBtn.classList.add('active');
+                listenToAdminInbox();
+            }
+        }
+
+        // 7. Live Notification System for Admin Only
+        function listenForLiveMessageNotifications() {
+            db.collection("messages").onSnapshot((snapshot) => {
+                let unreadCount = 0;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.isReadByAdmin === false) {
+                        unreadCount++;
+                    }
+                });
+
+                const inboxBadge = document.getElementById('inboxTabBadge');
+                const notifBanner = document.getElementById('adminNotifBanner');
+                const unreadCounterText = document.getElementById('unreadMsgsCount');
+
+                if (unreadCount > 0) {
+                    if (inboxBadge) {
+                        inboxBadge.style.display = 'inline-block';
+                        inboxBadge.textContent = unreadCount;
+                    }
+                    if (notifBanner) {
+                        notifBanner.classList.add('show');
+                        unreadCounterText.textContent = unreadCount;
+                    }
+                } else {
+                    if (inboxBadge) inboxBadge.style.display = 'none';
+                    if (notifBanner) notifBanner.classList.remove('show');
+                }
+            });
+        }
+
+        // 8. Admin Inbox & Live Reply System
+        function listenToAdminInbox() {
+            const inboxList = document.getElementById('adminInboxList');
+            db.collection("messages").orderBy("updatedAt", "desc").onSnapshot((snapshot) => {
+                if (snapshot.empty) {
+                    inboxList.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:15px;">لا توجد رسائل واردة حتى الآن.</p>`;
+                    return;
+                }
+                inboxList.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const card = document.createElement('div');
+                    const isUnread = (data.isReadByAdmin === false);
+                    card.className = `inbox-card ${isUnread ? 'unread' : ''}`;
+                    
+                    let timeFormatted = 'الآن';
+                    if (data.updatedAt && data.updatedAt.toDate) {
+                        timeFormatted = data.updatedAt.toDate().toLocaleDateString('ar-EG', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
+                    }
+
+                    card.innerHTML = `
+                        <div class="inbox-header">
+                            <span><i class="fas fa-user-circle" style="color: var(--primary);"></i> ${escapeHtml(data.visitorName || 'زائر')} ${isUnread ? '<span class="unread-tag">جديدة</span>' : ''}</span>
+                            <span class="inbox-time">${timeFormatted}</span>
+                        </div>
+                        <div class="inbox-msg">${escapeHtml(data.lastMessage || '')}</div>
+                        <div class="reply-input-row">
+                            <input type="text" id="adminReplyText_${doc.id}" class="reply-field" placeholder="اكتب ردك للزائر...">
+                            <button class="reply-btn" onclick="sendAdminReply('${doc.id}')"><i class="fas fa-reply"></i> إرسال الرد</button>
+                        </div>
+                    `;
+                    inboxList.appendChild(card);
+                });
+            });
+        }
+
+        async function sendAdminReply(targetVisitorId) {
+            const input = document.getElementById(`adminReplyText_${targetVisitorId}`);
+            const replyText = input.value.trim();
+            if (!replyText) return;
+
+            const replyData = {
+                sender: 'admin',
+                senderName: 'المهندس محمد السعيد',
+                text: replyText,
+                time: new Date().toISOString()
+            };
+
+            await db.collection("messages").doc(targetVisitorId).set({
+                lastMessage: `[ردك]: ${replyText}`,
+                isReadByAdmin: true,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                messages: firebase.firestore.FieldValue.arrayUnion(replyData)
+            }, { merge: true });
+
+            input.value = '';
+            showToast("تم إرسال الرد للزائر بنجاح!");
+        }
+
+        // 9. Image Handling & Compression
+        let selectedImagesBase64 = [];
+        function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width, height = img.height;
+                        const maxDimension = 1000;
+                        if (width > height && width > maxDimension) {
+                            height = Math.round((height * maxDimension) / width);
+                            width = maxDimension;
+                        } else if (height > maxDimension) {
+                            width = Math.round((width * maxDimension) / height);
+                            height = maxDimension;
+                        }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.75));
+                    };
+                };
+            });
+        }
+
+        async function handleImageSelection(event) {
+            const files = Array.from(event.target.files);
+            if (selectedImagesBase64.length + files.length > 10) alert('الحد الأقصى 10 صور!');
+            const allowedFiles = files.slice(0, 10 - selectedImagesBase64.length);
+            for (const file of allowedFiles) {
+                const compressed = await compressImage(file);
+                selectedImagesBase64.push(compressed);
+                renderImagePreviews();
+            }
+            event.target.value = '';
+        }
+
+        function removeSelectedImage(index) {
+            selectedImagesBase64.splice(index, 1);
+            renderImagePreviews();
+        }
+
+        function renderImagePreviews() {
+            const container = document.getElementById('imagesPreviewContainer');
+            container.innerHTML = '';
+            selectedImagesBase64.forEach((imgSrc, index) => {
+                const box = document.createElement('div');
+                box.className = 'preview-thumb-box';
+                box.innerHTML = `<img src="${imgSrc}" alt="Preview"><button type="button" class="remove-img-btn" onclick="removeSelectedImage(${index})">&times;</button>`;
+                container.appendChild(box);
+            });
+        }
+
+        // 10. Posts System: Create, Edit & Delete
+        let allCurrentPosts = [];
+
+        async function handlePostSubmit(event) {
+            event.preventDefault();
+            const textContent = document.getElementById('postContentInput').value.trim();
+            const editTargetId = document.getElementById('editPostTargetId').value;
+            const submitBtn = document.getElementById('submitPostBtn');
+
+            if (!textContent && selectedImagesBase64.length === 0) return;
+
+            submitBtn.disabled = true;
+
+            try {
+                if (editTargetId) {
+                    // Update existing post
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري حفظ التعديل...';
+                    await db.collection("posts").doc(editTargetId).update({
+                        text: textContent,
+                        images: selectedImagesBase64,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    showToast('تم تعديل المنشور بنجاح! ✨');
+                } else {
+                    // Create new post
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري النشر...';
+                    await db.collection("posts").add({
+                        text: textContent,
+                        images: selectedImagesBase64,
+                        reactions: { like: 0, love: 0, haha: 0, wow: 0, sad: 0, angry: 0 },
+                        totalReactions: 0,
+                        commentsCount: 0,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    showToast('تم نشر المنشور على صفحة المهندس محمد السعيد بنجاح! 🎉');
+                }
+
+                resetPostForm();
+                closeAdminModal();
+            } catch (error) {
+                console.error(error);
+                showToast('حدث خطأ أثناء الحفظ بالسحابة');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> نشر وحفظ سحابياً';
+            }
+        }
+
+        function resetPostForm() {
+            document.getElementById('editPostTargetId').value = '';
+            document.getElementById('postContentInput').value = '';
+            document.getElementById('formPostActionTitle').innerHTML = '<i class="fas fa-pen"></i> نص المنشور (الكلام):';
+            document.getElementById('submitPostBtn').innerHTML = '<i class="fas fa-paper-plane"></i> نشر وحفظ سحابياً';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            selectedImagesBase64 = [];
+            renderImagePreviews();
+        }
+
+        function loadPostToEdit(postId) {
+            const target = allCurrentPosts.find(p => p.id === postId);
+            if (!target) return;
+
+            if (!adminModal.classList.contains('active')) {
+                openAdminModal();
+            }
+
+            switchAdminTab('posts');
+
+            document.getElementById('editPostTargetId').value = postId;
+            document.getElementById('postContentInput').value = target.data.text || '';
+            document.getElementById('formPostActionTitle').innerHTML = '<i class="fas fa-edit" style="color:var(--gold);"></i> تعديل المنشور الحالي:';
+            document.getElementById('submitPostBtn').innerHTML = '<i class="fas fa-save"></i> حفظ التعديلات سحابياً';
+            document.getElementById('cancelEditBtn').style.display = 'block';
+
+            selectedImagesBase64 = [...(target.data.images || [])];
+            renderImagePreviews();
+
+            document.getElementById('postContentInput').focus();
+        }
+
+        function renderAdminPostsManager() {
+            const list = document.getElementById('adminPostsManagerList');
+            if (!list) return;
+
+            if (allCurrentPosts.length === 0) {
+                list.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:15px;">لا توجد منشورات حالياً للتعديل أو الحذف.</p>`;
+                return;
+            }
+
+            list.innerHTML = '';
+            allCurrentPosts.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'admin-post-item';
+                const preview = item.data.text ? escapeHtml(item.data.text) : '[منشور يحتوي على صور فقط]';
+                
+                card.innerHTML = `
+                    <div class="admin-post-preview-text">
+                        <i class="fas fa-file-alt" style="color:var(--primary); margin-left:6px;"></i> ${preview}
+                    </div>
+                    <div class="admin-post-ctrls">
+                        <button class="post-action-btn-sm btn-edit-post" onclick="loadPostToEdit('${item.id}')" title="تعديل"><i class="fas fa-edit"></i> تعديل</button>
+                        <button class="post-action-btn-sm btn-delete-post" onclick="deletePost('${item.id}')" title="حذف"><i class="fas fa-trash"></i> حذف</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function listenToCloudPosts() {
+            const feed = document.getElementById('feedContainer');
+            db.collection("posts").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
+                allCurrentPosts = [];
+                if (snapshot.empty) {
+                    feed.innerHTML = `<article class="post-card"><div class="post-body-text" style="text-align: center; color: var(--text-muted);">لا توجد منشورات حتى الآن، استخدم لوحة الأدمن لنشر أول منشور! 🚀</div></article>`;
+                    renderAdminPostsManager();
+                    return;
+                }
+                feed.innerHTML = '';
+                snapshot.forEach((doc) => {
+                    const postData = doc.data();
+                    allCurrentPosts.push({ id: doc.id, data: postData });
+                    const postElement = createPostElement(doc.id, postData);
+                    feed.appendChild(postElement);
+                    listenToPostComments(doc.id);
+                });
+                renderAdminPostsManager();
+            });
+        }
+
+        function createPostElement(postId, postData) {
+            const article = document.createElement('article');
+            article.className = 'post-card';
+            article.id = `post-${postId}`;
+
+            let timeAgo = "الآن";
+            if (postData.createdAt && postData.createdAt.toDate) {
+                timeAgo = postData.createdAt.toDate().toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+            }
+
+            const images = postData.images || [];
+            let imagesHtml = '';
+            if (images.length > 0) {
+                let gridClass = (images.length === 2) ? 'grid-2' : (images.length === 3) ? 'grid-3' : (images.length === 4) ? 'grid-4' : (images.length > 4) ? 'grid-multi' : 'grid-1';
+                let imgTags = '';
+                if (images.length <= 4) {
+                    imgTags = images.map(src => `<img src="${src}" alt="Post">`).join('');
+                } else {
+                    for (let i = 0; i < 3; i++) imgTags += `<img src="${images[i]}" alt="Post">`;
+                    imgTags += `<div class="more-images-overlay-box"><img src="${images[3]}" alt="Post"><div class="more-count-tag">+${images.length - 3}</div></div>`;
+                }
+                imagesHtml = `<div class="post-images-grid ${gridClass}">${imgTags}</div>`;
+            }
+
+            article.innerHTML = `
+                <div class="post-header">
+                    <div class="post-author-info">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" class="post-author-img" alt="المهندس محمد السعيد">
+                        <div class="author-meta">
+                            <h3>المهندس محمد السعيد <i class="fas fa-check-circle" style="color: var(--fb-blue); font-size: 0.85rem;"></i></h3>
+                            <span>${timeAgo} • <i class="fas fa-globe-americas"></i></span>
+                        </div>
+                    </div>
+                    <div class="post-admin-actions">
+                        <button class="post-action-btn-sm btn-edit-post" onclick="loadPostToEdit('${postId}')" title="تعديل المنشور"><i class="fas fa-edit"></i> تعديل</button>
+                        <button class="post-action-btn-sm btn-delete-post" onclick="deletePost('${postId}')" title="حذف المنشور"><i class="fas fa-trash-alt"></i> حذف</button>
+                    </div>
+                </div>
+                <div class="post-body-text">${escapeHtml(postData.text || '')}</div>
+                ${imagesHtml}
+                <div class="post-metrics-bar">
+                    <span>👍 ❤️ ${postData.totalReactions || 0} تفاعل</span>
+                    <span>${postData.commentsCount || 0} تعليقات</span>
+                </div>
+                <div class="post-interactions-row">
+                    <div class="interaction-btn-wrap">
+                        <button class="interaction-btn" id="react-btn-${postId}" onclick="sendReaction('${postId}', 'like')"><i class="far fa-thumbs-up"></i> <span>إعجاب</span></button>
+                        <div class="reactions-box">
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'like')">👍</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'love')">❤️</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'haha')">😂</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'wow')">😮</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'sad')">😢</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'angry')">😡</span>
+                        </div>
+                    </div>
+                    <div class="interaction-btn-wrap"><button class="interaction-btn" onclick="toggleCommentsSection('${postId}')"><i class="far fa-comment-alt"></i> تعليق</button></div>
+                    <div class="interaction-btn-wrap"><button class="interaction-btn" onclick="showToast('تم نسخ رابط المنشور')"><i class="far fa-share-square"></i> مشاركة</button></div>
+                </div>
+                <div class="comments-section" id="comments-section-${postId}">
+                    <div class="comment-input-wrap">
+                        <input type="text" id="comm-name-${postId}" class="comment-name-field" placeholder="اسمك الكريم (اختياري)...">
+                        <textarea id="comm-text-${postId}" class="comment-text-field" rows="2" placeholder="اكتب تعليقك هنا..."></textarea>
+                        <button class="comment-send-btn" onclick="submitComment('${postId}')"><i class="fas fa-paper-plane"></i> إرسال التعليق</button>
+                    </div>
+                    <div class="comments-list" id="comments-list-${postId}"></div>
+                </div>
+            `;
+            return article;
+        }
+
+        async function sendReaction(postId, type) {
+            const reactionMap = { like: '👍', love: '❤️', haha: '😂', wow: '😮', sad: '😢', angry: '😡' };
+            try {
+                await db.collection("posts").doc(postId).update({
+                    [`reactions.${type}`]: firebase.firestore.FieldValue.increment(1),
+                    totalReactions: firebase.firestore.FieldValue.increment(1)
+                });
+                showToast(`تفاعلت بـ ${reactionMap[type]}`);
+            } catch (err) { console.error(err); }
+        }
+
+        function toggleCommentsSection(postId) {
+            const section = document.getElementById(`comments-section-${postId}`);
+            if (section) section.classList.toggle('open');
+        }
+
+        async function submitComment(postId) {
+            const name = document.getElementById(`comm-name-${postId}`).value.trim() || 'زائر';
+            const textField = document.getElementById(`comm-text-${postId}`);
+            const text = textField.value.trim();
+            if (!text) return;
+
+            await db.collection("posts").doc(postId).collection("comments").add({
+                userName: name,
+                text: text,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            await db.collection("posts").doc(postId).update({
+                commentsCount: firebase.firestore.FieldValue.increment(1)
+            });
+            textField.value = '';
+            showToast('تم نشر تعليقك! ✨');
+        }
+
+        function listenToPostComments(postId) {
+            const list = document.getElementById(`comments-list-${postId}`);
+            if (!list) return;
+            db.collection("posts").doc(postId).collection("comments").orderBy("createdAt", "asc").onSnapshot((snapshot) => {
+                list.innerHTML = '';
+                snapshot.forEach((doc) => {
+                    const cData = doc.data();
+                    const item = document.createElement('div');
+                    item.className = 'comment-item';
+                    item.innerHTML = `
+                        <div class="comment-author-name">${escapeHtml(cData.userName || 'زائر')}</div>
+                        <div class="comment-body">${escapeHtml(cData.text || '')}</div>
+                        <div class="comment-time">الآن • (اضغط مطولاً للإدارة)</div>
+                    `;
+                    attachLongPressEvent(item, postId, doc.id, cData.text);
+                    list.appendChild(item);
+                });
+            });
+        }
+
+        // Long Press on Comments (Admin only)
+        let activeActionPostId = null, activeActionCommentId = null, activeActionCommentText = '';
+        function attachLongPressEvent(element, postId, commentId, currentText) {
+            let pressTimer = null;
+            const start = () => { pressTimer = setTimeout(() => { handleCommentLongPress(postId, commentId, currentText); }, 750); };
+            const cancel = () => { if (pressTimer) clearTimeout(pressTimer); };
+            element.addEventListener('mousedown', start);
+            element.addEventListener('touchstart', start, { passive: true });
+            element.addEventListener('mouseup', cancel);
+            element.addEventListener('mouseleave', cancel);
+            element.addEventListener('touchend', cancel);
+        }
+
+        function handleCommentLongPress(postId, commentId, text) {
+            if (!isAuthorized) {
+                showToast('تعديل وحذف التعليقات متاح للمهندس محمد السعيد فقط! 🔒');
+                return;
+            }
+            activeActionPostId = postId; activeActionCommentId = commentId; activeActionCommentText = text;
+            document.getElementById('targetCommentPreview').textContent = `التعليق: "${text.substring(0, 45)}..."`;
+            document.getElementById('commentActionModal').classList.add('show');
+        }
+
+        function closeCommentModal() { document.getElementById('commentActionModal').classList.remove('show'); }
+
+        async function promptEditComment() {
+            closeCommentModal();
+            const newText = prompt("تعديل التعليق:", activeActionCommentText);
+            if (newText) {
+                await db.collection("posts").doc(activeActionPostId).collection("comments").doc(activeActionCommentId).update({ text: newText.trim() });
+                showToast("تم تعديل التعليق!");
+            }
+        }
+
+        async function confirmDeleteComment() {
+            closeCommentModal();
+            if (confirm("حذف هذا التعليق نهائياً؟")) {
+                await db.collection("posts").doc(activeActionPostId).collection("comments").doc(activeActionCommentId).delete();
+                await db.collection("posts").doc(activeActionPostId).update({ commentsCount: firebase.firestore.FieldValue.increment(-1) });
+                showToast("تم حذف التعليق!");
+            }
+        }
+
+        async function deletePost(postId) {
+            if (!isAuthorized) return;
+            if (confirm("هل أنت متأكد من رغبتك في حذف هذا المنشور نهائياً من السحابة؟")) {
+                try {
+                    await db.collection("posts").doc(postId).delete();
+                    showToast("تم حذف المنشور بنجاح!");
+                } catch (e) {
+                    showToast("تعذر حذف المنشور");
+                }
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toastBox');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        function escapeHtml(string) {
+            return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // Init on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            listenToFollowers();
+            listenToVisitorMessages();
+            listenToCloudPosts();
+            listenForLiveMessageNotifications();
+        });
+    </script>
+</body>
+</html>
