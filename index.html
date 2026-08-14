@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,7 +34,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <style>
-        :root {
+        :root, [data-theme="dark"] {
             --bg-color: #0c0d11;
             --card-bg: #181920;
             --card-sub: #22242e;
@@ -49,6 +49,31 @@
             --gold: #ffc107;
             --success: #00ff66;
             --danger: #ff4757;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --btn-toggle-bg: rgba(24, 25, 32, 0.85);
+            --btn-toggle-border: rgba(255, 255, 255, 0.15);
+            --btn-toggle-text: #ffc107;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --card-sub: #f3f4f6;
+            --primary: #e11d48;
+            --primary-hover: #be123c;
+            --secondary: #6366f1;
+            --accent-glow: rgba(225, 29, 72, 0.2);
+            --fb-blue: #1877f2;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --gold: #d97706;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --shadow-color: rgba(0, 0, 0, 0.06);
+            --btn-toggle-bg: rgba(255, 255, 255, 0.9);
+            --btn-toggle-border: rgba(0, 0, 0, 0.1);
+            --btn-toggle-text: #6366f1;
         }
 
         * {
@@ -57,6 +82,7 @@
             box-sizing: border-box;
             font-family: 'Cairo', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         body {
@@ -67,9 +93,34 @@
             flex-direction: column;
             justify-content: space-between;
             overflow-x: hidden;
+            position: relative;
         }
 
-        /* Main Container */
+        /* زر الوضع الليلي/النهاري ثابت بأعلى الصفحة في اليسار */
+        .theme-toggle-floating {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 990;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--btn-toggle-bg);
+            border: 1px solid var(--btn-toggle-border);
+            color: var(--btn-toggle-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 18px var(--shadow-color);
+        }
+
+        .theme-toggle-floating:hover { transform: scale(1.1) rotate(15deg); }
+        .theme-toggle-floating:active { transform: scale(0.95); }
+
         .main-container {
             max-width: 950px;
             width: 100%;
@@ -80,13 +131,12 @@
             gap: 22px;
         }
 
-        /* Profile Card */
         .page-profile-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 30px var(--shadow-color);
             position: relative;
         }
 
@@ -97,14 +147,13 @@
             position: relative;
             background-size: cover;
             background-position: center;
-            cursor: pointer;
             user-select: none;
         }
 
         .cover-photo-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to bottom, transparent, rgba(24, 25, 32, 0.95));
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4));
         }
 
         .profile-info-section {
@@ -124,9 +173,7 @@
             gap: 15px;
         }
 
-        .profile-avatar-container {
-            position: relative;
-        }
+        .profile-avatar-container { position: relative; }
 
         .profile-avatar {
             width: 120px;
@@ -135,7 +182,7 @@
             border: 4px solid var(--card-bg);
             object-fit: cover;
             background: #111;
-            box-shadow: 0 0 25px rgba(255, 0, 85, 0.35);
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.25);
         }
 
         .profile-badge-verified {
@@ -176,7 +223,7 @@
         .btn-fb-primary {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: #fff;
-            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3);
+            box-shadow: 0 4px 15px var(--accent-glow);
         }
 
         .btn-fb-primary.followed {
@@ -193,14 +240,10 @@
             position: relative;
         }
 
-        .btn-fb-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
         .profile-text h1 {
             font-size: 1.6rem;
             font-weight: 900;
-            color: #fff;
+            color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -229,6 +272,253 @@
             font-size: 0.95rem;
         }
 
+        /* شريط إنشاء المنشور بأسلوب الفيسبوك (Trigger Bar) */
+        .post-trigger-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .post-trigger-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            flex-shrink: 0;
+            background: var(--card-sub);
+        }
+
+        .post-trigger-btn {
+            flex: 1;
+            background: var(--card-sub);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 12px 18px;
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            font-weight: 600;
+            text-align: right;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .post-trigger-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            color: var(--text-main);
+        }
+
+        /* نافذة منبثقة لكتابة المشكلة (Modal) */
+        .post-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .post-modal-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 22px;
+            padding: 24px;
+            max-width: 580px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            animation: modalFadeIn 0.25s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-close-btn {
+            background: var(--card-sub);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .modal-close-btn:hover { color: var(--danger); }
+
+        .form-grid-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 650px) {
+            .form-grid-fields { grid-template-columns: 1fr; }
+        }
+
+        .avatar-uploader-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--card-sub);
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px dashed var(--border-color);
+            cursor: pointer;
+        }
+
+        .avatar-preview-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .avatar-preview-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+        .visitor-input-field {
+            width: 100%;
+            background: var(--card-sub);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 12px 16px;
+            color: var(--text-main);
+            font-size: 0.92rem;
+            outline: none;
+        }
+
+        .visitor-input-field:focus { border-color: var(--primary); }
+
+        .visitor-textarea-field {
+            width: 100%;
+            background: var(--card-sub);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px 16px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            resize: none;
+            min-height: 100px;
+        }
+
+        .visitor-textarea-field:focus { border-color: var(--primary); }
+
+        .post-attach-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
+        }
+
+        .attach-btn-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            font-weight: 700;
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: var(--card-sub);
+        }
+
+        .attach-btn-label:hover { color: var(--primary); }
+
+        .submit-visitor-post-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            border: none;
+            padding: 11px 26px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .post-images-preview-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 8px;
+        }
+
+        .thumb-preview-box {
+            position: relative;
+            height: 70px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .thumb-preview-box img { width: 100%; height: 100%; object-fit: cover; }
+        .thumb-preview-box button {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(255,0,0,0.85);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+
         /* Feed Posts */
         .feed-container {
             display: flex;
@@ -241,8 +531,7 @@
             border: 1px solid var(--border-color);
             border-radius: 18px;
             padding: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-            transition: border-color 0.3s;
+            box-shadow: 0 4px 20px var(--shadow-color);
             position: relative;
         }
 
@@ -270,7 +559,7 @@
         .author-meta h3 {
             font-size: 1rem;
             font-weight: 800;
-            color: #fff;
+            color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 6px;
@@ -285,39 +574,28 @@
             font-family: monospace, 'Cairo', sans-serif;
         }
 
-        .post-admin-actions {
-            display: none;
+        .device-badge-tag {
+            display: inline-flex;
+            align-items: center;
             gap: 6px;
-        }
-
-        .admin-authenticated .post-admin-actions {
-            display: flex;
-        }
-
-        .post-action-btn-sm {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 6px 9px;
+            background: rgba(255, 193, 7, 0.12);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: var(--gold);
+            padding: 4px 10px;
             border-radius: 8px;
-            font-size: 0.85rem;
-            transition: 0.2s;
+            font-size: 0.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
         }
-
-        .btn-edit-post { color: var(--gold); }
-        .btn-edit-post:hover { background: rgba(255, 193, 7, 0.15); }
-        .btn-delete-post { color: var(--danger); }
-        .btn-delete-post:hover { background: rgba(255, 71, 87, 0.15); }
 
         .post-body-text {
-            color: #e5e7eb;
+            color: var(--text-main);
             font-size: 1rem;
             line-height: 1.7;
             white-space: pre-wrap;
             margin-bottom: 16px;
         }
 
-        /* Image Grids */
         .post-images-grid {
             display: grid;
             gap: 6px;
@@ -356,7 +634,6 @@
             font-family: monospace, sans-serif;
         }
 
-        /* Metrics & Reactions */
         .post-metrics-bar {
             display: flex;
             justify-content: space-between;
@@ -399,22 +676,26 @@
         }
 
         .interaction-btn:hover {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(0, 0, 0, 0.05);
             color: var(--text-main);
+        }
+
+        [data-theme="dark"] .interaction-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
         }
 
         .reactions-box {
             position: absolute;
             bottom: 45px;
             right: 10px;
-            background: #242531;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 35px;
             padding: 6px 12px;
             display: none;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 10px 25px var(--shadow-color);
             z-index: 50;
             animation: reactPop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -435,7 +716,7 @@
 
         .reaction-icon:hover { transform: scale(1.35) translateY(-5px); }
 
-        /* Comments */
+        /* Comments Section (للمنشورات الرسمية فقط) */
         .comments-section {
             display: none;
             margin-top: 15px;
@@ -457,7 +738,7 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 10px 14px;
-            color: #fff;
+            color: var(--text-main);
             font-size: 0.9rem;
             outline: none;
         }
@@ -477,38 +758,102 @@
         .comments-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-height: 300px;
+            gap: 12px;
+            max-height: 350px;
             overflow-y: auto;
         }
 
         .comment-item {
             background: var(--card-sub);
-            padding: 10px 14px;
+            padding: 12px 16px;
             border-radius: 14px;
             border: 1px solid var(--border-color);
-            cursor: pointer;
-            user-select: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .comment-author-name {
             font-weight: 800;
             font-size: 0.88rem;
-            color: #fff;
-            margin-bottom: 3px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .comment-body {
             font-size: 0.9rem;
-            color: #d1d5db;
+            color: var(--text-main);
             line-height: 1.4;
+            opacity: 0.9;
         }
 
         .comment-time {
             font-size: 0.72rem;
             color: var(--text-muted);
-            margin-top: 4px;
+            margin-top: 2px;
             font-family: monospace, 'Cairo', sans-serif;
+        }
+
+        .admin-reply-box {
+            margin-top: 8px;
+            padding: 10px 14px;
+            background: rgba(255, 0, 85, 0.08);
+            border-right: 3px solid var(--primary);
+            border-radius: 8px;
+        }
+
+        .admin-reply-author {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 3px;
+        }
+
+        .admin-reply-text {
+            font-size: 0.85rem;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        /* تعليق وحل الإدارة الحصري لمنشورات الزوار */
+        .exclusive-admin-comment-card {
+            margin-top: 15px;
+            padding: 16px;
+            background: rgba(255, 0, 85, 0.06);
+            border: 1px solid rgba(255, 0, 85, 0.25);
+            border-right: 4px solid var(--primary);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .admin-comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .admin-comment-header img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1.5px solid var(--primary);
+        }
+
+        .admin-comment-body {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-right: 36px;
         }
 
         /* Messenger Live Chat Widget */
@@ -517,10 +862,10 @@
             bottom: 25px;
             left: 25px;
             width: 330px;
-            background: #181924;
-            border: 1px solid rgba(24, 119, 242, 0.4);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 18px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            box-shadow: 0 10px 30px var(--shadow-color);
             z-index: 999;
             display: none;
             flex-direction: column;
@@ -551,7 +896,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            background: #111218;
+            background: var(--bg-color);
         }
 
         .chat-bubble {
@@ -566,7 +911,7 @@
         .bubble-visitor {
             align-self: flex-start;
             background: var(--card-sub);
-            color: #fff;
+            color: var(--text-main);
             border-bottom-right-radius: 2px;
         }
 
@@ -579,7 +924,7 @@
 
         .messenger-footer {
             padding: 10px;
-            background: #181924;
+            background: var(--card-bg);
             border-top: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
@@ -587,270 +932,26 @@
         }
 
         .chat-input {
-            background: #22242e;
+            background: var(--card-sub);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 8px 12px;
-            color: #fff;
+            color: var(--text-main);
             font-size: 0.85rem;
             outline: none;
         }
 
-        /* Admin & Comment Modals */
-        .admin-modal-overlay, .comment-action-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-        }
-
-        .admin-modal-overlay.active, .comment-action-modal.show { display: flex; }
-
-        .admin-box {
-            background: #161720;
-            border: 1px solid rgba(255, 0, 85, 0.3);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 680px;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 26px;
-            box-shadow: 0 10px 40px rgba(255, 0, 85, 0.25);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-
-        .modal-header h2 {
-            font-size: 1.3rem;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .close-modal-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.3rem;
-            cursor: pointer;
-        }
-
-        /* Admin Tabs */
-        .admin-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-weight: 700;
-            padding: 8px 16px;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-        }
-
-        .tab-btn.active {
-            background: var(--primary);
-            color: #fff;
-        }
-
-        .tab-badge {
-            background: #ff4757;
-            color: #fff;
-            font-size: 0.72rem;
-            font-weight: 800;
-            padding: 2px 7px;
-            border-radius: 10px;
-            display: none;
-            font-family: monospace, sans-serif;
-        }
-
-        /* Admin Posts List Manager */
-        .admin-posts-manager-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .admin-post-item {
-            background: var(--card-sub);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .admin-post-preview-text {
-            font-size: 0.9rem;
-            color: #e5e7eb;
-            line-height: 1.4;
-            max-width: 70%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .admin-post-ctrls {
-            display: flex;
-            gap: 8px;
-        }
-
-        /* Notification Banner Inside Admin Only */
-        .admin-notif-banner {
-            display: none;
-            background: linear-gradient(135deg, rgba(255, 0, 85, 0.15), rgba(121, 40, 202, 0.15));
-            border: 1px solid var(--primary);
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            align-items: center;
-            justify-content: space-between;
-            color: #fff;
-            font-size: 0.9rem;
-        }
-
-        .admin-notif-banner.show { display: flex; }
-
-        .admin-notif-banner strong {
-            font-family: monospace, sans-serif;
-        }
-
-        /* Password Screen */
-        #passwordView { text-align: center; padding: 30px 10px; }
-
-        .lock-icon-wrap {
-            width: 70px;
-            height: 70px;
-            background: rgba(255, 0, 85, 0.15);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: var(--primary);
-            margin: 0 auto 20px;
-            border: 1px solid rgba(255, 0, 85, 0.3);
-        }
-
-        .pin-input {
-            width: 100%;
-            max-width: 280px;
-            background: var(--card-sub);
-            border: 2px solid var(--border-color);
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 1.4rem;
-            letter-spacing: 6px;
-            text-align: center;
-            color: #fff;
-            margin: 18px 0;
-            outline: none;
-            font-family: monospace, sans-serif;
-        }
-
-        .pin-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
-        }
-
-        .modal-action-btn {
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border: none;
-            color: #fff;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 1.05rem;
-            font-weight: 800;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .form-group { margin-bottom: 18px; text-align: right; }
-        .form-group label { display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; color: #d1d5db; }
-        .form-control { width: 100%; background: var(--card-sub); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; color: #fff; font-size: 0.95rem; outline: none; }
-        .image-upload-zone { border: 2px dashed rgba(255, 0, 85, 0.35); background: rgba(255, 0, 85, 0.03); border-radius: 14px; padding: 20px; text-align: center; cursor: pointer; margin-bottom: 15px; }
-        .image-preview-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-top: 12px; }
-        .preview-thumb-box { position: relative; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); }
-        .preview-thumb-box img { width: 100%; height: 100%; object-fit: cover; }
-        .remove-img-btn { position: absolute; top: 3px; right: 3px; background: rgba(255, 0, 0, 0.85); color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 0.7rem; cursor: pointer; }
-
-        /* Inbox list */
-        .inbox-list { display: flex; flex-direction: column; gap: 12px; max-height: 380px; overflow-y: auto; }
-        .inbox-card { 
-            background: var(--card-sub); 
-            border: 1px solid var(--border-color); 
-            border-radius: 12px; 
-            padding: 14px 16px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 8px;
-            transition: all 0.2s;
-        }
-        .inbox-card.unread {
-            border-right: 4px solid var(--primary);
-            background: rgba(255, 0, 85, 0.05);
-        }
-        .inbox-header { display: flex; justify-content: space-between; font-weight: 800; color: #fff; align-items: center; }
-        .inbox-time { font-size: 0.75rem; color: var(--text-muted); font-weight: normal; font-family: monospace, 'Cairo', sans-serif; }
-        .inbox-msg { font-size: 0.9rem; color: #e5e7eb; line-height: 1.4; }
-        .unread-tag {
-            background: var(--primary);
-            color: #fff;
-            font-size: 0.68rem;
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-weight: 700;
-        }
-        .reply-input-row { display: flex; gap: 8px; margin-top: 6px; }
-        .reply-field { flex: 1; background: #181920; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 0.85rem; outline: none; }
-        .reply-btn { background: var(--fb-blue); border: none; color: #fff; padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.82rem; }
-
-        /* Comment Action modal */
-        .action-box { background: var(--card-bg); border: 1px solid var(--primary); border-radius: 18px; padding: 20px; width: 100%; max-width: 400px; text-align: center; }
-        .action-box button { width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; }
-
-        /* Toast */
         .toast-notification {
             position: fixed;
             bottom: 25px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: #1f1f2e;
-            color: #fff;
+            background: var(--card-bg);
+            color: var(--text-main);
             padding: 12px 24px;
             border-radius: 30px;
             border: 1px solid var(--primary);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 25px var(--shadow-color);
             font-weight: 700;
             z-index: 10000;
             opacity: 0;
@@ -860,18 +961,30 @@
         .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
         footer { text-align: center; padding: 22px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; margin-top: 30px; }
-        @media (max-width: 650px) { .profile-info-section { margin-top: -50px; } .profile-avatar { width: 95px; height: 95px; } .cover-photo-wrapper { height: 160px; } .profile-text h1 { font-size: 1.3rem; } .messenger-widget { left: 10px; right: 10px; width: auto; } }
+        
+        @media (max-width: 650px) {
+            .theme-toggle-floating { top: 15px; left: 15px; width: 40px; height: 40px; font-size: 1.1rem; }
+            .profile-info-section { margin-top: -50px; } 
+            .profile-avatar { width: 95px; height: 95px; } 
+            .cover-photo-wrapper { height: 160px; } 
+            .profile-text h1 { font-size: 1.3rem; } 
+            .messenger-widget { left: 10px; right: 10px; width: auto; } 
+        }
     </style>
 </head>
 <body>
 
-    <!-- Main Container (الصفحة تبدأ مباشرة من هنا) -->
+    <!-- زر التبديل بين الوضع الليلي والنهاري مثبت في أعلى الصفحة -->
+    <button class="theme-toggle-floating" id="themeToggleBtn" onclick="toggleAppTheme()" title="تبديل الوضع الليلي / النهاري">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </button>
+
+    <!-- Main Container -->
     <main class="main-container">
         
         <!-- Profile Section -->
         <section class="page-profile-card">
-            <!-- غلاف الصفحة (اضغط 5 مرات متتالية وسريعة على الغلاف لفتح لوحة الأدمن) -->
-            <div class="cover-photo-wrapper" id="secretAdminTrigger" title="اضغط 5 مرات لفتح لوحة الإدارة" style="background-image: url('https://b.top4top.io/p_38788xjki0.jpg');">
+            <div class="cover-photo-wrapper" style="background-image: url('https://b.top4top.io/p_38788xjki0.jpg');">
                 <div class="cover-photo-overlay"></div>
             </div>
             
@@ -905,6 +1018,62 @@
             </div>
         </section>
 
+        <!-- شريط النشر الخفيف مثل فيسبوك -->
+        <section class="post-trigger-card">
+            <img src="https://e.top4top.io/p_3878z3lii0.jpg" id="barVisitorAvatarPreview" class="post-trigger-avatar" alt="Avatar">
+            <button class="post-trigger-btn" onclick="openPostModal()">
+                <span>بماذا تفكر؟ أو اعرض مشكلتك على المهندس محمد السعيد...</span>
+                <i class="fas fa-images" style="color: var(--success); font-size: 1.1rem;"></i>
+            </button>
+        </section>
+
+        <!-- نافذة كتابة المنشور وعرض المشكلة المنبثقة (Modal) -->
+        <div class="post-modal-overlay" id="postModalOverlay" onclick="if(event.target===this) closePostModal()">
+            <div class="post-modal-box">
+                <div class="modal-header">
+                    <h3><i class="fas fa-edit" style="color: var(--primary);"></i> عرض مشكلة أو استفسار للإدارة</h3>
+                    <button class="modal-close-btn" onclick="closePostModal()"><i class="fas fa-times"></i></button>
+                </div>
+
+                <div class="form-grid-fields">
+                    <div>
+                        <input type="text" id="visitorFullName" class="visitor-input-field" placeholder="1. اكتب اسمك ثنائياً (مثال: أحمد محمود)...">
+                    </div>
+                    <div>
+                        <input type="text" id="visitorDeviceType" class="visitor-input-field" placeholder="2. نوع وموديل جهازك (مثال: ستار نت 2080)...">
+                    </div>
+                </div>
+
+                <div class="avatar-uploader-row" onclick="document.getElementById('visitorProfileImgFile').click()">
+                    <div class="avatar-preview-circle">
+                        <i class="fas fa-user" id="visitorAvatarIcon"></i>
+                        <img id="visitorAvatarPreviewImg" src="" style="display:none;" alt="Avatar">
+                    </div>
+                    <div style="flex:1;">
+                        <div style="font-size:0.88rem; font-weight:800; color:var(--text-main);">3. اختيار صورة البروفايل الشخصي (إجباري)</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);" id="avatarStatusLabel">اضغط هنا لتحديد صورتك من الجهاز</div>
+                    </div>
+                    <input type="file" id="visitorProfileImgFile" accept="image/*" style="display: none;" onchange="handleVisitorProfileImage(event)">
+                </div>
+
+                <textarea id="visitorProblemDescription" class="visitor-textarea-field" placeholder="4. اكتب مشكلتك أو استفسارك بالتفصيل وسيقوم الباشمهندس بالرد عليك بالحل المعتمد..."></textarea>
+
+                <div class="post-images-preview-strip" id="problemImagesStrip"></div>
+
+                <div class="post-attach-bar">
+                    <label class="attach-btn-label" onclick="document.getElementById('problemImagesInput').click()">
+                        <i class="fas fa-images" style="color: var(--success); font-size: 1.1rem;"></i>
+                        <span id="problemImagesBadge">إرفاق صور للمشكلة (حتى 10 صور)</span>
+                    </label>
+                    <input type="file" id="problemImagesInput" multiple accept="image/*" style="display: none;" onchange="handleProblemImages(event)">
+                </div>
+
+                <button class="submit-visitor-post-btn" id="submitProblemPostBtn" onclick="submitProblemPost()">
+                    <i class="fas fa-paper-plane"></i> إرسال المنشور للمراجعة
+                </button>
+            </div>
+        </div>
+
         <!-- Live Cloud Feed Posts -->
         <section class="feed-container" id="feedContainer">
             <p style="text-align: center; color: var(--text-muted); padding: 25px;">جاري مزامنة المنشورات والتفاعلات سحابياً...</p>
@@ -912,7 +1081,7 @@
 
     </main>
 
-    <!-- Messenger Live Chat Widget for Visitors -->
+    <!-- Messenger Live Chat Widget -->
     <div class="messenger-widget" id="messengerWidget">
         <div class="messenger-header">
             <div><i class="fab fa-facebook-messenger"></i> رسائل المهندس محمد السعيد</div>
@@ -922,103 +1091,11 @@
             <div class="chat-bubble bubble-admin">مرحباً بك! تواصل معنا عبر إرسال رسالتك وسيرد عليك المهندس محمد السعيد هنا فوراً. 👋</div>
         </div>
         <div class="messenger-footer">
-            <input type="text" id="chatSenderName" class="chat-input" placeholder="اسمك الكريم...">
+            <input type="text" id="chatSenderName" class="chat-input" placeholder="اسمك الكريم (مثال: أحمد محمود)...">
             <div style="display: flex; gap: 6px;">
                 <input type="text" id="chatMessageText" class="chat-input" style="flex: 1;" placeholder="اكتب رسالتك هنا..." onkeypress="if(event.key==='Enter') sendVisitorMessage()">
                 <button class="comment-send-btn" onclick="sendVisitorMessage()"><i class="fas fa-paper-plane"></i></button>
             </div>
-        </div>
-    </div>
-
-    <!-- Admin Modal -->
-    <div class="admin-modal-overlay" id="adminModal">
-        <div class="admin-box">
-            <div class="modal-header">
-                <h2><i class="fas fa-user-shield"></i> لوحة إدارة الصفحة</h2>
-                <button class="close-modal-btn" onclick="closeAdminModal()"><i class="fas fa-times"></i></button>
-            </div>
-
-            <!-- Password View -->
-            <div id="passwordView">
-                <div class="lock-icon-wrap"><i class="fas fa-lock"></i></div>
-                <h3 style="margin-bottom: 8px;">اللوحة محمية بكلمة مرور</h3>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">يرجى كتابة رمز المرور للمتابعة</p>
-                <input type="password" id="adminPinInput" class="pin-input" placeholder="••••" maxlength="6" autofocus>
-                <button class="modal-action-btn" onclick="verifyPassword()"><i class="fas fa-key"></i> تأكيد الدخول</button>
-            </div>
-
-            <!-- Admin Control View -->
-            <div id="publisherView" style="display: none;">
-                
-                <!-- Live Notification Alert Banner -->
-                <div class="admin-notif-banner" id="adminNotifBanner">
-                    <div><i class="fas fa-bell" style="color: var(--gold); margin-left: 8px;"></i> لديك <strong id="unreadMsgsCount">0</strong> رسائل جديدة غير مقروءة من الزوار!</div>
-                    <button style="background: var(--primary); border: none; color: #fff; padding: 4px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.78rem;" onclick="switchAdminTab('inbox')">عرض الآن</button>
-                </div>
-
-                <div class="admin-tabs">
-                    <button class="tab-btn active" id="tabPostBtn" onclick="switchAdminTab('posts')">
-                        <i class="fas fa-pen-alt"></i> نشر منشور جديد
-                    </button>
-                    <button class="tab-btn" id="tabManagePostsBtn" onclick="switchAdminTab('manage_posts')">
-                        <i class="fas fa-tasks"></i> إدارة وتعديل المنشورات
-                    </button>
-                    <button class="tab-btn" id="tabInboxBtn" onclick="switchAdminTab('inbox')">
-                        <i class="fas fa-inbox"></i> صندوق الرسائل 
-                        <span class="tab-badge" id="inboxTabBadge">0</span>
-                    </button>
-                </div>
-
-                <!-- Tab 1: Create / Edit Post -->
-                <div id="adminPostsSection">
-                    <form id="postPublishForm" onsubmit="handlePostSubmit(event)">
-                        <input type="hidden" id="editPostTargetId" value="">
-                        <div class="form-group">
-                            <label id="formPostActionTitle"><i class="fas fa-pen"></i> نص المنشور (الكلام):</label>
-                            <textarea id="postContentInput" class="form-control" rows="4" placeholder="اكتب ما يدور في خاطرك هنا..." required></textarea>
-                        </div>
-
-                        <div class="form-group" id="imageUploadGroup">
-                            <label><i class="fas fa-camera"></i> إضافة أو تعديل الصور (اختياري - حتى 10 صور):</label>
-                            <div class="image-upload-zone" onclick="document.getElementById('postImagesInput').click()">
-                                <div style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"><i class="fas fa-cloud-upload-alt"></i></div>
-                                <p style="font-weight: 700; font-size: 0.95rem;">اضغط لاختيار الصور من جهازك</p>
-                                <span style="font-size: 0.8rem; color: var(--text-muted);">يمكنك اختيار صورة، اثنتين أو حتى 10 صور</span>
-                            </div>
-                            <input type="file" id="postImagesInput" accept="image/*" multiple style="display: none;" onchange="handleImageSelection(event)">
-                            <div class="image-preview-strip" id="imagesPreviewContainer"></div>
-                        </div>
-
-                        <button type="submit" id="submitPostBtn" class="modal-action-btn"><i class="fas fa-paper-plane"></i> نشر وحفظ سحابياً</button>
-                        <button type="button" id="cancelEditBtn" style="display:none; width: 100%; background: var(--card-sub); border: 1px solid var(--border-color); color: #fff; padding: 10px; border-radius: 12px; margin-top: 8px; cursor: pointer; font-weight:700;" onclick="resetPostForm()">إلغاء وضع التعديل</button>
-                    </form>
-                </div>
-
-                <!-- Tab 2: Manage All Posts (Edit / Delete from Admin) -->
-                <div id="adminManagePostsSection" style="display: none;">
-                    <div class="admin-posts-manager-list" id="adminPostsManagerList">
-                        <p style="text-align: center; color: var(--text-muted);">جاري تحميل قائمة المنشورات...</p>
-                    </div>
-                </div>
-
-                <!-- Tab 3: Inbox & Replies -->
-                <div id="adminInboxSection" style="display: none;">
-                    <div class="inbox-list" id="adminInboxList">
-                        <p style="text-align: center; color: var(--text-muted);">جاري تحميل الرسائل...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Comment Context Modal -->
-    <div class="comment-action-modal" id="commentActionModal">
-        <div class="action-box">
-            <h3 style="margin-bottom: 12px;"><i class="fas fa-user-shield" style="color: var(--primary);"></i> إدارة التعليق (أدمن)</h3>
-            <p id="targetCommentPreview" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;"></p>
-            <button style="background: var(--gold); color: #000;" onclick="promptEditComment()"><i class="fas fa-edit"></i> تعديل نص التعليق</button>
-            <button style="background: var(--danger); color: #fff;" onclick="confirmDeleteComment()"><i class="fas fa-trash"></i> حذف التعليق نهائياً</button>
-            <button style="background: var(--card-sub); color: #fff;" onclick="closeCommentModal()">إلغاء</button>
         </div>
     </div>
 
@@ -1031,7 +1108,26 @@
 
     <!-- Scripts Logic -->
     <script>
-        // 1. Firebase Config
+        function initTheme() {
+            const savedTheme = localStorage.getItem("preferred_theme") || "dark";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleAppTheme() {
+            const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+            const newTheme = (currentTheme === "dark") ? "light" : "dark";
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("preferred_theme", newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById("themeIcon");
+            if (!icon) return;
+            icon.className = (theme === "light") ? "fas fa-sun" : "fas fa-moon";
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyBa2TuKhZf4i3sMWOo7m11OXjZ8h02YTFY",
             authDomain: "home-page-2d0db.firebaseapp.com",
@@ -1045,14 +1141,422 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 2. Visitor ID
         let visitorId = localStorage.getItem("fb_visitor_id");
         if (!visitorId) {
             visitorId = "usr_" + Math.random().toString(36).substr(2, 9);
             localStorage.setItem("fb_visitor_id", visitorId);
         }
 
-        // 3. Real Follow System (English Digits)
+        function openPostModal() {
+            document.getElementById('postModalOverlay').style.display = 'flex';
+        }
+
+        function closePostModal() {
+            document.getElementById('postModalOverlay').style.display = 'none';
+        }
+
+        function compressImage(file, maxDim = 800, quality = 0.65) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width, height = img.height;
+                        if (width > height && width > maxDim) {
+                            height = Math.round((height * maxDim) / width);
+                            width = maxDim;
+                        } else if (height > maxDim) {
+                            width = Math.round((width * maxDim) / height);
+                            height = maxDim;
+                        }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                };
+            });
+        }
+
+        function validateRealName(name) {
+            if (!name || name.trim().length < 5) return false;
+            const trimmed = name.trim();
+            const parts = trimmed.split(/\s+/);
+            if (parts.length < 2) return false;
+            const arabicRegex = /^[\u0621-\u064A\s]+$/;
+            if (!arabicRegex.test(trimmed)) return false;
+
+            const banned = ['وردة', 'بستان', 'الرجل', 'الصالح', 'عاشق', 'صمت', 'أمير', 'الظلام', 'حزين', 'أميرة', 'القمر', 'فارس', 'مجهول', 'خير', 'صقر', 'البرنس', 'القيصر', 'الملك', 'الزعيم', 'الجنرال'];
+            for (const word of banned) {
+                if (trimmed.includes(word)) return false;
+            }
+            if (/(.)\1{3,}/.test(trimmed)) return false;
+            return true;
+        }
+
+        // صورة البروفايل
+        let visitorAvatarBase64 = localStorage.getItem("saved_user_avatar") || "";
+        if (visitorAvatarBase64) {
+            document.getElementById('visitorAvatarPreviewImg').src = visitorAvatarBase64;
+            document.getElementById('visitorAvatarPreviewImg').style.display = 'block';
+            document.getElementById('visitorAvatarIcon').style.display = 'none';
+            document.getElementById('barVisitorAvatarPreview').src = visitorAvatarBase64;
+            document.getElementById('avatarStatusLabel').innerText = "تم حفظ صورتك الشخصية ✅";
+        }
+
+        async function handleVisitorProfileImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            visitorAvatarBase64 = await compressImage(file, 200, 0.75);
+            localStorage.setItem("saved_user_avatar", visitorAvatarBase64);
+            document.getElementById('visitorAvatarPreviewImg').src = visitorAvatarBase64;
+            document.getElementById('visitorAvatarPreviewImg').style.display = 'block';
+            document.getElementById('visitorAvatarIcon').style.display = 'none';
+            document.getElementById('barVisitorAvatarPreview').src = visitorAvatarBase64;
+            document.getElementById('avatarStatusLabel').innerText = "تم اختيار الصورة بنجاح ✅";
+            showToast("تم اختيار صورة البروفايل بنجاح!");
+        }
+
+        // صور المشكلة المرفقة
+        let problemImagesArray = [];
+        async function handleProblemImages(event) {
+            const files = Array.from(event.target.files);
+            const remaining = 10 - problemImagesArray.length;
+            if (files.length > remaining) alert(`يمكنك إضافة ${remaining} صور فقط.`);
+            const allowed = files.slice(0, remaining);
+            for (const file of allowed) {
+                const base64 = await compressImage(file, 800, 0.65);
+                problemImagesArray.push(base64);
+                renderProblemImagesStrip();
+            }
+            event.target.value = '';
+        }
+
+        function removeProblemImage(index) {
+            problemImagesArray.splice(index, 1);
+            renderProblemImagesStrip();
+        }
+
+        function renderProblemImagesStrip() {
+            const strip = document.getElementById('problemImagesStrip');
+            const badge = document.getElementById('problemImagesBadge');
+            badge.innerText = `${problemImagesArray.length} / 10 صور مرفقة`;
+            strip.innerHTML = problemImagesArray.map((src, i) => `
+                <div class="thumb-preview-box">
+                    <img src="${src}" alt="Img">
+                    <button type="button" onclick="removeProblemImage(${i})">&times;</button>
+                </div>
+            `).join('');
+        }
+
+        // إرسال المنشور للمراجعة
+        async function submitProblemPost() {
+            const nameInput = document.getElementById('visitorFullName');
+            const deviceInput = document.getElementById('visitorDeviceType');
+            const problemInput = document.getElementById('visitorProblemDescription');
+            const submitBtn = document.getElementById('submitProblemPostBtn');
+
+            const name = nameInput.value.trim();
+            const device = deviceInput.value.trim();
+            const problem = problemInput.value.trim();
+
+            if (!validateRealName(name)) {
+                showToast("1. يرجى كتابة اسمك الحقيقي ثنائياً باللغة العربية");
+                return;
+            }
+
+            if (!device) {
+                showToast("2. يرجى كتابة نوع وموديل جهازك");
+                return;
+            }
+
+            if (!visitorAvatarBase64) {
+                showToast("3. يرجى اختيار صورة بروفايلك الشخصي أولاً");
+                return;
+            }
+
+            if (!problem && problemImagesArray.length === 0) {
+                showToast("4. يرجى كتابة المشكلة أو الاستفسار بالتفصيل");
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+
+            try {
+                await db.collection("posts").add({
+                    authorName: name,
+                    authorAvatar: visitorAvatarBase64,
+                    deviceType: device,
+                    text: problem,
+                    images: problemImagesArray,
+                    status: 'pending',
+                    isVisitorPost: true,
+                    adminSolutionComment: '',
+                    reactions: { like: 0, love: 0, haha: 0, wow: 0, sad: 0, angry: 0 },
+                    totalReactions: 0,
+                    commentsCount: 0,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                nameInput.value = '';
+                deviceInput.value = '';
+                problemInput.value = '';
+                problemImagesArray = [];
+                renderProblemImagesStrip();
+                closePostModal();
+
+                showToast("تم إرسال مشكلتك بنجاح! سيتم مراجعتها ونشر الحل المعتمد عليها قريباً ✅");
+            } catch (err) {
+                console.error(err);
+                showToast("حدث خطأ أثناء إرسال المنشور");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال المنشور للمراجعة';
+            }
+        }
+
+        // الاستماع للمنشورات المعتمدة وعرضها
+        function listenToCloudPosts() {
+            const feed = document.getElementById('feedContainer');
+            db.collection("posts")
+                .orderBy("createdAt", "desc")
+                .onSnapshot((snapshot) => {
+                    if (snapshot.empty) {
+                        feed.innerHTML = `<article class="post-card"><div class="post-body-text" style="text-align: center; color: var(--text-muted);">لا توجد منشورات حالياً على الصفحة.</div></article>`;
+                        return;
+                    }
+                    feed.innerHTML = '';
+                    let hasApproved = false;
+                    snapshot.forEach((doc) => {
+                        const postData = doc.data();
+                        // عرض المعتمد أو المنشورات القديمة
+                        if (postData.status === 'approved' || postData.status === undefined) {
+                            hasApproved = true;
+                            const postElement = createPostElement(doc.id, postData);
+                            feed.appendChild(postElement);
+                            if (!postData.isVisitorPost) {
+                                listenToPostApprovedComments(doc.id);
+                            }
+                        }
+                    });
+                    if (!hasApproved) {
+                        feed.innerHTML = `<article class="post-card"><div class="post-body-text" style="text-align: center; color: var(--text-muted);">لا توجد منشورات معتمدة حالياً.</div></article>`;
+                    }
+                }, (error) => {
+                    console.error("Firestore feed error:", error);
+                });
+        }
+
+        function createPostElement(postId, postData) {
+            const article = document.createElement('article');
+            article.className = 'post-card';
+            article.id = `post-${postId}`;
+
+            let timeAgo = "الآن";
+            if (postData.createdAt && postData.createdAt.toDate) {
+                timeAgo = postData.createdAt.toDate().toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+            }
+
+            const authorName = postData.authorName || 'المهندس محمد السعيد';
+            const authorImg = postData.authorAvatar || 'https://e.top4top.io/p_3878z3lii0.jpg';
+            const isOfficial = !postData.isVisitorPost;
+
+            let deviceBadge = '';
+            if (postData.deviceType) {
+                deviceBadge = `<div class="device-badge-tag"><i class="fas fa-tv"></i> نوع الجهاز: ${escapeHtml(postData.deviceType)}</div>`;
+            }
+
+            const images = postData.images || [];
+            let imagesHtml = '';
+            if (images.length > 0) {
+                let gridClass = (images.length === 2) ? 'grid-2' : (images.length === 3) ? 'grid-3' : (images.length === 4) ? 'grid-4' : (images.length > 4) ? 'grid-multi' : 'grid-1';
+                let imgTags = '';
+                if (images.length <= 4) {
+                    imgTags = images.map(src => `<img src="${src}" alt="Post">`).join('');
+                } else {
+                    for (let i = 0; i < 3; i++) imgTags += `<img src="${images[i]}" alt="Post">`;
+                    imgTags += `<div class="more-images-overlay-box"><img src="${images[3]}" alt="Post"><div class="more-count-tag">+${Number(images.length - 3).toLocaleString('en-US')}</div></div>`;
+                }
+                imagesHtml = `<div class="post-images-grid ${gridClass}">${imgTags}</div>`;
+            }
+
+            const totalReactions = Number(postData.totalReactions || 0).toLocaleString('en-US');
+            const commentsCount = Number(postData.commentsCount || 0).toLocaleString('en-US');
+
+            // حل الإدارة المعتمد لمنشورات الزوار
+            let exclusiveCommentHtml = '';
+            if (postData.adminSolutionComment) {
+                exclusiveCommentHtml = `
+                    <div class="exclusive-admin-comment-card">
+                        <div class="admin-comment-header">
+                            <img src="https://e.top4top.io/p_3878z3lii0.jpg" alt="Admin">
+                            <span>المهندس محمد السعيد (الرد والحل المعتمد) <i class="fas fa-check-circle" style="color:var(--fb-blue);"></i></span>
+                        </div>
+                        <div class="admin-comment-body">${escapeHtml(postData.adminSolutionComment)}</div>
+                    </div>
+                `;
+            }
+
+            // أزرار التفاعل وقسم التعليقات: يفتح فقط للمنشورات الرسمية
+            let commentButtonHtml = '';
+            let commentsSectionBlock = '';
+
+            if (isOfficial) {
+                commentButtonHtml = `<div class="interaction-btn-wrap"><button class="interaction-btn" onclick="toggleCommentsSection('${postId}')"><i class="far fa-comment-alt"></i> تعليق</button></div>`;
+                commentsSectionBlock = `
+                    <div class="comments-section" id="comments-section-${postId}">
+                        <div class="comment-input-wrap">
+                            <input type="text" id="comm-name-${postId}" class="comment-name-field" placeholder="اسمك الحقيقي ثنائي (مثال: محمد علي)...">
+                            <textarea id="comm-text-${postId}" class="comment-text-field" rows="2" placeholder="اكتب تعليقك هنا (يخضع لمراجعة الإدارة)..."></textarea>
+                            <button class="comment-send-btn" onclick="submitComment('${postId}')"><i class="fas fa-paper-plane"></i> إرسال التعليق</button>
+                        </div>
+                        <div class="comments-list" id="comments-list-${postId}"></div>
+                    </div>
+                `;
+            }
+
+            article.innerHTML = `
+                <div class="post-header">
+                    <div class="post-author-info">
+                        <img src="${authorImg}" class="post-author-img" alt="${escapeHtml(authorName)}">
+                        <div class="author-meta">
+                            <h3>${escapeHtml(authorName)} ${isOfficial ? '<i class="fas fa-check-circle" style="color: var(--fb-blue); font-size: 0.85rem;"></i>' : ''}</h3>
+                            <span>${timeAgo} • <i class="fas fa-globe-americas"></i></span>
+                        </div>
+                    </div>
+                </div>
+                ${deviceBadge}
+                <div class="post-body-text">${escapeHtml(postData.text || '')}</div>
+                ${imagesHtml}
+                <div class="post-metrics-bar">
+                    <span>👍 ❤️ ${totalReactions} تفاعل</span>
+                    <span id="comm-count-badge-${postId}">${isOfficial ? `${commentsCount} تعليقات` : (postData.adminSolutionComment ? '1 رد معتمد' : 'بانتظار رد المهندس')}</span>
+                </div>
+                <div class="post-interactions-row">
+                    <div class="interaction-btn-wrap">
+                        <button class="interaction-btn" id="react-btn-${postId}" onclick="sendReaction('${postId}', 'like')"><i class="far fa-thumbs-up"></i> <span>إعجاب</span></button>
+                        <div class="reactions-box">
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'like')">👍</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'love')">❤️</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'haha')">😂</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'wow')">😮</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'sad')">😢</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'angry')">😡</span>
+                        </div>
+                    </div>
+                    ${commentButtonHtml}
+                    <div class="interaction-btn-wrap"><button class="interaction-btn" onclick="showToast('تم نسخ رابط المنشور')"><i class="far fa-share-square"></i> مشاركة</button></div>
+                </div>
+                ${commentsSectionBlock}
+                ${exclusiveCommentHtml}
+            `;
+            return article;
+        }
+
+        async function sendReaction(postId, type) {
+            const reactionMap = { like: '👍', love: '❤️', haha: '😂', wow: '😮', sad: '😢', angry: '😡' };
+            try {
+                await db.collection("posts").doc(postId).update({
+                    [`reactions.${type}`]: firebase.firestore.FieldValue.increment(1),
+                    totalReactions: firebase.firestore.FieldValue.increment(1)
+                });
+                showToast(`تفاعلت بـ ${reactionMap[type]}`);
+            } catch (err) { console.error(err); }
+        }
+
+        function toggleCommentsSection(postId) {
+            const section = document.getElementById(`comments-section-${postId}`);
+            if (section) section.classList.toggle('open');
+        }
+
+        async function submitComment(postId) {
+            const nameInput = document.getElementById(`comm-name-${postId}`);
+            const textInput = document.getElementById(`comm-text-${postId}`);
+            
+            const name = nameInput.value.trim();
+            const text = textInput.value.trim();
+
+            if (!validateRealName(name)) {
+                showToast("يرجى إدخال اسمك الحقيقي باللغة العربية (مثال: أحمد محمود) دون ألقاب أو أسماء مستعارة");
+                return;
+            }
+
+            if (!text || text.length < 2) {
+                showToast("يرجى كتابة نص التعليق");
+                return;
+            }
+
+            try {
+                await db.collection("comments_pending").add({
+                    postId: postId,
+                    userName: name,
+                    text: text,
+                    status: 'pending',
+                    replyText: '',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                textInput.value = '';
+                nameInput.value = '';
+                showToast("تم إرسال تعليقك بنجاح وسيظهر بعد مراجعته من الإدارة ✅");
+            } catch (error) {
+                console.error(error);
+                showToast("حدث خطأ أثناء إرسال التعليق");
+            }
+        }
+
+        function listenToPostApprovedComments(postId) {
+            const list = document.getElementById(`comments-list-${postId}`);
+            const badge = document.getElementById(`comm-count-badge-${postId}`);
+            if (!list) return;
+
+            db.collection("comments_pending")
+                .where("postId", "==", postId)
+                .where("status", "==", "approved")
+                .orderBy("createdAt", "asc")
+                .onSnapshot((snapshot) => {
+                    list.innerHTML = '';
+                    if (badge) badge.innerText = `${snapshot.size} تعليقات`;
+
+                    if (snapshot.empty) {
+                        list.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.8rem; padding:10px;">كن أول من يعلق على هذا المنشور!</p>`;
+                        return;
+                    }
+
+                    snapshot.forEach((doc) => {
+                        const cData = doc.data();
+                        const item = document.createElement('div');
+                        item.className = 'comment-item';
+                        
+                        let replyHtml = '';
+                        if (cData.replyText) {
+                            replyHtml = `
+                                <div class="admin-reply-box">
+                                    <div class="admin-reply-author">
+                                        <i class="fas fa-check-circle"></i> المهندس محمد السعيد (الرد الرسمي)
+                                    </div>
+                                    <div class="admin-reply-text">${escapeHtml(cData.replyText)}</div>
+                                </div>
+                            `;
+                        }
+
+                        item.innerHTML = `
+                            <div class="comment-author-name">
+                                <i class="fas fa-user-circle" style="color:var(--text-muted);"></i> ${escapeHtml(cData.userName || 'زائر')}
+                            </div>
+                            <div class="comment-body">${escapeHtml(cData.text || '')}</div>
+                            <div class="comment-time">معتمد • الآن</div>
+                            ${replyHtml}
+                        `;
+                        list.appendChild(item);
+                    });
+                });
+        }
+
         function listenToFollowers() {
             db.collection("page_meta").doc("stats").onSnapshot((doc) => {
                 const count = (doc.exists && doc.data().followersCount) ? doc.data().followersCount : 0;
@@ -1097,7 +1601,6 @@
             }
         }
 
-        // 4. Live Messenger System
         function toggleMessengerWidget() {
             const chat = document.getElementById('messengerWidget');
             chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
@@ -1124,7 +1627,12 @@
             const nameInput = document.getElementById('chatSenderName');
             const textInput = document.getElementById('chatMessageText');
             const text = textInput.value.trim();
-            const senderName = nameInput.value.trim() || 'زائر';
+            const senderName = nameInput.value.trim();
+
+            if (!validateRealName(senderName)) {
+                showToast("يرجى كتابة اسمك الحقيقي (ثنائي) للتواصل مع الإدارة");
+                return;
+            }
 
             if (!text) return;
 
@@ -1149,571 +1657,22 @@
             showToast("تم إرسال رسالتك للمهندس محمد السعيد!");
         }
 
-        // 5. Admin Panel Trigger (5 Clicks on Cover Photo + 108 PIN)
-        let coverClickCount = 0;
-        let coverClickTimer = null;
-        const secretAdminTrigger = document.getElementById('secretAdminTrigger');
-
-        secretAdminTrigger.addEventListener('click', function () {
-            coverClickCount++;
-            clearTimeout(coverClickTimer);
-            if (coverClickCount >= 5) {
-                coverClickCount = 0;
-                openAdminModal();
-            } else {
-                coverClickTimer = setTimeout(() => { coverClickCount = 0; }, 1500);
-            }
-        });
-
-        const adminModal = document.getElementById('adminModal');
-        const passwordView = document.getElementById('passwordView');
-        const publisherView = document.getElementById('publisherView');
-        const adminPinInput = document.getElementById('adminPinInput');
-        let isAuthorized = false;
-
-        function openAdminModal() {
-            adminModal.classList.add('active');
-            if (isAuthorized) {
-                passwordView.style.display = 'none';
-                publisherView.style.display = 'block';
-                listenToAdminInbox();
-                renderAdminPostsManager();
-            } else {
-                passwordView.style.display = 'block';
-                publisherView.style.display = 'none';
-                adminPinInput.value = '';
-                setTimeout(() => adminPinInput.focus(), 150);
-            }
-        }
-
-        function closeAdminModal() { adminModal.classList.remove('active'); }
-
-        function verifyPassword() {
-            const pin = adminPinInput.value.trim();
-            if (pin === '108') {
-                isAuthorized = true;
-                document.body.classList.add('admin-authenticated');
-                passwordView.style.display = 'none';
-                publisherView.style.display = 'block';
-                listenToAdminInbox();
-                renderAdminPostsManager();
-                showToast('أهلاً بك يا باشمهندس محمد! تم تفعيل لوحة الإدارة');
-            } else {
-                showToast('رمز المرور غير صحيح!');
-                adminPinInput.value = '';
-            }
-        }
-
-        adminPinInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') verifyPassword();
-        });
-
-        function switchAdminTab(tab) {
-            const postSection = document.getElementById('adminPostsSection');
-            const managePostsSection = document.getElementById('adminManagePostsSection');
-            const inboxSection = document.getElementById('adminInboxSection');
-            
-            const postBtn = document.getElementById('tabPostBtn');
-            const managePostsBtn = document.getElementById('tabManagePostsBtn');
-            const inboxBtn = document.getElementById('tabInboxBtn');
-
-            postSection.style.display = 'none';
-            managePostsSection.style.display = 'none';
-            inboxSection.style.display = 'none';
-            
-            postBtn.classList.remove('active');
-            managePostsBtn.classList.remove('active');
-            inboxBtn.classList.remove('active');
-
-            if (tab === 'posts') {
-                postSection.style.display = 'block';
-                postBtn.classList.add('active');
-            } else if (tab === 'manage_posts') {
-                managePostsSection.style.display = 'block';
-                managePostsBtn.classList.add('active');
-                renderAdminPostsManager();
-            } else if (tab === 'inbox') {
-                inboxSection.style.display = 'block';
-                inboxBtn.classList.add('active');
-                listenToAdminInbox();
-            }
-        }
-
-        // 6. Live Notification System for Admin Only (English Digits)
-        function listenForLiveMessageNotifications() {
-            db.collection("messages").onSnapshot((snapshot) => {
-                let unreadCount = 0;
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    if (data.isReadByAdmin === false) {
-                        unreadCount++;
-                    }
-                });
-
-                const inboxBadge = document.getElementById('inboxTabBadge');
-                const notifBanner = document.getElementById('adminNotifBanner');
-                const unreadCounterText = document.getElementById('unreadMsgsCount');
-
-                if (unreadCount > 0) {
-                    if (inboxBadge) {
-                        inboxBadge.style.display = 'inline-block';
-                        inboxBadge.textContent = Number(unreadCount).toLocaleString('en-US');
-                    }
-                    if (notifBanner) {
-                        notifBanner.classList.add('show');
-                        unreadCounterText.textContent = Number(unreadCount).toLocaleString('en-US');
-                    }
-                } else {
-                    if (inboxBadge) inboxBadge.style.display = 'none';
-                    if (notifBanner) notifBanner.classList.remove('show');
-                }
-            });
-        }
-
-        // 7. Admin Inbox & Live Reply System (English Digits)
-        function listenToAdminInbox() {
-            const inboxList = document.getElementById('adminInboxList');
-            db.collection("messages").orderBy("updatedAt", "desc").onSnapshot((snapshot) => {
-                if (snapshot.empty) {
-                    inboxList.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:15px;">لا توجد رسائل واردة حتى الآن.</p>`;
-                    return;
-                }
-                inboxList.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const card = document.createElement('div');
-                    const isUnread = (data.isReadByAdmin === false);
-                    card.className = `inbox-card ${isUnread ? 'unread' : ''}`;
-                    
-                    let timeFormatted = 'الآن';
-                    if (data.updatedAt && data.updatedAt.toDate) {
-                        timeFormatted = data.updatedAt.toDate().toLocaleDateString('en-US', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
-                    }
-
-                    card.innerHTML = `
-                        <div class="inbox-header">
-                            <span><i class="fas fa-user-circle" style="color: var(--primary);"></i> ${escapeHtml(data.visitorName || 'زائر')} ${isUnread ? '<span class="unread-tag">جديدة</span>' : ''}</span>
-                            <span class="inbox-time">${timeFormatted}</span>
-                        </div>
-                        <div class="inbox-msg">${escapeHtml(data.lastMessage || '')}</div>
-                        <div class="reply-input-row">
-                            <input type="text" id="adminReplyText_${doc.id}" class="reply-field" placeholder="اكتب ردك للزائر...">
-                            <button class="reply-btn" onclick="sendAdminReply('${doc.id}')"><i class="fas fa-reply"></i> إرسال الرد</button>
-                        </div>
-                    `;
-                    inboxList.appendChild(card);
-                });
-            });
-        }
-
-        async function sendAdminReply(targetVisitorId) {
-            const input = document.getElementById(`adminReplyText_${targetVisitorId}`);
-            const replyText = input.value.trim();
-            if (!replyText) return;
-
-            const replyData = {
-                sender: 'admin',
-                senderName: 'المهندس محمد السعيد',
-                text: replyText,
-                time: new Date().toISOString()
-            };
-
-            await db.collection("messages").doc(targetVisitorId).set({
-                lastMessage: `[ردك]: ${replyText}`,
-                isReadByAdmin: true,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                messages: firebase.firestore.FieldValue.arrayUnion(replyData)
-            }, { merge: true });
-
-            input.value = '';
-            showToast("تم إرسال الرد للزائر بنجاح!");
-        }
-
-        // 8. Image Handling & Compression
-        let selectedImagesBase64 = [];
-        function compressImage(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width, height = img.height;
-                        const maxDimension = 1000;
-                        if (width > height && width > maxDimension) {
-                            height = Math.round((height * maxDimension) / width);
-                            width = maxDimension;
-                        } else if (height > maxDimension) {
-                            width = Math.round((width * maxDimension) / height);
-                            height = maxDimension;
-                        }
-                        canvas.width = width; canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.75));
-                    };
-                };
-            });
-        }
-
-        async function handleImageSelection(event) {
-            const files = Array.from(event.target.files);
-            if (selectedImagesBase64.length + files.length > 10) alert('الحد الأقصى 10 صور!');
-            const allowedFiles = files.slice(0, 10 - selectedImagesBase64.length);
-            for (const file of allowedFiles) {
-                const compressed = await compressImage(file);
-                selectedImagesBase64.push(compressed);
-                renderImagePreviews();
-            }
-            event.target.value = '';
-        }
-
-        function removeSelectedImage(index) {
-            selectedImagesBase64.splice(index, 1);
-            renderImagePreviews();
-        }
-
-        function renderImagePreviews() {
-            const container = document.getElementById('imagesPreviewContainer');
-            container.innerHTML = '';
-            selectedImagesBase64.forEach((imgSrc, index) => {
-                const box = document.createElement('div');
-                box.className = 'preview-thumb-box';
-                box.innerHTML = `<img src="${imgSrc}" alt="Preview"><button type="button" class="remove-img-btn" onclick="removeSelectedImage(${index})">&times;</button>`;
-                container.appendChild(box);
-            });
-        }
-
-        // 9. Posts System: Create, Edit & Delete
-        let allCurrentPosts = [];
-
-        async function handlePostSubmit(event) {
-            event.preventDefault();
-            const textContent = document.getElementById('postContentInput').value.trim();
-            const editTargetId = document.getElementById('editPostTargetId').value;
-            const submitBtn = document.getElementById('submitPostBtn');
-
-            if (!textContent && selectedImagesBase64.length === 0) return;
-
-            submitBtn.disabled = true;
-
-            try {
-                if (editTargetId) {
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري حفظ التعديل...';
-                    await db.collection("posts").doc(editTargetId).update({
-                        text: textContent,
-                        images: selectedImagesBase64,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    showToast('تم تعديل المنشور بنجاح! ✨');
-                } else {
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري النشر...';
-                    await db.collection("posts").add({
-                        text: textContent,
-                        images: selectedImagesBase64,
-                        reactions: { like: 0, love: 0, haha: 0, wow: 0, sad: 0, angry: 0 },
-                        totalReactions: 0,
-                        commentsCount: 0,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    showToast('تم نشر المنشور على صفحة المهندس محمد السعيد بنجاح! 🎉');
-                }
-
-                resetPostForm();
-                closeAdminModal();
-            } catch (error) {
-                console.error(error);
-                showToast('حدث خطأ أثناء الحفظ بالسحابة');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> نشر وحفظ سحابياً';
-            }
-        }
-
-        function resetPostForm() {
-            document.getElementById('editPostTargetId').value = '';
-            document.getElementById('postContentInput').value = '';
-            document.getElementById('formPostActionTitle').innerHTML = '<i class="fas fa-pen"></i> نص المنشور (الكلام):';
-            document.getElementById('submitPostBtn').innerHTML = '<i class="fas fa-paper-plane"></i> نشر وحفظ سحابياً';
-            document.getElementById('cancelEditBtn').style.display = 'none';
-            selectedImagesBase64 = [];
-            renderImagePreviews();
-        }
-
-        function loadPostToEdit(postId) {
-            const target = allCurrentPosts.find(p => p.id === postId);
-            if (!target) return;
-
-            if (!adminModal.classList.contains('active')) {
-                openAdminModal();
-            }
-
-            switchAdminTab('posts');
-
-            document.getElementById('editPostTargetId').value = postId;
-            document.getElementById('postContentInput').value = target.data.text || '';
-            document.getElementById('formPostActionTitle').innerHTML = '<i class="fas fa-edit" style="color:var(--gold);"></i> تعديل المنشور الحالي:';
-            document.getElementById('submitPostBtn').innerHTML = '<i class="fas fa-save"></i> حفظ التعديلات سحابياً';
-            document.getElementById('cancelEditBtn').style.display = 'block';
-
-            selectedImagesBase64 = [...(target.data.images || [])];
-            renderImagePreviews();
-
-            document.getElementById('postContentInput').focus();
-        }
-
-        function renderAdminPostsManager() {
-            const list = document.getElementById('adminPostsManagerList');
-            if (!list) return;
-
-            if (allCurrentPosts.length === 0) {
-                list.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:15px;">لا توجد منشورات حالياً للتعديل أو الحذف.</p>`;
-                return;
-            }
-
-            list.innerHTML = '';
-            allCurrentPosts.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'admin-post-item';
-                const preview = item.data.text ? escapeHtml(item.data.text) : '[منشور يحتوي على صور فقط]';
-                
-                card.innerHTML = `
-                    <div class="admin-post-preview-text">
-                        <i class="fas fa-file-alt" style="color:var(--primary); margin-left:6px;"></i> ${preview}
-                    </div>
-                    <div class="admin-post-ctrls">
-                        <button class="post-action-btn-sm btn-edit-post" onclick="loadPostToEdit('${item.id}')" title="تعديل"><i class="fas fa-edit"></i> تعديل</button>
-                        <button class="post-action-btn-sm btn-delete-post" onclick="deletePost('${item.id}')" title="حذف"><i class="fas fa-trash"></i> حذف</button>
-                    </div>
-                `;
-                list.appendChild(card);
-            });
-        }
-
-        function listenToCloudPosts() {
-            const feed = document.getElementById('feedContainer');
-            db.collection("posts").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
-                allCurrentPosts = [];
-                if (snapshot.empty) {
-                    feed.innerHTML = `<article class="post-card"><div class="post-body-text" style="text-align: center; color: var(--text-muted);">لا توجد منشورات حتى الآن، استخدم لوحة الأدمن لنشر أول منشور! 🚀</div></article>`;
-                    renderAdminPostsManager();
-                    return;
-                }
-                feed.innerHTML = '';
-                snapshot.forEach((doc) => {
-                    const postData = doc.data();
-                    allCurrentPosts.push({ id: doc.id, data: postData });
-                    const postElement = createPostElement(doc.id, postData);
-                    feed.appendChild(postElement);
-                    listenToPostComments(doc.id);
-                });
-                renderAdminPostsManager();
-            });
-        }
-
-        function createPostElement(postId, postData) {
-            const article = document.createElement('article');
-            article.className = 'post-card';
-            article.id = `post-${postId}`;
-
-            let timeAgo = "الآن";
-            if (postData.createdAt && postData.createdAt.toDate) {
-                timeAgo = postData.createdAt.toDate().toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-            }
-
-            const images = postData.images || [];
-            let imagesHtml = '';
-            if (images.length > 0) {
-                let gridClass = (images.length === 2) ? 'grid-2' : (images.length === 3) ? 'grid-3' : (images.length === 4) ? 'grid-4' : (images.length > 4) ? 'grid-multi' : 'grid-1';
-                let imgTags = '';
-                if (images.length <= 4) {
-                    imgTags = images.map(src => `<img src="${src}" alt="Post">`).join('');
-                } else {
-                    for (let i = 0; i < 3; i++) imgTags += `<img src="${images[i]}" alt="Post">`;
-                    imgTags += `<div class="more-images-overlay-box"><img src="${images[3]}" alt="Post"><div class="more-count-tag">+${Number(images.length - 3).toLocaleString('en-US')}</div></div>`;
-                }
-                imagesHtml = `<div class="post-images-grid ${gridClass}">${imgTags}</div>`;
-            }
-
-            const totalReactions = Number(postData.totalReactions || 0).toLocaleString('en-US');
-            const commentsCount = Number(postData.commentsCount || 0).toLocaleString('en-US');
-
-            article.innerHTML = `
-                <div class="post-header">
-                    <div class="post-author-info">
-                        <img src="https://e.top4top.io/p_3878z3lii0.jpg" class="post-author-img" alt="المهندس محمد السعيد">
-                        <div class="author-meta">
-                            <h3>المهندس محمد السعيد <i class="fas fa-check-circle" style="color: var(--fb-blue); font-size: 0.85rem;"></i></h3>
-                            <span>${timeAgo} • <i class="fas fa-globe-americas"></i></span>
-                        </div>
-                    </div>
-                    <div class="post-admin-actions">
-                        <button class="post-action-btn-sm btn-edit-post" onclick="loadPostToEdit('${postId}')" title="تعديل المنشور"><i class="fas fa-edit"></i> تعديل</button>
-                        <button class="post-action-btn-sm btn-delete-post" onclick="deletePost('${postId}')" title="حذف المنشور"><i class="fas fa-trash"></i> حذف</button>
-                    </div>
-                </div>
-                <div class="post-body-text">${escapeHtml(postData.text || '')}</div>
-                ${imagesHtml}
-                <div class="post-metrics-bar">
-                    <span>👍 ❤️ ${totalReactions} تفاعل</span>
-                    <span>${commentsCount} تعليقات</span>
-                </div>
-                <div class="post-interactions-row">
-                    <div class="interaction-btn-wrap">
-                        <button class="interaction-btn" id="react-btn-${postId}" onclick="sendReaction('${postId}', 'like')"><i class="far fa-thumbs-up"></i> <span>إعجاب</span></button>
-                        <div class="reactions-box">
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'like')">👍</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'love')">❤️</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'haha')">😂</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'wow')">😮</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'sad')">😢</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'angry')">😡</span>
-                        </div>
-                    </div>
-                    <div class="interaction-btn-wrap"><button class="interaction-btn" onclick="toggleCommentsSection('${postId}')"><i class="far fa-comment-alt"></i> تعليق</button></div>
-                    <div class="interaction-btn-wrap"><button class="interaction-btn" onclick="showToast('تم نسخ رابط المنشور')"><i class="far fa-share-square"></i> مشاركة</button></div>
-                </div>
-                <div class="comments-section" id="comments-section-${postId}">
-                    <div class="comment-input-wrap">
-                        <input type="text" id="comm-name-${postId}" class="comment-name-field" placeholder="اسمك الكريم (اختياري)...">
-                        <textarea id="comm-text-${postId}" class="comment-text-field" rows="2" placeholder="اكتب تعليقك هنا..."></textarea>
-                        <button class="comment-send-btn" onclick="submitComment('${postId}')"><i class="fas fa-paper-plane"></i> إرسال التعليق</button>
-                    </div>
-                    <div class="comments-list" id="comments-list-${postId}"></div>
-                </div>
-            `;
-            return article;
-        }
-
-        async function sendReaction(postId, type) {
-            const reactionMap = { like: '👍', love: '❤️', haha: '😂', wow: '😮', sad: '😢', angry: '😡' };
-            try {
-                await db.collection("posts").doc(postId).update({
-                    [`reactions.${type}`]: firebase.firestore.FieldValue.increment(1),
-                    totalReactions: firebase.firestore.FieldValue.increment(1)
-                });
-                showToast(`تفاعلت بـ ${reactionMap[type]}`);
-            } catch (err) { console.error(err); }
-        }
-
-        function toggleCommentsSection(postId) {
-            const section = document.getElementById(`comments-section-${postId}`);
-            if (section) section.classList.toggle('open');
-        }
-
-        async function submitComment(postId) {
-            const name = document.getElementById(`comm-name-${postId}`).value.trim() || 'زائر';
-            const textField = document.getElementById(`comm-text-${postId}`);
-            const text = textField.value.trim();
-            if (!text) return;
-
-            await db.collection("posts").doc(postId).collection("comments").add({
-                userName: name,
-                text: text,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-            await db.collection("posts").doc(postId).update({
-                commentsCount: firebase.firestore.FieldValue.increment(1)
-            });
-            textField.value = '';
-            showToast('تم نشر تعليقك! ✨');
-        }
-
-        function listenToPostComments(postId) {
-            const list = document.getElementById(`comments-list-${postId}`);
-            if (!list) return;
-            db.collection("posts").doc(postId).collection("comments").orderBy("createdAt", "asc").onSnapshot((snapshot) => {
-                list.innerHTML = '';
-                snapshot.forEach((doc) => {
-                    const cData = doc.data();
-                    const item = document.createElement('div');
-                    item.className = 'comment-item';
-                    item.innerHTML = `
-                        <div class="comment-author-name">${escapeHtml(cData.userName || 'زائر')}</div>
-                        <div class="comment-body">${escapeHtml(cData.text || '')}</div>
-                        <div class="comment-time">الآن • (اضغط مطولاً للإدارة)</div>
-                    `;
-                    attachLongPressEvent(item, postId, doc.id, cData.text);
-                    list.appendChild(item);
-                });
-            });
-        }
-
-        // 10. Long Press on Comments (Admin only)
-        let activeActionPostId = null, activeActionCommentId = null, activeActionCommentText = '';
-        function attachLongPressEvent(element, postId, commentId, currentText) {
-            let pressTimer = null;
-            const start = () => { pressTimer = setTimeout(() => { handleCommentLongPress(postId, commentId, currentText); }, 750); };
-            const cancel = () => { if (pressTimer) clearTimeout(pressTimer); };
-            element.addEventListener('mousedown', start);
-            element.addEventListener('touchstart', start, { passive: true });
-            element.addEventListener('mouseup', cancel);
-            element.addEventListener('mouseleave', cancel);
-            element.addEventListener('touchend', cancel);
-        }
-
-        function handleCommentLongPress(postId, commentId, text) {
-            if (!isAuthorized) {
-                showToast('تعديل وحذف التعليقات متاح للمهندس محمد السعيد فقط! 🔒');
-                return;
-            }
-            activeActionPostId = postId; activeActionCommentId = commentId; activeActionCommentText = text;
-            document.getElementById('targetCommentPreview').textContent = `التعليق: "${text.substring(0, 45)}..."`;
-            document.getElementById('commentActionModal').classList.add('show');
-        }
-
-        function closeCommentModal() { document.getElementById('commentActionModal').classList.remove('show'); }
-
-        async function promptEditComment() {
-            closeCommentModal();
-            const newText = prompt("تعديل التعليق:", activeActionCommentText);
-            if (newText) {
-                await db.collection("posts").doc(activeActionPostId).collection("comments").doc(activeActionCommentId).update({ text: newText.trim() });
-                showToast("تم تعديل التعليق!");
-            }
-        }
-
-        async function confirmDeleteComment() {
-            closeCommentModal();
-            if (confirm("حذف هذا التعليق نهائياً؟")) {
-                await db.collection("posts").doc(activeActionPostId).collection("comments").doc(activeActionCommentId).delete();
-                await db.collection("posts").doc(activeActionPostId).update({ commentsCount: firebase.firestore.FieldValue.increment(-1) });
-                showToast("تم حذف التعليق!");
-            }
-        }
-
-        async function deletePost(postId) {
-            if (!isAuthorized) return;
-            if (confirm("هل أنت متأكد من رغبتك في حذف هذا المنشور نهائياً من السحابة؟")) {
-                try {
-                    await db.collection("posts").doc(postId).delete();
-                    showToast("تم حذف المنشور بنجاح!");
-                } catch (e) {
-                    showToast("تعذر حذف المنشور");
-                }
-            }
-        }
-
         function showToast(message) {
             const toast = document.getElementById('toastBox');
             toast.textContent = message;
             toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+            setTimeout(() => { toast.classList.remove('show'); }, 3500);
         }
 
         function escapeHtml(string) {
             return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
-        // Init on Load
         window.addEventListener('DOMContentLoaded', () => {
+            initTheme();
             listenToFollowers();
             listenToVisitorMessages();
             listenToCloudPosts();
-            listenForLiveMessageNotifications();
         });
     </script>
 </body>
