@@ -272,7 +272,7 @@
             font-size: 0.95rem;
         }
 
-        /* شريط إنشاء المنشور بأسلوب الفيسبوك (Trigger Bar) */
+        /* شريط إنشاء المنشور */
         .post-trigger-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -317,7 +317,7 @@
             color: var(--text-main);
         }
 
-        /* نافذة منبثقة لكتابة المشكلة (Modal) */
+        /* نافذة كتابة المشكلة المنبثقة */
         .post-modal-overlay {
             position: fixed;
             inset: 0;
@@ -533,6 +533,7 @@
             padding: 20px;
             box-shadow: 0 4px 20px var(--shadow-color);
             position: relative;
+            cursor: pointer;
         }
 
         .post-header {
@@ -634,14 +635,29 @@
             font-family: monospace, sans-serif;
         }
 
+        /* شريط التفاعلات القابل للضغط */
         .post-metrics-bar {
             display: flex;
             justify-content: space-between;
             color: var(--text-muted);
-            font-size: 0.82rem;
-            padding: 8px 0;
+            font-size: 0.85rem;
+            padding: 10px 4px;
             border-bottom: 1px solid var(--border-color);
-            font-family: monospace, 'Cairo', sans-serif;
+            font-family: 'Cairo', sans-serif;
+            user-select: none;
+        }
+
+        .clickable-metric {
+            cursor: pointer;
+            transition: color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .clickable-metric:hover {
+            color: var(--primary);
+            text-decoration: underline;
         }
 
         .post-interactions-row {
@@ -678,6 +694,11 @@
         .interaction-btn:hover {
             background: rgba(0, 0, 0, 0.05);
             color: var(--text-main);
+        }
+
+        .interaction-btn.user-reacted {
+            color: var(--primary);
+            font-weight: 800;
         }
 
         [data-theme="dark"] .interaction-btn:hover {
@@ -771,6 +792,12 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        .comment-item:hover {
+            border-color: rgba(255, 0, 85, 0.4);
         }
 
         .comment-author-name {
@@ -854,6 +881,47 @@
             color: var(--text-main);
             line-height: 1.6;
             padding-right: 36px;
+        }
+
+        /* نافذة منبثقة لعرض المتفاعلين بالتفصيل */
+        .reactions-details-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .reactions-details-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 22px;
+            padding: 20px;
+            max-width: 440px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: modalFadeIn 0.2s ease-out;
+        }
+
+        .reaction-stat-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: var(--card-sub);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 0.92rem;
+            font-weight: 700;
         }
 
         /* Messenger Live Chat Widget */
@@ -1081,6 +1149,17 @@
 
     </main>
 
+    <!-- نافذة منبثقة لعرض تفاصيل المتفاعلين مع المنشور للجميع -->
+    <div class="reactions-details-modal" id="reactionsModal" onclick="if(event.target===this) closeReactionsModal()">
+        <div class="reactions-details-box">
+            <div class="modal-header">
+                <h3 style="color: var(--text-main);"><i class="fas fa-heart" style="color: var(--primary);"></i> التفاعلات على هذا المنشور</h3>
+                <button class="modal-close-btn" onclick="closeReactionsModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="reactionsModalBody" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+    </div>
+
     <!-- Messenger Live Chat Widget -->
     <div class="messenger-widget" id="messengerWidget">
         <div class="messenger-header">
@@ -1146,6 +1225,8 @@
             visitorId = "usr_" + Math.random().toString(36).substr(2, 9);
             localStorage.setItem("fb_visitor_id", visitorId);
         }
+
+        let visitorRealName = localStorage.getItem("fb_visitor_name") || "";
 
         function openPostModal() {
             document.getElementById('postModalOverlay').style.display = 'flex';
@@ -1298,6 +1379,7 @@
                     adminSolutionComment: '',
                     reactions: { like: 0, love: 0, haha: 0, wow: 0, sad: 0, angry: 0 },
                     totalReactions: 0,
+                    userReactionsMap: {},
                     commentsCount: 0,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
@@ -1319,36 +1401,104 @@
             }
         }
 
+        let allCloudPostsData = {};
+
         // الاستماع للمنشورات المعتمدة وعرضها
         function listenToCloudPosts() {
             const feed = document.getElementById('feedContainer');
             db.collection("posts")
-                .orderBy("createdAt", "desc")
                 .onSnapshot((snapshot) => {
                     if (snapshot.empty) {
                         feed.innerHTML = `<article class="post-card"><div class="post-body-text" style="text-align: center; color: var(--text-muted);">لا توجد منشورات حالياً على الصفحة.</div></article>`;
                         return;
                     }
-                    feed.innerHTML = '';
-                    let hasApproved = false;
+
+                    let postsList = [];
+                    allCloudPostsData = {};
+
                     snapshot.forEach((doc) => {
                         const postData = doc.data();
-                        // عرض المعتمد أو المنشورات القديمة
+                        allCloudPostsData[doc.id] = postData;
                         if (postData.status === 'approved' || postData.status === undefined) {
-                            hasApproved = true;
-                            const postElement = createPostElement(doc.id, postData);
-                            feed.appendChild(postElement);
-                            if (!postData.isVisitorPost) {
-                                listenToPostApprovedComments(doc.id);
-                            }
+                            postsList.push({ id: doc.id, ...postData });
                         }
                     });
-                    if (!hasApproved) {
+
+                    postsList.sort((a, b) => {
+                        const timeA = (a.createdAt && a.createdAt.toDate) ? a.createdAt.toDate().getTime() : 0;
+                        const timeB = (b.createdAt && b.createdAt.toDate) ? b.createdAt.toDate().getTime() : 0;
+                        return timeB - timeA;
+                    });
+
+                    feed.innerHTML = '';
+                    if (postsList.length === 0) {
                         feed.innerHTML = `<article class="post-card"><div class="post-body-text" style="text-align: center; color: var(--text-muted);">لا توجد منشورات معتمدة حالياً.</div></article>`;
+                        return;
                     }
+
+                    postsList.forEach((postData) => {
+                        const postElement = createPostElement(postData.id, postData);
+                        feed.appendChild(postElement);
+                        if (!postData.isVisitorPost) {
+                            listenToPostApprovedComments(postData.id);
+                        }
+                    });
                 }, (error) => {
                     console.error("Firestore feed error:", error);
                 });
+        }
+
+        // عداد الـ 5 ضغطات للمنشورات والتعليقات
+        let postClicksTracker = {};
+        let commentClicksTracker = {};
+
+        function handlePost5Clicks(postId) {
+            const now = Date.now();
+            if (!postClicksTracker[postId] || now - postClicksTracker[postId].lastTime > 2500) {
+                postClicksTracker[postId] = { count: 1, lastTime: now };
+            } else {
+                postClicksTracker[postId].count++;
+                postClicksTracker[postId].lastTime = now;
+            }
+
+            if (postClicksTracker[postId].count === 5) {
+                postClicksTracker[postId].count = 0;
+                if (confirm("هل تريد إعادة هذا المنشور إلى لوحة التحكم للمراجعة أو الحذف؟")) {
+                    db.collection("posts").doc(postId).update({
+                        status: 'pending'
+                    }).then(() => {
+                        showToast("تم سحب المنشور وإعادته إلى لوحة الإدارة للمراجعة بنجاح! 🔄");
+                    }).catch(() => {
+                        showToast("حدث خطأ أثناء سحب المنشور");
+                    });
+                }
+            }
+        }
+
+        function handleComment5Clicks(commentId, postId) {
+            const now = Date.now();
+            if (!commentClicksTracker[commentId] || now - commentClicksTracker[commentId].lastTime > 2500) {
+                commentClicksTracker[commentId] = { count: 1, lastTime: now };
+            } else {
+                commentClicksTracker[commentId].count++;
+                commentClicksTracker[commentId].lastTime = now;
+            }
+
+            if (commentClicksTracker[commentId].count === 5) {
+                commentClicksTracker[commentId].count = 0;
+                if (confirm("هل تريد إرجاع هذا التعليق إلى لوحة الإدارة لحذفه؟")) {
+                    db.collection("comments_pending").doc(commentId).update({
+                        status: 'pending'
+                    }).then(() => {
+                        db.collection("posts").doc(postId).update({
+                            commentsCount: firebase.firestore.FieldValue.increment(-1)
+                        });
+                        showToast("تم إرجاع التعليق إلى لوحة الإدارة بنجاح! 🔄");
+                    }).catch(() => {
+                        showToast("حدث خطأ أثناء إرجاع التعليق");
+                    });
+                }
+            }
         }
 
         function createPostElement(postId, postData) {
@@ -1387,6 +1537,10 @@
             const totalReactions = Number(postData.totalReactions || 0).toLocaleString('en-US');
             const commentsCount = Number(postData.commentsCount || 0).toLocaleString('en-US');
 
+            // فحص تفاعل الزائر الحالي لمنع تكرار اللايك
+            const userReactionsMap = postData.userReactionsMap || {};
+            const currentUserReact = userReactionsMap[visitorId];
+
             // حل الإدارة المعتمد لمنشورات الزوار
             let exclusiveCommentHtml = '';
             if (postData.adminSolutionComment) {
@@ -1420,7 +1574,7 @@
             }
 
             article.innerHTML = `
-                <div class="post-header">
+                <div class="post-header" onclick="handlePost5Clicks('${postId}')" title="اضغط 5 ضغطات متتالية لإرجاع المنشور للوحة الأدمن">
                     <div class="post-author-info">
                         <img src="${authorImg}" class="post-author-img" alt="${escapeHtml(authorName)}">
                         <div class="author-meta">
@@ -1430,15 +1584,25 @@
                     </div>
                 </div>
                 ${deviceBadge}
-                <div class="post-body-text">${escapeHtml(postData.text || '')}</div>
+                <div class="post-body-text" onclick="handlePost5Clicks('${postId}')">${escapeHtml(postData.text || '')}</div>
                 ${imagesHtml}
+                
+                <!-- شريط العدادات القابل للضغط -->
                 <div class="post-metrics-bar">
-                    <span>👍 ❤️ ${totalReactions} تفاعل</span>
-                    <span id="comm-count-badge-${postId}">${isOfficial ? `${commentsCount} تعليقات` : (postData.adminSolutionComment ? '1 رد معتمد' : 'بانتظار رد المهندس')}</span>
+                    <span class="clickable-metric" onclick="openReactionsDetailsModal('${postId}')" title="اضغط لرؤية تفاصيل المتفاعلين">
+                        👍 ❤️ ${totalReactions} تفاعل
+                    </span>
+                    <span class="clickable-metric" id="comm-count-badge-${postId}" onclick="${isOfficial ? `toggleCommentsSection('${postId}')` : ''}">
+                        ${isOfficial ? `${commentsCount} تعليقات` : (postData.adminSolutionComment ? '1 رد معتمد' : 'بانتظار رد المهندس')}
+                    </span>
                 </div>
+
                 <div class="post-interactions-row">
                     <div class="interaction-btn-wrap">
-                        <button class="interaction-btn" id="react-btn-${postId}" onclick="sendReaction('${postId}', 'like')"><i class="far fa-thumbs-up"></i> <span>إعجاب</span></button>
+                        <button class="interaction-btn ${currentUserReact ? 'user-reacted' : ''}" id="react-btn-${postId}" onclick="sendReaction('${postId}', 'like')">
+                            <i class="far fa-thumbs-up"></i> 
+                            <span>${currentUserReact ? 'أعجبك' : 'إعجاب'}</span>
+                        </button>
                         <div class="reactions-box">
                             <span class="reaction-icon" onclick="sendReaction('${postId}', 'like')">👍</span>
                             <span class="reaction-icon" onclick="sendReaction('${postId}', 'love')">❤️</span>
@@ -1457,15 +1621,98 @@
             return article;
         }
 
+        // إرسال تفاعل مع منع التكرار (Toggle Like)
         async function sendReaction(postId, type) {
             const reactionMap = { like: '👍', love: '❤️', haha: '😂', wow: '😮', sad: '😢', angry: '😡' };
+            const uName = visitorRealName || localStorage.getItem("saved_visitor_name") || "زائر";
+            const post = allCloudPostsData[postId];
+            if (!post) return;
+
+            const userMap = post.userReactionsMap || {};
+            const previousReact = userMap[visitorId];
+
+            const postRef = db.collection("posts").doc(postId);
+
             try {
-                await db.collection("posts").doc(postId).update({
-                    [`reactions.${type}`]: firebase.firestore.FieldValue.increment(1),
-                    totalReactions: firebase.firestore.FieldValue.increment(1)
-                });
-                showToast(`تفاعلت بـ ${reactionMap[type]}`);
+                // إذا كان متفاعلاً بنفس التفاعل ⬅️ يتم إلغاء التفاعل فوراً
+                if (previousReact === type) {
+                    await postRef.update({
+                        [`reactions.${type}`]: firebase.firestore.FieldValue.increment(-1),
+                        totalReactions: firebase.firestore.FieldValue.increment(-1),
+                        [`userReactionsMap.${visitorId}`]: firebase.firestore.FieldValue.delete()
+                    });
+                    showToast("تم إلغاء التفاعل");
+                } 
+                // إذا كان متفاعلاً بنوع تفاعل آخر ⬅️ يتم تبديله
+                else if (previousReact) {
+                    await postRef.update({
+                        [`reactions.${previousReact}`]: firebase.firestore.FieldValue.increment(-1),
+                        [`reactions.${type}`]: firebase.firestore.FieldValue.increment(1),
+                        [`userReactionsMap.${visitorId}`]: type
+                    });
+                    showToast(`تم تغيير التفاعل إلى ${reactionMap[type]}`);
+                } 
+                // تفاعل جديد لأول مرة
+                else {
+                    await postRef.update({
+                        [`reactions.${type}`]: firebase.firestore.FieldValue.increment(1),
+                        totalReactions: firebase.firestore.FieldValue.increment(1),
+                        [`userReactionsMap.${visitorId}`]: type,
+                        recentReactors: firebase.firestore.FieldValue.arrayUnion({
+                            userName: uName,
+                            type: type,
+                            icon: reactionMap[type],
+                            time: new Date().toISOString()
+                        })
+                    });
+                    showToast(`تفاعلت بـ ${reactionMap[type]}`);
+                }
             } catch (err) { console.error(err); }
+        }
+
+        // عرض تفاصيل المتفاعلين للجميع
+        function openReactionsDetailsModal(postId) {
+            const post = allCloudPostsData[postId];
+            if (!post) return;
+
+            const modal = document.getElementById('reactionsModal');
+            const body = document.getElementById('reactionsModalBody');
+            
+            const reacts = post.reactions || {};
+            const reactors = post.recentReactors || [];
+            const total = Number(post.totalReactions || 0).toLocaleString('en-US');
+
+            let rowsHtml = `
+                <div class="reaction-stat-row" style="background: rgba(255, 0, 85, 0.1); border-color: var(--primary);">
+                    <span style="color: var(--primary);">إجمالي التفاعلات</span>
+                    <span style="font-family: monospace;">${total}</span>
+                </div>
+                <div class="reaction-stat-row"><span>👍 إعجاب (Like)</span><span style="font-family: monospace;">${reacts.like || 0}</span></div>
+                <div class="reaction-stat-row"><span>❤️ أحببته (Love)</span><span style="font-family: monospace;">${reacts.love || 0}</span></div>
+                <div class="reaction-stat-row"><span>😂 أضحكني (Haha)</span><span style="font-family: monospace;">${reacts.haha || 0}</span></div>
+                <div class="reaction-stat-row"><span>😮 واو (Wow)</span><span style="font-family: monospace;">${reacts.wow || 0}</span></div>
+                <div class="reaction-stat-row"><span>😢 أحزنني (Sad)</span><span style="font-family: monospace;">${reacts.sad || 0}</span></div>
+                <div class="reaction-stat-row"><span>😡 أغضبني (Angry)</span><span style="font-family: monospace;">${reacts.angry || 0}</span></div>
+            `;
+
+            if (reactors.length > 0) {
+                rowsHtml += `<div style="font-size: 0.85rem; font-weight: 800; color: var(--text-muted); margin-top: 10px;">آخر المتفاعلين مع المنشور:</div>`;
+                reactors.slice(-8).reverse().forEach(r => {
+                    rowsHtml += `
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--card-sub); border-radius: 10px;">
+                            <span style="font-size: 0.88rem; font-weight: 700; color: var(--text-main);"><i class="fas fa-user-circle" style="color: var(--text-muted);"></i> ${escapeHtml(r.userName)}</span>
+                            <span style="font-size: 1.1rem;">${r.icon || '👍'}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            body.innerHTML = rowsHtml;
+            modal.style.display = 'flex';
+        }
+
+        function closeReactionsModal() {
+            document.getElementById('reactionsModal').style.display = 'none';
         }
 
         function toggleCommentsSection(postId) {
@@ -1491,6 +1738,9 @@
             }
 
             try {
+                visitorRealName = name;
+                localStorage.setItem("saved_visitor_name", name);
+
                 await db.collection("comments_pending").add({
                     postId: postId,
                     userName: name,
@@ -1517,20 +1767,31 @@
             db.collection("comments_pending")
                 .where("postId", "==", postId)
                 .where("status", "==", "approved")
-                .orderBy("createdAt", "asc")
                 .onSnapshot((snapshot) => {
-                    list.innerHTML = '';
-                    if (badge) badge.innerText = `${snapshot.size} تعليقات`;
+                    let approvedComments = [];
+                    snapshot.forEach(doc => {
+                        approvedComments.push({ id: doc.id, ...doc.data() });
+                    });
 
-                    if (snapshot.empty) {
+                    approvedComments.sort((a, b) => {
+                        const timeA = (a.createdAt && a.createdAt.toDate) ? a.createdAt.toDate().getTime() : 0;
+                        const timeB = (b.createdAt && b.createdAt.toDate) ? b.createdAt.toDate().getTime() : 0;
+                        return timeA - timeB;
+                    });
+
+                    list.innerHTML = '';
+                    if (badge) badge.innerText = `${approvedComments.length} تعليقات`;
+
+                    if (approvedComments.length === 0) {
                         list.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.8rem; padding:10px;">كن أول من يعلق على هذا المنشور!</p>`;
                         return;
                     }
 
-                    snapshot.forEach((doc) => {
-                        const cData = doc.data();
+                    approvedComments.forEach((cData) => {
                         const item = document.createElement('div');
                         item.className = 'comment-item';
+                        item.setAttribute("onclick", `handleComment5Clicks('${cData.id}', '${postId}')`);
+                        item.setAttribute("title", "اضغط 5 ضغطات متتالية لإرجاع التعليق للوحة الأدمن");
                         
                         let replyHtml = '';
                         if (cData.replyText) {
