@@ -947,7 +947,7 @@
         }
 
         .messenger-header {
-            background: linear-gradient(135deg, #1877f2, #7928ca);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             padding: 12px 16px;
             color: #fff;
             display: flex;
@@ -985,7 +985,7 @@
 
         .bubble-admin {
             align-self: flex-end;
-            background: var(--fb-blue);
+            background: var(--primary);
             color: #fff;
             border-bottom-left-radius: 2px;
         }
@@ -1068,7 +1068,7 @@
                             <i class="fas fa-plus"></i> <span>متابعة</span>
                         </button>
                         <button class="btn-fb btn-fb-secondary" onclick="toggleMessengerWidget()">
-                            <i class="fab fa-facebook-messenger"></i> رسالة
+                            <i class="fas fa-comments"></i> رسالة
                         </button>
                     </div>
                 </div>
@@ -1086,11 +1086,11 @@
             </div>
         </section>
 
-        <!-- شريط النشر الخفيف مثل فيسبوك -->
+        <!-- شريط النشر الخفيف -->
         <section class="post-trigger-card">
             <img src="https://e.top4top.io/p_3878z3lii0.jpg" id="barVisitorAvatarPreview" class="post-trigger-avatar" alt="Avatar">
             <button class="post-trigger-btn" onclick="openPostModal()">
-                <span>بماذا تفكر؟ أو اعرض مشكلتك على المهندس محمد السعيد...</span>
+                <span>لديك استفسار؟ اضغط هنا لعرض مشكلتك على المهندس محمد السعيد...</span>
                 <i class="fas fa-images" style="color: var(--success); font-size: 1.1rem;"></i>
             </button>
         </section>
@@ -1160,10 +1160,10 @@
         </div>
     </div>
 
-    <!-- Messenger Live Chat Widget -->
+    <!-- Live Chat Widget -->
     <div class="messenger-widget" id="messengerWidget">
         <div class="messenger-header">
-            <div><i class="fab fa-facebook-messenger"></i> رسائل المهندس محمد السعيد</div>
+            <div><i class="fas fa-comments"></i> رسائل المهندس محمد السعيد</div>
             <i class="fas fa-times" style="cursor: pointer;" onclick="toggleMessengerWidget()"></i>
         </div>
         <div class="messenger-body" id="chatMessagesContainer">
@@ -1590,7 +1590,7 @@
                 <!-- شريط العدادات القابل للضغط -->
                 <div class="post-metrics-bar">
                     <span class="clickable-metric" onclick="openReactionsDetailsModal('${postId}')" title="اضغط لرؤية تفاصيل المتفاعلين">
-                        👍 ❤️ ${totalReactions} تفاعل
+                        ❤️ 👍 ${totalReactions} تفاعل
                     </span>
                     <span class="clickable-metric" id="comm-count-badge-${postId}" onclick="${isOfficial ? `toggleCommentsSection('${postId}')` : ''}">
                         ${isOfficial ? `${commentsCount} تعليقات` : (postData.adminSolutionComment ? '1 رد معتمد' : 'بانتظار رد المهندس')}
@@ -1599,13 +1599,13 @@
 
                 <div class="post-interactions-row">
                     <div class="interaction-btn-wrap">
-                        <button class="interaction-btn ${currentUserReact ? 'user-reacted' : ''}" id="react-btn-${postId}" onclick="sendReaction('${postId}', 'like')">
-                            <i class="far fa-thumbs-up"></i> 
-                            <span>${currentUserReact ? 'أعجبك' : 'إعجاب'}</span>
+                        <button class="interaction-btn ${currentUserReact ? 'user-reacted' : ''}" id="react-btn-${postId}" onclick="sendReaction('${postId}', 'love')">
+                            <i class="${currentUserReact ? 'fas fa-heart' : 'far fa-heart'}"></i> 
+                            <span>${currentUserReact ? 'تفاعلت' : 'تفاعل'}</span>
                         </button>
                         <div class="reactions-box">
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'like')">👍</span>
                             <span class="reaction-icon" onclick="sendReaction('${postId}', 'love')">❤️</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'like')">👍</span>
                             <span class="reaction-icon" onclick="sendReaction('${postId}', 'haha')">😂</span>
                             <span class="reaction-icon" onclick="sendReaction('${postId}', 'wow')">😮</span>
                             <span class="reaction-icon" onclick="sendReaction('${postId}', 'sad')">😢</span>
@@ -1621,7 +1621,7 @@
             return article;
         }
 
-        // إرسال تفاعل مع منع التكرار (Toggle Like)
+        // إرسال تفاعل مع منع التكرار (Toggle Reaction)
         async function sendReaction(postId, type) {
             const reactionMap = { like: '👍', love: '❤️', haha: '😂', wow: '😮', sad: '😢', angry: '😡' };
             const uName = visitorRealName || localStorage.getItem("saved_visitor_name") || "زائر";
@@ -1634,7 +1634,6 @@
             const postRef = db.collection("posts").doc(postId);
 
             try {
-                // إذا كان متفاعلاً بنفس التفاعل ⬅️ يتم إلغاء التفاعل فوراً
                 if (previousReact === type) {
                     await postRef.update({
                         [`reactions.${type}`]: firebase.firestore.FieldValue.increment(-1),
@@ -1643,7 +1642,6 @@
                     });
                     showToast("تم إلغاء التفاعل");
                 } 
-                // إذا كان متفاعلاً بنوع تفاعل آخر ⬅️ يتم تبديله
                 else if (previousReact) {
                     await postRef.update({
                         [`reactions.${previousReact}`]: firebase.firestore.FieldValue.increment(-1),
@@ -1652,7 +1650,6 @@
                     });
                     showToast(`تم تغيير التفاعل إلى ${reactionMap[type]}`);
                 } 
-                // تفاعل جديد لأول مرة
                 else {
                     await postRef.update({
                         [`reactions.${type}`]: firebase.firestore.FieldValue.increment(1),
@@ -1687,8 +1684,8 @@
                     <span style="color: var(--primary);">إجمالي التفاعلات</span>
                     <span style="font-family: monospace;">${total}</span>
                 </div>
-                <div class="reaction-stat-row"><span>👍 إعجاب (Like)</span><span style="font-family: monospace;">${reacts.like || 0}</span></div>
                 <div class="reaction-stat-row"><span>❤️ أحببته (Love)</span><span style="font-family: monospace;">${reacts.love || 0}</span></div>
+                <div class="reaction-stat-row"><span>👍 إعجاب (Like)</span><span style="font-family: monospace;">${reacts.like || 0}</span></div>
                 <div class="reaction-stat-row"><span>😂 أضحكني (Haha)</span><span style="font-family: monospace;">${reacts.haha || 0}</span></div>
                 <div class="reaction-stat-row"><span>😮 واو (Wow)</span><span style="font-family: monospace;">${reacts.wow || 0}</span></div>
                 <div class="reaction-stat-row"><span>😢 أحزنني (Sad)</span><span style="font-family: monospace;">${reacts.sad || 0}</span></div>
@@ -1701,7 +1698,7 @@
                     rowsHtml += `
                         <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--card-sub); border-radius: 10px;">
                             <span style="font-size: 0.88rem; font-weight: 700; color: var(--text-main);"><i class="fas fa-user-circle" style="color: var(--text-muted);"></i> ${escapeHtml(r.userName)}</span>
-                            <span style="font-size: 1.1rem;">${r.icon || '👍'}</span>
+                            <span style="font-size: 1.1rem;">${r.icon || '❤️'}</span>
                         </div>
                     `;
                 });
