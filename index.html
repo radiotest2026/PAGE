@@ -229,7 +229,7 @@
         .btn-fb-primary.followed {
             background: var(--card-sub);
             color: var(--success);
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(0, 255, 102, 0.3);
             box-shadow: none;
         }
 
@@ -272,7 +272,7 @@
             font-size: 0.95rem;
         }
 
-        /* شريط إنشاء المنشور */
+        /* شريط النشر */
         .post-trigger-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -611,7 +611,11 @@
             height: 100%;
             object-fit: cover;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .post-images-grid img:hover {
+            filter: brightness(1.06);
         }
 
         .grid-1 { grid-template-columns: 1fr; max-height: 450px; }
@@ -621,7 +625,7 @@
         .grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; height: 360px; }
         .grid-multi { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 140px; }
 
-        .more-images-overlay-box { position: relative; overflow: hidden; }
+        .more-images-overlay-box { position: relative; overflow: hidden; cursor: pointer; }
         .more-count-tag {
             position: absolute;
             inset: 0;
@@ -633,6 +637,102 @@
             font-size: 1.8rem;
             font-weight: 800;
             font-family: monospace, sans-serif;
+        }
+
+        /* 🖼️ عارض الصور المتطور مع الحواف المضيئة الانسيابية */
+        .image-lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 6, 10, 0.94);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: zoom-out;
+        }
+
+        .image-lightbox-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .image-lightbox-wrapper {
+            position: relative;
+            max-width: 92vw;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transform: scale(0.85);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: default;
+        }
+
+        .image-lightbox-overlay.active .image-lightbox-wrapper {
+            transform: scale(1);
+        }
+
+        .image-lightbox-img {
+            max-width: 90vw;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 18px;
+            border: 2px solid rgba(255, 0, 85, 0.6);
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.4), 
+                        0 0 55px rgba(121, 40, 202, 0.25),
+                        0 20px 40px rgba(0, 0, 0, 0.8);
+            cursor: pointer;
+            user-select: none;
+            transition: box-shadow 0.4s ease, border-color 0.4s ease;
+        }
+
+        .image-lightbox-img:hover {
+            border-color: rgba(255, 0, 85, 0.9);
+            box-shadow: 0 0 35px rgba(255, 0, 85, 0.6), 
+                        0 0 70px rgba(121, 40, 202, 0.4),
+                        0 25px 50px rgba(0, 0, 0, 0.9);
+        }
+
+        .lightbox-toolbar {
+            position: absolute;
+            top: -55px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lightbox-btn {
+            background: rgba(24, 25, 32, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(8px);
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            text-decoration: none;
+        }
+
+        .lightbox-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 85, 0.4);
         }
 
         /* شريط التفاعلات القابل للضغط */
@@ -737,7 +837,7 @@
 
         .reaction-icon:hover { transform: scale(1.35) translateY(-5px); }
 
-        /* Comments Section (للمنشورات الرسمية فقط) */
+        /* Comments Section */
         .comments-section {
             display: none;
             margin-top: 15px;
@@ -924,7 +1024,7 @@
             font-weight: 700;
         }
 
-        /* Messenger Live Chat Widget */
+        /* Live Chat Widget */
         .messenger-widget {
             position: fixed;
             bottom: 25px;
@@ -1042,7 +1142,7 @@
 </head>
 <body>
 
-    <!-- زر التبديل بين الوضع الليلي والنهاري مثبت في أعلى الصفحة -->
+    <!-- زر التبديل بين الوضع الليلي والنهاري -->
     <button class="theme-toggle-floating" id="themeToggleBtn" onclick="toggleAppTheme()" title="تبديل الوضع الليلي / النهاري">
         <i class="fas fa-moon" id="themeIcon"></i>
     </button>
@@ -1086,7 +1186,7 @@
             </div>
         </section>
 
-        <!-- شريط النشر الخفيف -->
+        <!-- شريط النشر -->
         <section class="post-trigger-card">
             <img src="https://e.top4top.io/p_3878z3lii0.jpg" id="barVisitorAvatarPreview" class="post-trigger-avatar" alt="Avatar">
             <button class="post-trigger-btn" onclick="openPostModal()">
@@ -1148,6 +1248,21 @@
         </section>
 
     </main>
+
+    <!-- 🖼️ نافذة تكبير وتنزيل الصور (Lightbox) الانسيابية -->
+    <div class="image-lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox(event)">
+        <div class="image-lightbox-wrapper" id="lightboxWrapper">
+            <div class="lightbox-toolbar">
+                <a href="javascript:void(0)" id="lightboxDownloadBtn" onclick="downloadActiveLightboxImage()" class="lightbox-btn">
+                    <i class="fas fa-download"></i> تنزيل الصورة
+                </a>
+                <button type="button" class="lightbox-btn" onclick="forceCloseLightbox()">
+                    <i class="fas fa-times"></i> إغلاق
+                </button>
+            </div>
+            <img src="" id="lightboxImg" class="image-lightbox-img" alt="صورة مكبرة" onclick="forceCloseLightbox()">
+        </div>
+    </div>
 
     <!-- نافذة منبثقة لعرض تفاصيل المتفاعلين مع المنشور للجميع -->
     <div class="reactions-details-modal" id="reactionsModal" onclick="if(event.target===this) closeReactionsModal()">
@@ -1227,6 +1342,69 @@
         }
 
         let visitorRealName = localStorage.getItem("fb_visitor_name") || "";
+
+        // 🖼️ دوال عارض الصور المطور والتنزيل
+        let currentLightboxImgSrc = '';
+
+        function openLightbox(imgSrc, event) {
+            if (event) event.stopPropagation();
+            currentLightboxImgSrc = imgSrc;
+            const overlay = document.getElementById('lightboxOverlay');
+            const imgEl = document.getElementById('lightboxImg');
+            imgEl.src = imgSrc;
+            overlay.style.display = 'flex';
+            setTimeout(() => {
+                overlay.classList.add('active');
+            }, 10);
+        }
+
+        function closeLightbox(event) {
+            if (event.target.id === 'lightboxOverlay') {
+                forceCloseLightbox();
+            }
+        }
+
+        function forceCloseLightbox() {
+            const overlay = document.getElementById('lightboxOverlay');
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 300);
+        }
+
+        async function downloadActiveLightboxImage() {
+            if (!currentLightboxImgSrc) return;
+            try {
+                showToast("جاري تنزيل الصورة...");
+                if (currentLightboxImgSrc.startsWith('data:')) {
+                    const link = document.createElement('a');
+                    link.href = currentLightboxImgSrc;
+                    link.download = `starnet-post-${Date.now()}.jpg`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    const response = await fetch(currentLightboxImgSrc);
+                    const blob = await response.blob();
+                    const blobUrl = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = `starnet-post-${Date.now()}.jpg`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(blobUrl);
+                }
+                showToast("تم تنزيل الصورة بنجاح! 📥");
+            } catch (err) {
+                console.error(err);
+                const link = document.createElement('a');
+                link.href = currentLightboxImgSrc;
+                link.target = '_blank';
+                link.download = `starnet-post-${Date.now()}.jpg`;
+                link.click();
+            }
+        }
 
         function openPostModal() {
             document.getElementById('postModalOverlay').style.display = 'flex';
@@ -1515,8 +1693,9 @@
             const authorImg = postData.authorAvatar || 'https://e.top4top.io/p_3878z3lii0.jpg';
             const isOfficial = !postData.isVisitorPost;
 
+            // يظهر بادج نوع الجهاز فقط إذا كان المنشور من أحد الزوار
             let deviceBadge = '';
-            if (postData.deviceType) {
+            if (postData.isVisitorPost && postData.deviceType) {
                 deviceBadge = `<div class="device-badge-tag"><i class="fas fa-tv"></i> نوع الجهاز: ${escapeHtml(postData.deviceType)}</div>`;
             }
 
@@ -1526,10 +1705,10 @@
                 let gridClass = (images.length === 2) ? 'grid-2' : (images.length === 3) ? 'grid-3' : (images.length === 4) ? 'grid-4' : (images.length > 4) ? 'grid-multi' : 'grid-1';
                 let imgTags = '';
                 if (images.length <= 4) {
-                    imgTags = images.map(src => `<img src="${src}" alt="Post">`).join('');
+                    imgTags = images.map(src => `<img src="${src}" alt="Post" onclick="openLightbox('${src}', event)">`).join('');
                 } else {
-                    for (let i = 0; i < 3; i++) imgTags += `<img src="${images[i]}" alt="Post">`;
-                    imgTags += `<div class="more-images-overlay-box"><img src="${images[3]}" alt="Post"><div class="more-count-tag">+${Number(images.length - 3).toLocaleString('en-US')}</div></div>`;
+                    for (let i = 0; i < 3; i++) imgTags += `<img src="${images[i]}" alt="Post" onclick="openLightbox('${images[i]}', event)">`;
+                    imgTags += `<div class="more-images-overlay-box" onclick="openLightbox('${images[3]}', event)"><img src="${images[3]}" alt="Post"><div class="more-count-tag">+${Number(images.length - 3).toLocaleString('en-US')}</div></div>`;
                 }
                 imagesHtml = `<div class="post-images-grid ${gridClass}">${imgTags}</div>`;
             }
@@ -1537,7 +1716,7 @@
             const totalReactions = Number(postData.totalReactions || 0).toLocaleString('en-US');
             const commentsCount = Number(postData.commentsCount || 0).toLocaleString('en-US');
 
-            // فحص تفاعل الزائر الحالي لمنع تكرار اللايك
+            // فحص تفاعل الزائر الحالي
             const userReactionsMap = postData.userReactionsMap || {};
             const currentUserReact = userReactionsMap[visitorId];
 
@@ -1555,7 +1734,7 @@
                 `;
             }
 
-            // أزرار التفاعل وقسم التعليقات: يفتح فقط للمنشورات الرسمية
+            // أزرار التفاعل وقسم التعليقات
             let commentButtonHtml = '';
             let commentsSectionBlock = '';
 
@@ -1579,7 +1758,7 @@
                         <img src="${authorImg}" class="post-author-img" alt="${escapeHtml(authorName)}">
                         <div class="author-meta">
                             <h3>${escapeHtml(authorName)} ${isOfficial ? '<i class="fas fa-check-circle" style="color: var(--fb-blue); font-size: 0.85rem;"></i>' : ''}</h3>
-                            <span>${timeAgo} • <i class="fas fa-globe-americas"></i></span>
+                            <span>${timeAgo} • <i class="far fa-clock" style="font-size: 0.72rem; opacity: 0.8;"></i></span>
                         </div>
                     </div>
                 </div>
@@ -1587,10 +1766,10 @@
                 <div class="post-body-text" onclick="handlePost5Clicks('${postId}')">${escapeHtml(postData.text || '')}</div>
                 ${imagesHtml}
                 
-                <!-- شريط العدادات القابل للضغط -->
+                <!-- شريط العدادات - يظهر رمز القلب فقط دائماً -->
                 <div class="post-metrics-bar">
                     <span class="clickable-metric" onclick="openReactionsDetailsModal('${postId}')" title="اضغط لرؤية تفاصيل المتفاعلين">
-                        ❤️ 👍 ${totalReactions} تفاعل
+                        ❤️ ${totalReactions} تفاعل
                     </span>
                     <span class="clickable-metric" id="comm-count-badge-${postId}" onclick="${isOfficial ? `toggleCommentsSection('${postId}')` : ''}">
                         ${isOfficial ? `${commentsCount} تعليقات` : (postData.adminSolutionComment ? '1 رد معتمد' : 'بانتظار رد المهندس')}
@@ -1604,12 +1783,12 @@
                             <span>${currentUserReact ? 'تفاعلت' : 'تفاعل'}</span>
                         </button>
                         <div class="reactions-box">
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'love')">❤️</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'like')">👍</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'haha')">😂</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'wow')">😮</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'sad')">😢</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'angry')">😡</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'love')" title="أحببته">❤️</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'like')" title="إعجاب">👍</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'haha')" title="أضحكني">😂</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'wow')" title="واو">😮</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'sad')" title="أحزنني">😢</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'angry')" title="أغضبني">😡</span>
                         </div>
                     </div>
                     ${commentButtonHtml}
@@ -1623,7 +1802,7 @@
 
         // إرسال تفاعل مع منع التكرار (Toggle Reaction)
         async function sendReaction(postId, type) {
-            const reactionMap = { like: '👍', love: '❤️', haha: '😂', wow: '😮', sad: '😢', angry: '😡' };
+            const reactionMap = { love: '❤️', like: '👍', haha: '😂', wow: '😮', sad: '😢', angry: '😡' };
             const uName = visitorRealName || localStorage.getItem("saved_visitor_name") || "زائر";
             const post = allCloudPostsData[postId];
             if (!post) return;
@@ -1773,7 +1952,7 @@
                     approvedComments.sort((a, b) => {
                         const timeA = (a.createdAt && a.createdAt.toDate) ? a.createdAt.toDate().getTime() : 0;
                         const timeB = (b.createdAt && b.createdAt.toDate) ? b.createdAt.toDate().getTime() : 0;
-                        return timeA - timeB;
+                        return timeB - timeA;
                     });
 
                     list.innerHTML = '';
@@ -1815,47 +1994,71 @@
                 });
         }
 
+        // الاستماع الحقيقي المباشر لعداد المتابعين وحالة متابعة هذا الزائر بدقة 100%
+        let isUserFollowing = false;
+        let isFollowProcessing = false;
+
         function listenToFollowers() {
+            // الاستماع المباشر لإجمالي المتابعين الحقيقيين
             db.collection("page_meta").doc("stats").onSnapshot((doc) => {
-                const count = (doc.exists && doc.data().followersCount) ? doc.data().followersCount : 0;
+                let count = 0;
+                if (doc.exists && doc.data().followersCount !== undefined) {
+                    count = Math.max(0, doc.data().followersCount);
+                }
                 document.getElementById('followersCountDisplay').textContent = Number(count).toLocaleString('en-US');
             });
 
-            db.collection("followers").doc(visitorId).get().then((doc) => {
+            // الاستماع المباشر لحالة المتابعة لهذا الجهاز عبر الـ visitorId الثابت
+            db.collection("followers").doc(visitorId).onSnapshot((doc) => {
                 const btn = document.getElementById("followBtn");
+                if (!btn) return;
+                
                 if (doc.exists) {
+                    isUserFollowing = true;
                     btn.classList.add("followed");
                     btn.innerHTML = '<i class="fas fa-check"></i> <span>متابَع</span>';
+                } else {
+                    isUserFollowing = false;
+                    btn.classList.remove("followed");
+                    btn.innerHTML = '<i class="fas fa-plus"></i> <span>متابعة</span>';
                 }
             });
         }
 
+        // نظام المتابعة المحمي الحقيقي الصارم بدون أي تكرار
         async function toggleRealFollow() {
+            if (isFollowProcessing) return; // منع الضغط السريع المتكرر
+            isFollowProcessing = true;
+
             const btn = document.getElementById("followBtn");
             const followerRef = db.collection("followers").doc(visitorId);
             const statsRef = db.collection("page_meta").doc("stats");
 
-            const doc = await followerRef.get();
-            if (doc.exists) {
-                await followerRef.delete();
-                await statsRef.set({
-                    followersCount: firebase.firestore.FieldValue.increment(-1)
-                }, { merge: true });
-
-                btn.classList.remove("followed");
-                btn.innerHTML = '<i class="fas fa-plus"></i> <span>متابعة</span>';
-                showToast("تم إلغاء المتابعة");
-            } else {
-                await followerRef.set({
-                    followedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                await statsRef.set({
-                    followersCount: firebase.firestore.FieldValue.increment(1)
-                }, { merge: true });
-
-                btn.classList.add("followed");
-                btn.innerHTML = '<i class="fas fa-check"></i> <span>متابَع</span>';
-                showToast("شكراً لمتابعتك صفحة المهندس محمد السعيد! 🎉");
+            try {
+                const doc = await followerRef.get();
+                if (doc.exists) {
+                    // إلغاء المتابعة الحقيقي
+                    await followerRef.delete();
+                    await statsRef.set({
+                        followersCount: firebase.firestore.FieldValue.increment(-1)
+                    }, { merge: true });
+                    showToast("تم إلغاء المتابعة");
+                } else {
+                    // تسجيل متابعة جديدة وفريدة للمستخدم
+                    await followerRef.set({
+                        visitorId: visitorId,
+                        followedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    await statsRef.set({
+                        followersCount: firebase.firestore.FieldValue.increment(1)
+                    }, { merge: true });
+                    showToast("شكراً لمتابعتك صفحة المهندس محمد السعيد! 🎉");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("حدث خطأ أثناء معالجة المتابعة");
+            } finally {
+                isFollowProcessing = false;
             }
         }
 
