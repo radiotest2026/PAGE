@@ -14,15 +14,6 @@
     <meta property="og:image:width" content="600">
     <meta property="og:image:height" content="600">
     
-    <!-- Twitter / X Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="المهندس محمد السعيد - الصفحة الرسمية">
-    <meta name="twitter:description" content="الصفحة الرسمية للمهندس محمد السعيد المشرف العام بشركة ستار نت لمستلزمات الدش والريسيفرات على منصة سات دوت كوم.">
-    <meta name="twitter:image" content="https://e.top4top.io/p_3878z3lii0.jpg">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/jpeg" href="https://e.top4top.io/p_3878z3lii0.jpg">
-
     <title>المهندس محمد السعيد - المشرف العام بشركة ستار نت</title>
     
     <!-- Google Fonts & Font Awesome Icons -->
@@ -32,6 +23,9 @@
     <!-- Firebase Compat SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <!-- FingerprintJS لبصمة الجهاز -->
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
 
     <style>
         :root, [data-theme="dark"] {
@@ -246,7 +240,6 @@
             position: relative;
         }
 
-        /* 🟢 زر الواتساب الاحترافي */
         .btn-fb-whatsapp {
             background: rgba(37, 211, 102, 0.12);
             color: #25d366;
@@ -317,7 +310,6 @@
             font-size: 0.95rem;
         }
 
-        /* شريط النشر */
         .post-trigger-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -373,7 +365,6 @@
             color: var(--text-main);
         }
 
-        /* نافذة كتابة المشكلة المنبثقة */
         .post-modal-overlay {
             position: fixed;
             inset: 0;
@@ -576,7 +567,6 @@
             cursor: pointer;
         }
 
-        /* Feed Posts */
         .feed-container {
             display: flex;
             flex-direction: column;
@@ -1220,7 +1210,6 @@
                             <i class="fas fa-comments"></i> <span>رسالة</span>
                             <span class="msg-unread-badge" id="visitorUnreadMsgBadge">0</span>
                         </button>
-                        <!-- 🟢 زر الواتساب الاحترافي الجديد -->
                         <a href="https://wa.me/mohamedelsaed2307" target="_blank" class="btn-fb btn-fb-whatsapp" title="تواصل عبر واتساب">
                             <i class="fab fa-whatsapp" style="font-size: 1.1rem;"></i> <span>واتساب</span>
                         </a>
@@ -1252,7 +1241,7 @@
             </button>
         </section>
 
-        <!-- نافذة كتابة المنشور وعرض المشكلة المنبثقة (Modal) -->
+        <!-- نافذة كتابة المشكلة -->
         <div class="post-modal-overlay" id="postModalOverlay" onclick="if(event.target===this) closePostModal()">
             <div class="post-modal-box">
                 <div class="modal-header">
@@ -1306,7 +1295,7 @@
 
     </main>
 
-    <!-- 🖼️ نافذة تكبير وتنزيل الصور (Lightbox) -->
+    <!-- Lightbox -->
     <div class="image-lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox(event)">
         <div class="image-lightbox-wrapper" id="lightboxWrapper">
             <div class="lightbox-toolbar">
@@ -1399,6 +1388,40 @@
         }
 
         let visitorRealName = localStorage.getItem("fb_visitor_name") || "";
+
+        // 🛡️ فحص بصمة الجهاز والتحقق الفوري من الحظر
+        let deviceFingerprint = localStorage.getItem("device_fp_id") || visitorId;
+
+        async function initDeviceSecurity() {
+            try {
+                if (window.FingerprintJS) {
+                    const fp = await FingerprintJS.load();
+                    const result = await fp.get();
+                    if (result && result.visitorId) {
+                        deviceFingerprint = result.visitorId;
+                        localStorage.setItem("device_fp_id", deviceFingerprint);
+                    }
+                }
+            } catch (e) {
+                console.error("Fingerprint error", e);
+            }
+
+            // الاستماع المباشر في قاعدة البيانات إن كان هذا الجهاز محظوراً
+            db.collection("banned_devices").doc(deviceFingerprint).onSnapshot((doc) => {
+                if (doc.exists) {
+                    const reason = doc.data().reason || "بسبب إجراء غير طبيعي أو مخالفة الشروط";
+                    document.body.innerHTML = `
+                        <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; background:#0c0d11; color:#ff4757; text-align:center; padding:20px; font-family:'Cairo', sans-serif;">
+                            <div style="width:80px; height:80px; background:rgba(255,71,87,0.1); border:2px solid #ff4757; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.5rem; margin-bottom:20px;">
+                                <i class="fas fa-user-slash"></i>
+                            </div>
+                            <h1 style="font-size:1.8rem; font-weight:900; color:#fff; margin-bottom:10px;">تم تقييد وصولك إلى الصفحة</h1>
+                            <p style="font-size:1rem; color:#9fa4b2; max-width:450px; line-height:1.6;">تم حظر جهازك من قبل الإدارة ${escapeHtml(reason)}. لا يمكنك إجراء أي عمليات أو مراسلة على هذه المنصة.</p>
+                        </div>
+                    `;
+                }
+            });
+        }
 
         let currentLightboxImgSrc = '';
 
@@ -1513,7 +1536,6 @@
         }
 
         let visitorAvatarBase64 = localStorage.getItem("saved_user_avatar") || "";
-        
         if (visitorAvatarBase64 && (visitorAvatarBase64.includes('top4top.io') || !visitorAvatarBase64.startsWith('data:image'))) {
             visitorAvatarBase64 = "";
             localStorage.removeItem("saved_user_avatar");
@@ -1619,6 +1641,7 @@
                     authorName: name,
                     authorAvatar: visitorAvatarBase64,
                     deviceType: device,
+                    deviceId: deviceFingerprint, // بصمة الجهاز للحظر
                     text: problem,
                     images: problemImagesArray,
                     status: 'pending',
@@ -1980,6 +2003,7 @@
                 await db.collection("comments_pending").add({
                     postId: postId,
                     userName: name,
+                    deviceId: deviceFingerprint, // بصمة الجهاز للحظر
                     text: text,
                     status: 'pending',
                     replyText: '',
@@ -2199,6 +2223,7 @@
             const docRef = db.collection("messages").doc(visitorId);
             await docRef.set({
                 visitorId: visitorId,
+                deviceId: deviceFingerprint, // بصمة الجهاز للحظر
                 visitorName: senderName,
                 lastMessage: text,
                 isReadByAdmin: false,
@@ -2223,6 +2248,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initTheme();
+            initDeviceSecurity();
             updateAvatarUI();
             listenToFollowers();
             listenToVisitorMessages();
