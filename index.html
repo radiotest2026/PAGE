@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <meta property="og:type" content="profile">
     <meta property="og:title" content="المهندس محمد السعيد - الصفحة الرسمية">
@@ -78,6 +78,7 @@
             box-sizing: border-box;
             font-family: 'Cairo', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -90,6 +91,7 @@
             justify-content: space-between;
             overflow-x: hidden;
             position: relative;
+            -webkit-font-smoothing: antialiased;
         }
 
         .theme-toggle-floating {
@@ -111,10 +113,10 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 4px 18px var(--shadow-color);
+            user-select: none;
         }
 
-        .theme-toggle-floating:hover { transform: scale(1.1) rotate(15deg); }
-        .theme-toggle-floating:active { transform: scale(0.95); }
+        .theme-toggle-floating:active { transform: scale(0.92); }
 
         .main-container {
             max-width: 950px;
@@ -178,6 +180,7 @@
             object-fit: cover;
             background: #111;
             box-shadow: 0 0 20px rgba(255, 0, 85, 0.25);
+            user-select: none;
         }
 
         .profile-badge-verified {
@@ -194,6 +197,7 @@
             justify-content: center;
             font-size: 0.7rem;
             border: 2px solid var(--card-bg);
+            user-select: none;
         }
 
         .profile-actions {
@@ -205,7 +209,10 @@
             overflow-x: auto;
             max-width: 100%;
             padding-bottom: 2px;
+            scrollbar-width: none;
         }
+
+        .profile-actions::-webkit-scrollbar { display: none; }
 
         .btn-fb {
             padding: 7px 13px;
@@ -217,12 +224,15 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
             position: relative;
             text-decoration: none;
             white-space: nowrap;
             flex-shrink: 0;
+            user-select: none;
         }
+
+        .btn-fb:active { transform: scale(0.96); }
 
         .btn-fb-primary {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -250,14 +260,12 @@
             border: 1px solid rgba(37, 211, 102, 0.35);
         }
 
-        .btn-fb-whatsapp:hover {
+        .btn-fb-whatsapp:hover, .btn-fb-whatsapp:active {
             background: #25d366;
             color: #fff;
             box-shadow: 0 4px 15px var(--whatsapp-glow);
-            transform: translateY(-2px);
         }
 
-        /* 🛡️ شارة موثوق به مع نص ذهبي واضح ووميض خفيف جداً */
         .btn-fb-trusted {
             background: rgba(255, 183, 3, 0.1);
             border: 1px solid rgba(255, 183, 3, 0.45);
@@ -275,12 +283,7 @@
             left: -150%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(
-                90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.22), 
-                transparent
-            );
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
             transform: skewX(-20deg);
             animation: lightShineSweep 4s infinite;
             pointer-events: none;
@@ -355,6 +358,7 @@
             border-top: 1px solid var(--border-color);
             padding-top: 10px;
             margin-top: 2px;
+            user-select: none;
         }
 
         .page-stats-bar strong {
@@ -387,6 +391,7 @@
             overflow: hidden;
             color: var(--primary);
             font-size: 1rem;
+            user-select: none;
         }
 
         .post-trigger-avatar-wrap img {
@@ -410,13 +415,10 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            user-select: none;
         }
 
-        .post-trigger-btn:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: var(--primary);
-            color: var(--text-main);
-        }
+        .post-trigger-btn:active { transform: scale(0.98); }
 
         .post-modal-overlay {
             position: fixed;
@@ -482,7 +484,7 @@
             cursor: pointer;
         }
 
-        .modal-close-btn:hover { color: var(--danger); }
+        .modal-close-btn:active { transform: scale(0.9); color: var(--danger); }
 
         .form-grid-fields {
             display: grid;
@@ -503,6 +505,7 @@
             border-radius: 12px;
             border: 1px dashed var(--border-color);
             cursor: pointer;
+            user-select: none;
         }
 
         .avatar-preview-circle {
@@ -571,9 +574,8 @@
             padding: 6px 12px;
             border-radius: 8px;
             background: var(--card-sub);
+            user-select: none;
         }
-
-        .attach-btn-label:hover { color: var(--primary); }
 
         .submit-visitor-post-btn {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -589,7 +591,10 @@
             gap: 6px;
             width: 100%;
             justify-content: center;
+            user-select: none;
         }
+
+        .submit-visitor-post-btn:active { transform: scale(0.98); }
 
         .post-images-preview-strip {
             display: grid;
@@ -633,7 +638,6 @@
             padding: 14px 16px;
             box-shadow: 0 4px 15px var(--shadow-color);
             position: relative;
-            cursor: pointer;
         }
 
         .post-header {
@@ -641,6 +645,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
+            user-select: none;
         }
 
         .post-author-info {
@@ -689,6 +694,7 @@
             font-size: 0.75rem;
             font-weight: 800;
             margin-bottom: 6px;
+            user-select: none;
         }
 
         .post-body-text {
@@ -715,17 +721,15 @@
             box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3);
             transition: all 0.2s ease;
             vertical-align: middle;
+            user-select: none;
         }
 
-        .smart-link-badge:hover {
-            transform: translateY(-1.5px);
-            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.45);
-            filter: brightness(1.08);
+        .smart-link-badge:active {
+            transform: scale(0.96);
+            filter: brightness(1.1);
         }
 
-        .smart-link-badge i {
-            font-size: 0.72rem;
-        }
+        .smart-link-badge i { font-size: 0.72rem; }
 
         .post-images-grid {
             display: grid;
@@ -747,11 +751,7 @@
             cursor: pointer;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
-            transition: transform 0.3s ease, filter 0.3s ease;
-        }
-
-        .post-images-grid img:hover {
-            filter: brightness(1.05);
+            user-select: none;
         }
 
         .grid-1 { grid-template-columns: 1fr; }
@@ -760,7 +760,7 @@
         .grid-4 { grid-template-columns: 1fr 1fr; }
         .grid-multi { grid-template-columns: repeat(3, 1fr); }
 
-        .more-images-overlay-box { position: relative; overflow: hidden; cursor: pointer; border-radius: 10px; }
+        .more-images-overlay-box { position: relative; overflow: hidden; cursor: pointer; border-radius: 10px; user-select: none; }
         .more-images-overlay-box img { width: 100%; height: 100%; object-fit: cover; }
         .more-count-tag {
             position: absolute;
@@ -790,6 +790,7 @@
             opacity: 0;
             transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: zoom-out;
+            user-select: none;
         }
 
         .image-lightbox-overlay.active {
@@ -825,14 +826,6 @@
                         0 15px 35px rgba(0, 0, 0, 0.8);
             cursor: pointer;
             user-select: none;
-            transition: box-shadow 0.4s ease, border-color 0.4s ease;
-        }
-
-        .image-lightbox-img:hover {
-            border-color: rgba(255, 0, 85, 0.9);
-            box-shadow: 0 0 30px rgba(255, 0, 85, 0.6), 
-                        0 0 60px rgba(121, 40, 202, 0.4),
-                        0 20px 40px rgba(0, 0, 0, 0.9);
         }
 
         .lightbox-toolbar {
@@ -859,17 +852,13 @@
             align-items: center;
             gap: 5px;
             backdrop-filter: blur(8px);
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             text-decoration: none;
+            user-select: none;
         }
 
-        .lightbox-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(255, 0, 85, 0.4);
-        }
+        .lightbox-btn:active { transform: scale(0.94); background: var(--primary); }
 
         .post-metrics-bar {
             display: flex;
@@ -888,18 +877,17 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            user-select: none;
         }
 
-        .clickable-metric:hover {
-            color: var(--primary);
-            text-decoration: underline;
-        }
+        .clickable-metric:active { color: var(--primary); }
 
         .post-interactions-row {
             display: flex;
             justify-content: space-around;
             padding-top: 4px;
             position: relative;
+            user-select: none;
         }
 
         .interaction-btn-wrap {
@@ -918,17 +906,18 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 8px 12px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.15s ease;
             width: 100%;
             justify-content: center;
+            user-select: none;
         }
 
-        .interaction-btn:hover {
-            background: rgba(0, 0, 0, 0.05);
-            color: var(--text-main);
+        .interaction-btn:active {
+            background: rgba(255, 255, 255, 0.08);
+            transform: scale(0.96);
         }
 
         .interaction-btn.user-reacted {
@@ -936,28 +925,24 @@
             font-weight: 800;
         }
 
-        [data-theme="dark"] .interaction-btn:hover {
-            background: rgba(255, 255, 255, 0.06);
-        }
-
         .reactions-box {
             position: absolute;
-            bottom: 38px;
+            bottom: 44px;
             right: 10px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 30px;
-            padding: 4px 10px;
+            border-radius: 35px;
+            padding: 6px 12px;
             display: none;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 8px 20px var(--shadow-color);
-            z-index: 50;
+            gap: 8px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            z-index: 99;
             animation: reactPop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
         }
 
-        .interaction-btn-wrap:hover .reactions-box,
-        .reactions-box.active { display: flex; }
+        .reactions-box.open { display: flex !important; }
 
         @keyframes reactPop {
             from { transform: translateY(8px) scale(0.8); opacity: 0; }
@@ -965,12 +950,14 @@
         }
 
         .reaction-icon {
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: transform 0.15s ease;
+            user-select: none;
+            padding: 2px 4px;
         }
 
-        .reaction-icon:hover { transform: scale(1.3) translateY(-4px); }
+        .reaction-icon:active { transform: scale(1.4) translateY(-6px); }
 
         .comments-section {
             display: none;
@@ -1008,7 +995,10 @@
             font-size: 0.8rem;
             font-weight: 700;
             cursor: pointer;
+            user-select: none;
         }
+
+        .comment-send-btn:active { transform: scale(0.95); }
 
         .comments-list {
             display: flex;
@@ -1027,11 +1017,7 @@
             flex-direction: column;
             gap: 2px;
             cursor: pointer;
-            transition: border-color 0.2s ease;
-        }
-
-        .comment-item:hover {
-            border-color: rgba(255, 0, 85, 0.4);
+            user-select: none;
         }
 
         .comment-author-name {
@@ -1129,6 +1115,7 @@
             align-items: center;
             justify-content: center;
             padding: 14px;
+            user-select: none;
         }
 
         .reactions-details-box {
@@ -1189,6 +1176,7 @@
             align-items: center;
             font-weight: 800;
             font-size: 0.9rem;
+            user-select: none;
         }
 
         .messenger-body {
@@ -1259,11 +1247,13 @@
             opacity: 0;
             transition: all 0.3s ease;
             font-size: 0.85rem;
+            user-select: none;
+            pointer-events: none;
         }
 
         .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        footer { text-align: center; padding: 16px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.8rem; margin-top: 18px; }
+        footer { text-align: center; padding: 16px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.8rem; margin-top: 18px; user-select: none; }
         
         @media (max-width: 650px) {
             .theme-toggle-floating { top: 12px; left: 12px; width: 36px; height: 36px; font-size: 1rem; }
@@ -1298,7 +1288,6 @@
                         <div class="profile-badge-verified"><i class="fas fa-check"></i></div>
                     </div>
 
-                    <!-- أزرار الإجراءات مع شارة موثوق به باللمعان الهادئ والخط الواضح -->
                     <div class="profile-actions">
                         <button id="followBtn" class="btn-fb btn-fb-primary" onclick="toggleRealFollow()">
                             <i class="fas fa-plus"></i> <span>متابعة</span>
@@ -1884,6 +1873,28 @@
             }
         }
 
+        function toggleReactionsBox(postId, event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            const box = document.getElementById(`react-box-${postId}`);
+            if (!box) return;
+
+            const isOpen = box.classList.contains('open');
+            document.querySelectorAll('.reactions-box').forEach(b => b.classList.remove('open'));
+
+            if (!isOpen) {
+                box.classList.add('open');
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.interaction-btn-wrap')) {
+                document.querySelectorAll('.reactions-box').forEach(b => b.classList.remove('open'));
+            }
+        });
+
         function createPostElement(postId, postData) {
             const article = document.createElement('article');
             article.className = 'post-card';
@@ -1978,17 +1989,17 @@
 
                 <div class="post-interactions-row">
                     <div class="interaction-btn-wrap">
-                        <button class="interaction-btn ${currentUserReact ? 'user-reacted' : ''}" id="react-btn-${postId}" onclick="sendReaction('${postId}', 'love')">
+                        <button class="interaction-btn ${currentUserReact ? 'user-reacted' : ''}" id="react-btn-${postId}" onclick="toggleReactionsBox('${postId}', event)">
                             <i class="${currentUserReact ? 'fas fa-heart' : 'far fa-heart'}"></i> 
                             <span>${currentUserReact ? 'تفاعلت' : 'تفاعل'}</span>
                         </button>
-                        <div class="reactions-box">
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'love')" title="أحببته">❤️</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'like')" title="إعجاب">👍</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'haha')" title="أضحكني">😂</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'wow')" title="واو">😮</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'sad')" title="أحزنني">😢</span>
-                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'angry')" title="أغضبني">😡</span>
+                        <div class="reactions-box" id="react-box-${postId}">
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'love', event)" title="أحببته">❤️</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'like', event)" title="إعجاب">👍</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'haha', event)" title="أضحكني">😂</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'wow', event)" title="واو">😮</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'sad', event)" title="أحزنني">😢</span>
+                            <span class="reaction-icon" onclick="sendReaction('${postId}', 'angry', event)" title="أغضبني">😡</span>
                         </div>
                     </div>
                     ${commentButtonHtml}
@@ -2000,7 +2011,15 @@
             return article;
         }
 
-        async function sendReaction(postId, type) {
+        async function sendReaction(postId, type, event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            const box = document.getElementById(`react-box-${postId}`);
+            if (box) box.classList.remove('open');
+
             const reactionMap = { love: '❤️', like: '👍', haha: '😂', wow: '😮', sad: '😢', angry: '😡' };
             const uName = visitorRealName || localStorage.getItem("saved_visitor_name") || "زائر";
             const post = allCloudPostsData[postId];
