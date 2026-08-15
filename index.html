@@ -6,7 +6,7 @@
     
     <meta property="og:type" content="profile">
     <meta property="og:title" content="المهندس محمد السعيد - الصفحة الرسمية">
-    <meta property="og:description" content="الصفحة الرسمية للمهندس محمد السعيد المشرف العام بشركة ستار نت لمستلزمات الدش والريسيفرات على منصة سات دوت كوم.">
+    <meta property="og:description" content="مشرف عام بشركة ستار نت لمستلزمات الدش والريسيفرات">
     <meta property="og:image" content="https://e.top4top.io/p_3878z3lii0.jpg">
     <meta property="og:image:secure_url" content="https://e.top4top.io/p_3878z3lii0.jpg">
     <meta property="og:image:type" content="image/jpeg">
@@ -151,6 +151,38 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4));
+        }
+
+        .header-official-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+            background: rgba(24, 25, 32, 0.85);
+            border: 1px solid rgba(255, 183, 3, 0.5);
+            padding: 6px 14px;
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 183, 3, 0.2);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+        }
+
+        .header-official-badge::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transform: skewX(-20deg);
+            animation: lightShineSweep 4s infinite;
+            pointer-events: none;
         }
 
         .profile-info-section {
@@ -1257,6 +1289,8 @@
         
         @media (max-width: 650px) {
             .theme-toggle-floating { top: 12px; left: 12px; width: 36px; height: 36px; font-size: 1rem; }
+            .header-official-badge { top: 12px; right: 12px; padding: 5px 11px; }
+            .trusted-gold-text { font-size: 0.78rem; }
             .profile-info-section { margin-top: -45px; } 
             .profile-avatar { width: 85px; height: 85px; } 
             .cover-photo-wrapper { height: 145px; } 
@@ -1279,6 +1313,10 @@
         <section class="page-profile-card">
             <div class="cover-photo-wrapper" style="background-image: url('https://b.top4top.io/p_38788xjki0.jpg');">
                 <div class="cover-photo-overlay"></div>
+                <div class="header-official-badge" title="حساب رسمي ومعتمد من شركة ستار نت">
+                    <i class="fas fa-shield-alt trusted-gold-icon"></i> 
+                    <span class="trusted-gold-text">حساب رسمي</span>
+                </div>
             </div>
             
             <div class="profile-info-section">
@@ -1299,16 +1337,12 @@
                         <a href="https://wa.me/mohamedelsaed2307" target="_blank" rel="noopener noreferrer nofollow" class="btn-fb btn-fb-whatsapp" title="تواصل عبر واتساب">
                             <i class="fab fa-whatsapp" style="font-size: 1rem;"></i> <span>واتساب</span>
                         </a>
-                        <div class="btn-fb btn-fb-trusted" title="حساب معتمد وموثوق رسمياً من شركة ستار نت">
-                            <i class="fas fa-shield-alt trusted-gold-icon"></i> 
-                            <span class="trusted-gold-text">موثوق به</span>
-                        </div>
                     </div>
                 </div>
 
                 <div class="profile-text">
                     <h1>المهندس محمد السعيد <i class="fas fa-check-circle" style="color: var(--fb-blue); font-size: 1rem;"></i></h1>
-                    <p>الصفحة الرسمية للمهندس محمد السعيد المشرف العام بشركة ستار نت لمستلزمات الدش والريسيفرات على منصة سات دوت كوم.</p>
+                    <p>مشرف عام بشركة ستار نت لمستلزمات الدش والريسيفرات</p>
                 </div>
 
                 <div class="page-stats-bar">
