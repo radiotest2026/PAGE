@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SEO & Open Graph Meta Tags -->
     <meta property="og:type" content="profile">
     <meta property="og:title" content="المهندس محمد السعيد - الصفحة الرسمية">
     <meta property="og:description" content="الصفحة الرسمية للمهندس محمد السعيد المشرف العام بشركة ستار نت لمستلزمات الدش والريسيفرات على منصة سات دوت كوم.">
@@ -16,16 +15,11 @@
     
     <title>المهندس محمد السعيد - المشرف العام بشركة ستار نت</title>
     
-    <!-- Google Fonts & Font Awesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Firebase Compat SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    
-    <!-- FingerprintJS لبصمة الجهاز -->
-    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
 
     <style>
         :root, [data-theme="dark"] {
@@ -1389,34 +1383,33 @@
 
         let visitorRealName = localStorage.getItem("fb_visitor_name") || "";
 
-        // 🛡️ فحص بصمة الجهاز والتحقق الفوري من الحظر
-        let deviceFingerprint = localStorage.getItem("device_fp_id") || visitorId;
+        // 🛡️ فحص الحظر اللحظي الصارم عبر Firestore
+        function initDeviceSecurity() {
+            db.collection("banned_devices").onSnapshot((snapshot) => {
+                let isBanned = false;
+                let banReason = "بسبب سوء السلوك ومخالفة الشروط";
 
-        async function initDeviceSecurity() {
-            try {
-                if (window.FingerprintJS) {
-                    const fp = await FingerprintJS.load();
-                    const result = await fp.get();
-                    if (result && result.visitorId) {
-                        deviceFingerprint = result.visitorId;
-                        localStorage.setItem("device_fp_id", deviceFingerprint);
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (
+                        doc.id === visitorId || 
+                        data.visitorId === visitorId || 
+                        data.userId === visitorId || 
+                        (visitorRealName && data.userName === visitorRealName)
+                    ) {
+                        isBanned = true;
+                        if (data.reason) banReason = data.reason;
                     }
-                }
-            } catch (e) {
-                console.error("Fingerprint error", e);
-            }
+                });
 
-            // الاستماع المباشر في قاعدة البيانات إن كان هذا الجهاز محظوراً
-            db.collection("banned_devices").doc(deviceFingerprint).onSnapshot((doc) => {
-                if (doc.exists) {
-                    const reason = doc.data().reason || "بسبب إجراء غير طبيعي أو مخالفة الشروط";
+                if (isBanned) {
                     document.body.innerHTML = `
-                        <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; background:#0c0d11; color:#ff4757; text-align:center; padding:20px; font-family:'Cairo', sans-serif;">
+                        <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh; background:#0c0d11; color:#ff4757; text-align:center; padding:20px; font-family:'Cairo', sans-serif;">
                             <div style="width:80px; height:80px; background:rgba(255,71,87,0.1); border:2px solid #ff4757; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.5rem; margin-bottom:20px;">
-                                <i class="fas fa-user-slash"></i>
+                                <i class="fas fa-ban"></i>
                             </div>
                             <h1 style="font-size:1.8rem; font-weight:900; color:#fff; margin-bottom:10px;">تم تقييد وصولك إلى الصفحة</h1>
-                            <p style="font-size:1rem; color:#9fa4b2; max-width:450px; line-height:1.6;">تم حظر جهازك من قبل الإدارة ${escapeHtml(reason)}. لا يمكنك إجراء أي عمليات أو مراسلة على هذه المنصة.</p>
+                            <p style="font-size:1rem; color:#9fa4b2; max-width:450px; line-height:1.6;">تم حظرك نهائياً من قبل الإدارة (${escapeHtml(banReason)}). لا يمكنك تصفح الموقع أو إرسال أي رسائل.</p>
                         </div>
                     `;
                 }
@@ -1641,7 +1634,7 @@
                     authorName: name,
                     authorAvatar: visitorAvatarBase64,
                     deviceType: device,
-                    deviceId: deviceFingerprint, // بصمة الجهاز للحظر
+                    visitorId: visitorId,
                     text: problem,
                     images: problemImagesArray,
                     status: 'pending',
@@ -2003,7 +1996,7 @@
                 await db.collection("comments_pending").add({
                     postId: postId,
                     userName: name,
-                    deviceId: deviceFingerprint, // بصمة الجهاز للحظر
+                    visitorId: visitorId,
                     text: text,
                     status: 'pending',
                     replyText: '',
@@ -2036,7 +2029,7 @@
                     approvedComments.sort((a, b) => {
                         const timeA = (a.createdAt && a.createdAt.toDate) ? a.createdAt.toDate().getTime() : 0;
                         const timeB = (b.createdAt && b.createdAt.toDate) ? b.createdAt.toDate().getTime() : 0;
-                        return timeA - timeB;
+                        return timeB - timeA;
                     });
 
                     list.innerHTML = '';
@@ -2223,7 +2216,6 @@
             const docRef = db.collection("messages").doc(visitorId);
             await docRef.set({
                 visitorId: visitorId,
-                deviceId: deviceFingerprint, // بصمة الجهاز للحظر
                 visitorName: senderName,
                 lastMessage: text,
                 isReadByAdmin: false,
