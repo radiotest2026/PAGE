@@ -43,6 +43,8 @@
             --secondary: #7928ca;
             --accent-glow: rgba(255, 0, 85, 0.4);
             --fb-blue: #1877f2;
+            --whatsapp-green: #25d366;
+            --whatsapp-glow: rgba(37, 211, 102, 0.35);
             --text-main: #f0f2f5;
             --text-muted: #9fa4b2;
             --border-color: rgba(255, 255, 255, 0.08);
@@ -64,6 +66,8 @@
             --secondary: #6366f1;
             --accent-glow: rgba(225, 29, 72, 0.2);
             --fb-blue: #1877f2;
+            --whatsapp-green: #25d366;
+            --whatsapp-glow: rgba(37, 211, 102, 0.25);
             --text-main: #111827;
             --text-muted: #6b7280;
             --border-color: rgba(0, 0, 0, 0.08);
@@ -96,7 +100,6 @@
             position: relative;
         }
 
-        /* زر الوضع الليلي/النهاري ثابت بأعلى الصفحة في اليسار */
         .theme-toggle-floating {
             position: absolute;
             top: 20px;
@@ -203,6 +206,7 @@
 
         .profile-actions {
             display: flex;
+            flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 5px;
         }
@@ -219,6 +223,7 @@
             gap: 8px;
             transition: all 0.25s ease;
             position: relative;
+            text-decoration: none;
         }
 
         .btn-fb-primary {
@@ -241,7 +246,20 @@
             position: relative;
         }
 
-        /* 🔴 شارة عدد الرسائل غير المقروءة الحمراء */
+        /* 🟢 زر الواتساب الاحترافي */
+        .btn-fb-whatsapp {
+            background: rgba(37, 211, 102, 0.12);
+            color: #25d366;
+            border: 1px solid rgba(37, 211, 102, 0.35);
+        }
+
+        .btn-fb-whatsapp:hover {
+            background: #25d366;
+            color: #fff;
+            box-shadow: 0 4px 18px var(--whatsapp-glow);
+            transform: translateY(-2px);
+        }
+
         .msg-unread-badge {
             position: absolute;
             top: -6px;
@@ -678,7 +696,6 @@
             font-family: monospace, sans-serif;
         }
 
-        /* 🖼️ عارض الصور المتطور مع الحواف المضيئة الانسيابية */
         .image-lightbox-overlay {
             position: fixed;
             inset: 0;
@@ -774,7 +791,6 @@
             box-shadow: 0 6px 20px rgba(255, 0, 85, 0.4);
         }
 
-        /* شريط التفاعلات القابل للضغط */
         .post-metrics-bar {
             display: flex;
             justify-content: space-between;
@@ -876,7 +892,6 @@
 
         .reaction-icon:hover { transform: scale(1.35) translateY(-5px); }
 
-        /* Comments Section */
         .comments-section {
             display: none;
             margin-top: 15px;
@@ -986,7 +1001,6 @@
             line-height: 1.4;
         }
 
-        /* تعليق وحل الإدارة الحصري لمنشورات الزوار */
         .exclusive-admin-comment-card {
             margin-top: 15px;
             padding: 16px;
@@ -1022,7 +1036,6 @@
             padding-right: 36px;
         }
 
-        /* نافذة منبثقة لعرض المتفاعلين بالتفصيل */
         .reactions-details-modal {
             position: fixed;
             inset: 0;
@@ -1063,7 +1076,6 @@
             font-weight: 700;
         }
 
-        /* Live Chat Widget */
         .messenger-widget {
             position: fixed;
             bottom: 25px;
@@ -1181,12 +1193,10 @@
 </head>
 <body>
 
-    <!-- زر التبديل بين الوضع الليلي والنهاري -->
     <button class="theme-toggle-floating" id="themeToggleBtn" onclick="toggleAppTheme()" title="تبديل الوضع الليلي / النهاري">
         <i class="fas fa-moon" id="themeIcon"></i>
     </button>
 
-    <!-- Main Container -->
     <main class="main-container">
         
         <!-- Profile Section -->
@@ -1208,9 +1218,12 @@
                         </button>
                         <button class="btn-fb btn-fb-secondary" onclick="toggleMessengerWidget()" id="headerMsgBtn">
                             <i class="fas fa-comments"></i> <span>رسالة</span>
-                            <!-- 🔴 شارة عدد الرسائل غير المقروءة السحابية -->
                             <span class="msg-unread-badge" id="visitorUnreadMsgBadge">0</span>
                         </button>
+                        <!-- 🟢 زر الواتساب الاحترافي الجديد -->
+                        <a href="https://wa.me/mohamedelsaed2307" target="_blank" class="btn-fb btn-fb-whatsapp" title="تواصل عبر واتساب">
+                            <i class="fab fa-whatsapp" style="font-size: 1.1rem;"></i> <span>واتساب</span>
+                        </a>
                     </div>
                 </div>
 
@@ -1227,7 +1240,7 @@
             </div>
         </section>
 
-        <!-- شريط النشر - أيقونة ساتلايت افتراضية معممة -->
+        <!-- شريط النشر -->
         <section class="post-trigger-card">
             <div class="post-trigger-avatar-wrap">
                 <i class="fas fa-satellite-dish" id="barVisitorAvatarIcon"></i>
@@ -1293,7 +1306,7 @@
 
     </main>
 
-    <!-- 🖼️ نافذة تكبير وتنزيل الصور (Lightbox) الانسيابية -->
+    <!-- 🖼️ نافذة تكبير وتنزيل الصور (Lightbox) -->
     <div class="image-lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox(event)">
         <div class="image-lightbox-wrapper" id="lightboxWrapper">
             <div class="lightbox-toolbar">
@@ -1308,7 +1321,7 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة لعرض تفاصيل المتفاعلين مع المنشور للجميع -->
+    <!-- نافذة تفاصيل المتفاعلين -->
     <div class="reactions-details-modal" id="reactionsModal" onclick="if(event.target===this) closeReactionsModal()">
         <div class="reactions-details-box">
             <div class="modal-header">
@@ -1387,7 +1400,6 @@
 
         let visitorRealName = localStorage.getItem("fb_visitor_name") || "";
 
-        // 🖼️ دوال عارض الصور المطور والتنزيل
         let currentLightboxImgSrc = '';
 
         function openLightbox(imgSrc, event) {
@@ -1500,10 +1512,8 @@
             return true;
         }
 
-        // إعداد صورة البروفايل (تجاهل الروابط القديمة غير المرغوبة والبدء بأيقونة الساتلايت)
         let visitorAvatarBase64 = localStorage.getItem("saved_user_avatar") || "";
         
-        // تنظيف الكاش القديم إذا كان يحتوي على روابط معينة
         if (visitorAvatarBase64 && (visitorAvatarBase64.includes('top4top.io') || !visitorAvatarBase64.startsWith('data:image'))) {
             visitorAvatarBase64 = "";
             localStorage.removeItem("saved_user_avatar");
@@ -1540,7 +1550,6 @@
             showToast("تم اختيار صورة البروفايل بنجاح!");
         }
 
-        // صور المشكلة المرفقة
         let problemImagesArray = [];
         async function handleProblemImages(event) {
             const files = Array.from(event.target.files);
@@ -1572,7 +1581,6 @@
             `).join('');
         }
 
-        // إرسال المنشور للمراجعة
         async function submitProblemPost() {
             const nameInput = document.getElementById('visitorFullName');
             const deviceInput = document.getElementById('visitorDeviceType');
@@ -1642,7 +1650,6 @@
 
         let allCloudPostsData = {};
 
-        // الاستماع للمنشورات المعتمدة وعرضها
         function listenToCloudPosts() {
             const feed = document.getElementById('feedContainer');
             db.collection("posts")
@@ -1687,7 +1694,6 @@
                 });
         }
 
-        // عداد الـ 5 ضغطات للمنشورات والتعليقات
         let postClicksTracker = {};
         let commentClicksTracker = {};
 
@@ -1823,7 +1829,6 @@
                 <div class="post-body-text" onclick="handlePost5Clicks('${postId}')">${escapeHtml(postData.text || '')}</div>
                 ${imagesHtml}
                 
-                <!-- شريط العدادات - يظهر رمز القلب فقط دائماً -->
                 <div class="post-metrics-bar">
                     <span class="clickable-metric" onclick="openReactionsDetailsModal('${postId}')" title="اضغط لرؤية تفاصيل المتفاعلين">
                         ❤️ ${totalReactions} تفاعل
@@ -1857,7 +1862,6 @@
             return article;
         }
 
-        // إرسال تفاعل مع منع التكرار (Toggle Reaction)
         async function sendReaction(postId, type) {
             const reactionMap = { love: '❤️', like: '👍', haha: '😂', wow: '😮', sad: '😢', angry: '😡' };
             const uName = visitorRealName || localStorage.getItem("saved_visitor_name") || "زائر";
@@ -1903,7 +1907,6 @@
             } catch (err) { console.error(err); }
         }
 
-        // عرض تفاصيل المتفاعلين للجميع
         function openReactionsDetailsModal(postId) {
             const post = allCloudPostsData[postId];
             if (!post) return;
@@ -2009,7 +2012,7 @@
                     approvedComments.sort((a, b) => {
                         const timeA = (a.createdAt && a.createdAt.toDate) ? a.createdAt.toDate().getTime() : 0;
                         const timeB = (b.createdAt && b.createdAt.toDate) ? b.createdAt.toDate().getTime() : 0;
-                        return timeB - timeA;
+                        return timeA - timeB;
                     });
 
                     list.innerHTML = '';
@@ -2051,7 +2054,6 @@
                 });
         }
 
-        // الاستماع الحقيقي المباشر لعداد المتابعين وحالة متابعة هذا الزائر
         let isUserFollowing = false;
         let isFollowProcessing = false;
 
@@ -2080,7 +2082,6 @@
             });
         }
 
-        // نظام المتابعة المحمي الحقيقي الصارم بدون أي تكرار
         async function toggleRealFollow() {
             if (isFollowProcessing) return;
             isFollowProcessing = true;
