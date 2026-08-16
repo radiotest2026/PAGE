@@ -952,15 +952,15 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: linear-gradient(to right, #e11d48, #9333ea, #6366f1);
+            background: linear-gradient(135deg, #e11d48, #9333ea);
             color: #ffffff !important;
             padding: 4px 12px;
             border-radius: 16px;
             font-weight: 700;
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             text-decoration: none;
-            margin: 2px 0;
-            box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3);
+            margin: 3px 2px;
+            box-shadow: 0 3px 10px rgba(225, 29, 72, 0.25);
             transition: all 0.2s ease;
             vertical-align: middle;
             user-select: none;
@@ -971,7 +971,7 @@
             filter: brightness(1.1);
         }
 
-        .smart-link-badge i { font-size: 0.72rem; }
+        .smart-link-badge i { font-size: 0.75rem; }
 
         /* ================== Elegant Arc Rounded Image Layout ================== */
         .post-images-grid {
@@ -1780,7 +1780,7 @@
         function updateThemeIcon(theme) {
             const icon = document.getElementById("themeIcon");
             if (!icon) return;
-            icon.className = (theme === "light") ? "fas fa-moon" : "fas fa-sun";
+            icon.className = (theme === "dark") ? "fas fa-sun" : "fas fa-moon";
         }
 
         const firebaseConfig = {
@@ -1796,7 +1796,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // تفعيل الكاش المحلي لتسريع جلب البيانات والفتح الفوري
         db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 
         let visitorId = localStorage.getItem("fb_visitor_id");
@@ -1841,14 +1840,44 @@
 
         function formatSmartPostText(text) {
             if (!text) return '';
-            let safeText = escapeHtml(text);
-            const urlPattern = /(https?:\/\/[^\s]+)/g;
-            return safeText.replace(urlPattern, (url) => {
-                return `<a href="${url}" target="_blank" rel="noopener noreferrer nofollow" class="smart-link-badge" onclick="event.stopPropagation();">
+            
+            const urlPattern = /(https?:\/\/[^\s<>]+|(?:www\.)[^\s<>]+|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\/[^\s<>]*)?)/gi;
+            
+            let parts = [];
+            let lastIndex = 0;
+            let match;
+
+            while ((match = urlPattern.exec(text)) !== null) {
+                let rawMatch = match[0];
+                let isLikelyUrl = rawMatch.startsWith('http://') || 
+                                  rawMatch.startsWith('https://') || 
+                                  rawMatch.startsWith('www.') || 
+                                  /\.(com|net|org|app|io|me|info|site|online|tv|link|co|top|eg|sa|ae|xyz|store|shop)([\/?#]|$)/i.test(rawMatch);
+
+                if (!isLikelyUrl) continue;
+
+                if (match.index > lastIndex) {
+                    parts.push(escapeHtml(text.substring(lastIndex, match.index)));
+                }
+
+                let targetHref = rawMatch;
+                if (!/^https?:\/\//i.test(targetHref)) {
+                    targetHref = 'https://' + targetHref;
+                }
+
+                parts.push(`<a href="${escapeHtml(targetHref)}" target="_blank" rel="noopener noreferrer nofollow" class="smart-link-badge" onclick="event.stopPropagation();">
                     <i class="fas fa-external-link-alt"></i>
                     <span>اضغط هنا لفتح الرابط مباشرة</span>
-                </a>`;
-            });
+                </a>`);
+
+                lastIndex = urlPattern.lastIndex;
+            }
+
+            if (lastIndex < text.length) {
+                parts.push(escapeHtml(text.substring(lastIndex)));
+            }
+
+            return parts.join('');
         }
 
         let currentLightboxImgSrc = '';
