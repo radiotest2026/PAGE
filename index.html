@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="dark">
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -615,7 +615,7 @@
             gap: 12px;
         }
 
-        /* ================== Distinctive Match Ad Card ================== */
+        /* ================== High-End Distinctive Sponsored Ad Card ================== */
         .match-promo-card {
             background: linear-gradient(145deg, #0d111a 0%, #141a26 100%);
             border: 1px solid rgba(255, 183, 3, 0.35);
@@ -1764,13 +1764,13 @@
     <!-- Scripts Logic -->
     <script>
         function initTheme() {
-            const savedTheme = localStorage.getItem("preferred_theme") || "dark";
+            const savedTheme = localStorage.getItem("preferred_theme") || "light";
             document.documentElement.setAttribute("data-theme", savedTheme);
             updateThemeIcon(savedTheme);
         }
 
         function toggleAppTheme() {
-            const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
             const newTheme = (currentTheme === "dark") ? "light" : "dark";
             document.documentElement.setAttribute("data-theme", newTheme);
             localStorage.setItem("preferred_theme", newTheme);
@@ -1780,7 +1780,7 @@
         function updateThemeIcon(theme) {
             const icon = document.getElementById("themeIcon");
             if (!icon) return;
-            icon.className = (theme === "light") ? "fas fa-sun" : "fas fa-moon";
+            icon.className = (theme === "dark") ? "fas fa-sun" : "fas fa-moon";
         }
 
         const firebaseConfig = {
