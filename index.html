@@ -1082,21 +1082,22 @@
             backdrop-filter: blur(2px);
         }
 
+        /* ================== Interactive Lightbox Image Gallery ================== */
         .image-lightbox-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(5, 6, 10, 0.94);
+            background: rgba(5, 6, 10, 0.95);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             z-index: 10000;
             display: none;
             align-items: center;
             justify-content: center;
-            padding: 16px;
+            padding: 12px;
             opacity: 0;
             transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: zoom-out;
             user-select: none;
+            touch-action: none;
         }
 
         .image-lightbox-overlay.active {
@@ -1106,8 +1107,8 @@
 
         .image-lightbox-wrapper {
             position: relative;
-            max-width: 92vw;
-            max-height: 88vh;
+            max-width: 94vw;
+            max-height: 86vh;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -1123,26 +1124,26 @@
 
         .image-lightbox-img {
             max-width: 90vw;
-            max-height: 80vh;
+            max-height: 78vh;
             object-fit: contain;
             border-radius: 18px;
             border: 2px solid rgba(255, 0, 85, 0.6);
             box-shadow: 0 0 20px rgba(255, 0, 85, 0.4), 
                         0 0 45px rgba(121, 40, 202, 0.25),
                         0 15px 35px rgba(0, 0, 0, 0.8);
-            cursor: pointer;
             user-select: none;
+            pointer-events: auto;
         }
 
         .lightbox-toolbar {
             position: absolute;
-            top: -48px;
+            top: -50px;
             left: 0;
             right: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .lightbox-btn {
@@ -1165,6 +1166,50 @@
         }
 
         .lightbox-btn:active { transform: scale(0.94); background: var(--primary); }
+
+        .lightbox-counter-badge {
+            background: rgba(255, 0, 85, 0.2);
+            border: 1px solid rgba(255, 0, 85, 0.4);
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            font-family: monospace, 'Cairo', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .lightbox-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(24, 25, 32, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10005;
+            backdrop-filter: blur(6px);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            user-select: none;
+        }
+
+        .lightbox-nav-btn:active { transform: translateY(-50%) scale(0.9); background: var(--primary); }
+        .lightbox-prev-btn { right: 15px; }
+        .lightbox-next-btn { left: 15px; }
+
+        @media (max-width: 650px) {
+            .lightbox-nav-btn { width: 38px; height: 38px; font-size: 0.95rem; }
+            .lightbox-prev-btn { right: 8px; }
+            .lightbox-next-btn { left: 8px; }
+        }
 
         .post-metrics-bar {
             display: flex;
@@ -1710,19 +1755,28 @@
 
     </main>
 
-    <!-- Lightbox -->
+    <!-- Interactive Lightbox Image Gallery Slider -->
     <div class="image-lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox(event)">
-        <div class="image-lightbox-wrapper" id="lightboxWrapper">
+        <button type="button" class="lightbox-nav-btn lightbox-prev-btn" id="lightboxPrevBtn" onclick="navigateLightboxImage(-1, event)" title="الصورة السابقة">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <div class="image-lightbox-wrapper" id="lightboxWrapper" onclick="event.stopPropagation();">
             <div class="lightbox-toolbar">
                 <a href="javascript:void(0)" id="lightboxDownloadBtn" onclick="downloadActiveLightboxImage()" class="lightbox-btn">
                     <i class="fas fa-download"></i> تنزيل الصورة
                 </a>
+                <span class="lightbox-counter-badge" id="lightboxCounterBadge" style="display:none;">1 / 1</span>
                 <button type="button" class="lightbox-btn" onclick="forceCloseLightbox()">
                     <i class="fas fa-times"></i> إغلاق
                 </button>
             </div>
-            <img src="" id="lightboxImg" class="image-lightbox-img" alt="صورة مكبرة" onclick="forceCloseLightbox()">
+            <img src="" id="lightboxImg" class="image-lightbox-img" alt="صورة مكبرة">
         </div>
+
+        <button type="button" class="lightbox-nav-btn lightbox-next-btn" id="lightboxNextBtn" onclick="navigateLightboxImage(1, event)" title="الصورة التالية">
+            <i class="fas fa-chevron-left"></i>
+        </button>
     </div>
 
     <!-- نافذة تفاصيل المتفاعلين -->
@@ -1780,7 +1834,7 @@
         function updateThemeIcon(theme) {
             const icon = document.getElementById("themeIcon");
             if (!icon) return;
-            icon.className = (theme === "dark") ? "fas fa-sun" : "fas fa-moon";
+            icon.className = (theme === "light") ? "fas fa-moon" : "fas fa-sun";
         }
 
         const firebaseConfig = {
@@ -1880,15 +1934,25 @@
             return parts.join('');
         }
 
-        let currentLightboxImgSrc = '';
+        /* ================== Lightbox Gallery with Arrows & Touch Swipe ================== */
+        let currentLightboxImagesList = [];
+        let currentLightboxImageIndex = 0;
         let isLightboxOpenState = false;
 
-        function openLightbox(imgSrc, event) {
+        function openLightbox(imgSrc, event, galleryList = null, initialIndex = 0) {
             if (event) event.stopPropagation();
-            currentLightboxImgSrc = imgSrc;
+
+            if (galleryList && Array.isArray(galleryList) && galleryList.length > 0) {
+                currentLightboxImagesList = galleryList;
+                currentLightboxImageIndex = (initialIndex >= 0 && initialIndex < galleryList.length) ? initialIndex : 0;
+            } else {
+                currentLightboxImagesList = [imgSrc];
+                currentLightboxImageIndex = 0;
+            }
+
+            updateLightboxUI();
+
             const overlay = document.getElementById('lightboxOverlay');
-            const imgEl = document.getElementById('lightboxImg');
-            imgEl.src = imgSrc;
             overlay.style.display = 'flex';
             setTimeout(() => {
                 overlay.classList.add('active');
@@ -1897,6 +1961,81 @@
             isLightboxOpenState = true;
             history.pushState({ lightboxOpen: true }, "");
         }
+
+        function updateLightboxUI() {
+            const imgEl = document.getElementById('lightboxImg');
+            const counterBadge = document.getElementById('lightboxCounterBadge');
+            const prevBtn = document.getElementById('lightboxPrevBtn');
+            const nextBtn = document.getElementById('lightboxNextBtn');
+
+            if (currentLightboxImagesList.length > 0) {
+                imgEl.src = currentLightboxImagesList[currentLightboxImageIndex];
+            }
+
+            if (currentLightboxImagesList.length > 1) {
+                counterBadge.style.display = 'inline-block';
+                counterBadge.textContent = `${currentLightboxImageIndex + 1} / ${currentLightboxImagesList.length}`;
+                prevBtn.style.display = 'flex';
+                nextBtn.style.display = 'flex';
+            } else {
+                counterBadge.style.display = 'none';
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            }
+        }
+
+        function navigateLightboxImage(direction, event) {
+            if (event) event.stopPropagation();
+            if (currentLightboxImagesList.length <= 1) return;
+
+            currentLightboxImageIndex += direction;
+            if (currentLightboxImageIndex < 0) {
+                currentLightboxImageIndex = currentLightboxImagesList.length - 1;
+            } else if (currentLightboxImageIndex >= currentLightboxImagesList.length) {
+                currentLightboxImageIndex = 0;
+            }
+
+            const imgEl = document.getElementById('lightboxImg');
+            imgEl.style.opacity = '0.5';
+            setTimeout(() => {
+                updateLightboxUI();
+                imgEl.style.opacity = '1';
+            }, 80);
+        }
+
+        // إيماءات اللمس للموبايل (Touch Swipe Left / Right)
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const lightboxOverlayEl = document.getElementById('lightboxOverlay');
+
+        lightboxOverlayEl.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        lightboxOverlayEl.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleLightboxSwipe();
+        }, { passive: true });
+
+        function handleLightboxSwipe() {
+            const swipeThreshold = 45;
+            const diff = touchEndX - touchStartX;
+            if (Math.abs(diff) > swipeThreshold && currentLightboxImagesList.length > 1) {
+                if (diff > 0) {
+                    navigateLightboxImage(-1); // سحب يمين -> الصورة السابقة
+                } else {
+                    navigateLightboxImage(1);  // سحب يسار -> الصورة التالية
+                }
+            }
+        }
+
+        // دعم أسهم لوحة المفاتيح
+        document.addEventListener('keydown', (e) => {
+            if (!isLightboxOpenState) return;
+            if (e.key === 'ArrowRight') navigateLightboxImage(-1);
+            else if (e.key === 'ArrowLeft') navigateLightboxImage(1);
+            else if (e.key === 'Escape') forceCloseLightbox();
+        });
 
         function closeLightbox(event) {
             if (event.target.id === 'lightboxOverlay') {
@@ -1930,18 +2069,19 @@
         });
 
         async function downloadActiveLightboxImage() {
-            if (!currentLightboxImgSrc) return;
+            const currentImg = currentLightboxImagesList[currentLightboxImageIndex];
+            if (!currentImg) return;
             try {
                 showToast("جاري تنزيل الصورة...");
-                if (currentLightboxImgSrc.startsWith('data:')) {
+                if (currentImg.startsWith('data:')) {
                     const link = document.createElement('a');
-                    link.href = currentLightboxImgSrc;
+                    link.href = currentImg;
                     link.download = `starnet-post-${Date.now()}.jpg`;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
                 } else {
-                    const response = await fetch(currentLightboxImgSrc);
+                    const response = await fetch(currentImg);
                     const blob = await response.blob();
                     const blobUrl = window.URL.createObjectURL(blob);
                     const link = document.createElement('a');
@@ -1956,7 +2096,7 @@
             } catch (err) {
                 console.error(err);
                 const link = document.createElement('a');
-                link.href = currentLightboxImgSrc;
+                link.href = currentImg;
                 link.target = '_blank';
                 link.rel = 'noopener noreferrer nofollow';
                 link.download = `starnet-post-${Date.now()}.jpg`;
@@ -2402,44 +2542,46 @@
             let imagesHtml = '';
 
             if (images.length > 0) {
+                window[`post_gallery_${postId}`] = images;
+
                 if (images.length === 1) {
                     imagesHtml = `
                         <div class="post-images-grid fb-grid-1">
                             <div class="fb-img-item">
-                                <img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event)">
+                                <img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)">
                             </div>
                         </div>
                     `;
                 } else if (images.length === 2) {
                     imagesHtml = `
                         <div class="post-images-grid fb-grid-2">
-                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event)"></div>
-                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" onclick="openLightbox('${images[1]}', event)"></div>
+                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)"></div>
+                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" onclick="openLightbox('${images[1]}', event, window['post_gallery_${postId}'], 1)"></div>
                         </div>
                     `;
                 } else if (images.length === 3) {
                     imagesHtml = `
                         <div class="post-images-grid fb-grid-3">
-                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event)"></div>
-                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" onclick="openLightbox('${images[1]}', event)"></div>
-                            <div class="fb-img-item"><img src="${images[2]}" alt="Post" onclick="openLightbox('${images[2]}', event)"></div>
+                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)"></div>
+                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" onclick="openLightbox('${images[1]}', event, window['post_gallery_${postId}'], 1)"></div>
+                            <div class="fb-img-item"><img src="${images[2]}" alt="Post" onclick="openLightbox('${images[2]}', event, window['post_gallery_${postId}'], 2)"></div>
                         </div>
                     `;
                 } else {
                     let remainingCount = images.length - 4;
                     imagesHtml = `
                         <div class="post-images-grid fb-grid-4plus">
-                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event)"></div>
-                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" onclick="openLightbox('${images[1]}', event)"></div>
-                            <div class="fb-img-item"><img src="${images[2]}" alt="Post" onclick="openLightbox('${images[2]}', event)"></div>
+                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)"></div>
+                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" onclick="openLightbox('${images[1]}', event, window['post_gallery_${postId}'], 1)"></div>
+                            <div class="fb-img-item"><img src="${images[2]}" alt="Post" onclick="openLightbox('${images[2]}', event, window['post_gallery_${postId}'], 2)"></div>
                             <div class="fb-img-item">
                                 ${remainingCount > 0 ? `
-                                    <div class="more-images-overlay-box" onclick="openLightbox('${images[3]}', event)">
+                                    <div class="more-images-overlay-box" onclick="openLightbox('${images[3]}', event, window['post_gallery_${postId}'], 3)">
                                         <img src="${images[3]}" alt="Post">
                                         <div class="more-count-tag">+${remainingCount}</div>
                                     </div>
                                 ` : `
-                                    <img src="${images[3]}" alt="Post" onclick="openLightbox('${images[3]}', event)">
+                                    <img src="${images[3]}" alt="Post" onclick="openLightbox('${images[3]}', event, window['post_gallery_${postId}'], 3)">
                                 `}
                             </div>
                         </div>
