@@ -722,6 +722,13 @@
             padding: 12px 14px;
             box-shadow: 0 3px 12px var(--shadow-color);
             position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .post-card.highlight-target {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 20px var(--accent-glow) !important;
+            transform: scale(1.02);
         }
 
         .post-header {
@@ -1291,8 +1298,11 @@
             background: var(--card-sub);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s ease, transform 0.15s ease;
+            cursor: pointer;
         }
+
+        .notif-item:active { transform: scale(0.98); }
 
         .notif-item.unread {
             background: rgba(225, 29, 72, 0.08);
@@ -2188,6 +2198,14 @@
             renderPostsFeed();
         }
 
+        /* جلب المنشورات وترتيبها حسب تاريخ الموافقة/التحديث ليتصدر المنشور المعتمد حديثاً */
+        function getPostEffectiveTime(post) {
+            const timeObj = post.approvedAt || post.updatedAt || post.createdAt;
+            if (timeObj && timeObj.toDate) return timeObj.toDate().getTime();
+            if (timeObj) return new Date(timeObj).getTime();
+            return 0;
+        }
+
         function listenToCloudPosts() {
             db.collection("posts")
                 .limit(50)
@@ -2207,11 +2225,8 @@
                         }
                     });
 
-                    freshPosts.sort((a, b) => {
-                        const timeA = (a.createdAt && a.createdAt.toDate) ? a.createdAt.toDate().getTime() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
-                        const timeB = (b.createdAt && b.createdAt.toDate) ? b.createdAt.toDate().getTime() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
-                        return timeB - timeA;
-                    });
+                    // الترتيب حسب وقت وتاريخ الموافقة ليكون في المقدمة
+                    freshPosts.sort((a, b) => getPostEffectiveTime(b) - getPostEffectiveTime(a));
 
                     if (freshPosts.length > 0) {
                         allApprovedPostsList = freshPosts;
@@ -2305,8 +2320,9 @@
             article.id = `post-${postId}`;
 
             let timeAgo = "الآن";
-            if (postData.createdAt && postData.createdAt.toDate) {
-                timeAgo = postData.createdAt.toDate().toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+            const effectiveDate = postData.approvedAt || postData.updatedAt || postData.createdAt;
+            if (effectiveDate && effectiveDate.toDate) {
+                timeAgo = effectiveDate.toDate().toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
             }
 
             const authorName = postData.authorName || 'المهندس محمد السعيد';
@@ -2547,27 +2563,28 @@
 
         function closeReactionsModal() { document.getElementById('reactionsModal').style.display = 'none'; }
 
-        /* Notifications Center System (Real-time Live Sync) */
+        /* Notifications Center System (Real-time Live Sync + Click to Open Target Post/Chat) */
         let myPostsNotifs = [];
         let myCommentsNotifs = [];
         let globalPostsNotifs = [];
 
         function listenToVisitorNotifications() {
-            // مراقبة حية لمنشورات الزائر والردود عليها
             db.collection("posts").where("visitorId", "==", visitorId).onSnapshot((snapshot) => {
                 const lastReadNotifTime = localStorage.getItem(`last_read_notif_${visitorId}`) || '1970-01-01T00:00:00.000Z';
                 myPostsNotifs = [];
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    const postTime = (data.createdAt && data.createdAt.toDate) ? data.createdAt.toDate().toISOString() : new Date().toISOString();
+                    const postTime = (data.approvedAt && data.approvedAt.toDate) ? data.approvedAt.toDate().toISOString() : ((data.createdAt && data.createdAt.toDate) ? data.createdAt.toDate().toISOString() : new Date().toISOString());
                     const status = (data.status || '').toString().toLowerCase();
 
                     if (status === 'approved') {
                         myPostsNotifs.push({
                             id: `post_app_${doc.id}`,
+                            postId: doc.id,
+                            targetType: 'post',
                             title: 'تمت الموافقة على منشورك بنجاح ✅',
-                            desc: `تمت مراجعة منشورك الخاص بجهاز (${data.deviceType || 'ريسيفر'}) ونشره في الصفحة.`,
+                            desc: `تمت مراجعة منشورك الخاص بجهاز (${data.deviceType || 'ريسيفر'}) ونشره في الصفحة. اضغط هنا لرؤيته.`,
                             time: postTime,
                             icon: 'fas fa-check-circle',
                             iconClass: 'notif-icon-approved',
@@ -2578,8 +2595,10 @@
                     if (data.adminSolutionComment) {
                         myPostsNotifs.push({
                             id: `post_sol_${doc.id}`,
+                            postId: doc.id,
+                            targetType: 'post',
                             title: 'رد جديد بالحل المعتمد من المهندس محمد السعيد 🛠️',
-                            desc: `تم الرد على استفسارك: "${data.adminSolutionComment.substring(0, 75)}..."`,
+                            desc: `تم الرد على استفسارك: "${data.adminSolutionComment.substring(0, 75)}...". اضغط لفتح الحل.`,
                             time: postTime,
                             icon: 'fas fa-tools',
                             iconClass: 'notif-icon-reply',
@@ -2590,7 +2609,6 @@
                 renderCombinedNotifications();
             });
 
-            // مراقبة حية لتعليقات الزائر والردود عليها
             db.collection("comments_pending").where("visitorId", "==", visitorId).onSnapshot((snapshot) => {
                 const lastReadNotifTime = localStorage.getItem(`last_read_notif_${visitorId}`) || '1970-01-01T00:00:00.000Z';
                 myCommentsNotifs = [];
@@ -2603,8 +2621,10 @@
                     if (status === 'approved') {
                         myCommentsNotifs.push({
                             id: `comm_app_${doc.id}`,
+                            postId: data.postId,
+                            targetType: 'post',
                             title: 'تمت الموافقة على تعليقك 💬',
-                            desc: `تم اعتماد ونشر تعليقك: "${data.text ? data.text.substring(0, 60) : ''}"`,
+                            desc: `تم اعتماد ونشر تعليقك: "${data.text ? data.text.substring(0, 60) : ''}". اضغط لفتح المنشور.`,
                             time: commTime,
                             icon: 'fas fa-comment-check',
                             iconClass: 'notif-icon-approved',
@@ -2615,8 +2635,10 @@
                     if (data.replyText) {
                         myCommentsNotifs.push({
                             id: `comm_rep_${doc.id}`,
+                            postId: data.postId,
+                            targetType: 'post',
                             title: 'رد رسمي من المهندس محمد السعيد على تعليقك ✍️',
-                            desc: `الرد: "${data.replyText.substring(0, 75)}..."`,
+                            desc: `الرد: "${data.replyText.substring(0, 75)}...". اضغط للقراءة.`,
                             time: commTime,
                             icon: 'fas fa-reply',
                             iconClass: 'notif-icon-reply',
@@ -2627,21 +2649,22 @@
                 renderCombinedNotifications();
             });
 
-            // مراقبة حية لكل المنشورات المعتمدة الجديدة على الصفحة
             db.collection("posts").limit(25).onSnapshot((snapshot) => {
                 const lastReadNotifTime = localStorage.getItem(`last_read_notif_${visitorId}`) || '1970-01-01T00:00:00.000Z';
                 globalPostsNotifs = [];
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    const pTime = (data.createdAt && data.createdAt.toDate) ? data.createdAt.toDate().toISOString() : new Date().toISOString();
+                    const pTime = (data.approvedAt && data.approvedAt.toDate) ? data.approvedAt.toDate().toISOString() : ((data.createdAt && data.createdAt.toDate) ? data.createdAt.toDate().toISOString() : new Date().toISOString());
                     const status = (data.status || '').toString().toLowerCase();
 
                     if (status === 'approved' || data.adminSolutionComment) {
                         globalPostsNotifs.push({
                             id: `global_post_${doc.id}`,
+                            postId: doc.id,
+                            targetType: 'post',
                             title: `منشور جديد: ${escapeHtml(data.authorName || 'المهندس محمد السعيد')} 📢`,
-                            desc: data.text ? data.text.substring(0, 80) + '...' : 'تحديث جديد متاح على الصفحة',
+                            desc: data.text ? data.text.substring(0, 80) + '...' : 'تحديث جديد متاح على الصفحة. اضغط لفتحه.',
                             time: pTime,
                             icon: 'fas fa-bullhorn',
                             iconClass: 'notif-icon-post',
@@ -2656,7 +2679,6 @@
         function renderCombinedNotifications() {
             let combined = [...myPostsNotifs, ...myCommentsNotifs, ...globalPostsNotifs];
 
-            // إزالة التكرار إن وجد والترتيب من الأحدث للأقدم
             const uniqueMap = new Map();
             combined.forEach(item => uniqueMap.set(item.id, item));
             visitorNotificationsList = Array.from(uniqueMap.values());
@@ -2687,7 +2709,7 @@
                 body.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 16px; font-size: 0.82rem;">لا توجد أي إشعارات جديدة حالياً.</p>`;
             } else {
                 body.innerHTML = visitorNotificationsList.map(n => `
-                    <div class="notif-item ${n.isUnread ? 'unread' : ''}">
+                    <div class="notif-item ${n.isUnread ? 'unread' : ''}" onclick="handleNotificationClick('${n.targetType}', '${n.postId || ''}')">
                         <div class="notif-icon-wrap ${n.iconClass}">
                             <i class="${n.icon}"></i>
                         </div>
@@ -2701,6 +2723,28 @@
             }
 
             modal.style.display = 'flex';
+        }
+
+        function handleNotificationClick(targetType, targetId) {
+            closeNotificationsModal();
+
+            if (targetType === 'chat') {
+                toggleMessengerWidget();
+                return;
+            }
+
+            if (targetType === 'post' && targetId) {
+                const targetPostEl = document.getElementById(`post-${targetId}`);
+                if (targetPostEl) {
+                    targetPostEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetPostEl.classList.add('highlight-target');
+                    setTimeout(() => {
+                        targetPostEl.classList.remove('highlight-target');
+                    }, 2200);
+                } else {
+                    showToast("المنشور متاح في أول الصفحة");
+                }
+            }
         }
 
         function closeNotificationsModal() {
