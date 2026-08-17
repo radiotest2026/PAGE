@@ -229,7 +229,7 @@
         .profile-actions::-webkit-scrollbar { display: none; }
 
         .btn-fb {
-            padding: 7px 13px;
+            padding: 7px 12px;
             border-radius: 10px;
             font-size: 0.82rem;
             font-weight: 700;
@@ -1343,6 +1343,66 @@
             font-weight: 700;
         }
 
+        /* ================== Notifications Modal Styles ================== */
+        .notif-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--card-sub);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            transition: background-color 0.2s ease;
+        }
+
+        .notif-item.unread {
+            background: rgba(225, 29, 72, 0.08);
+            border-color: rgba(225, 29, 72, 0.3);
+        }
+
+        .notif-icon-wrap {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+            color: #fff;
+        }
+
+        .notif-icon-post { background: linear-gradient(135deg, #1877f2, #6366f1); }
+        .notif-icon-approved { background: linear-gradient(135deg, #16a34a, #00ff66); }
+        .notif-icon-reply { background: linear-gradient(135deg, #e11d48, #ff0055); }
+
+        .notif-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .notif-title {
+            font-size: 0.86rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .notif-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .notif-time {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-family: monospace, 'Cairo', sans-serif;
+        }
+
         .messenger-widget {
             position: fixed;
             bottom: 20px;
@@ -1461,7 +1521,7 @@
             .cover-photo-wrapper { height: 145px; } 
             .profile-text h1 { font-size: 1.25rem; } 
             .profile-actions { gap: 4px; }
-            .btn-fb { padding: 6px 9px; font-size: 0.74rem; }
+            .btn-fb { padding: 6px 8px; font-size: 0.72rem; }
             .messenger-widget { left: 8px; right: 8px; width: auto; } 
             .match-sponsored-badge { font-size: 0.72rem; padding: 3px 8px; }
             
@@ -1499,6 +1559,10 @@
                     <div class="profile-actions">
                         <button id="followBtn" class="btn-fb btn-fb-primary" onclick="toggleRealFollow()">
                             <i class="fas fa-plus"></i> <span>متابعة</span>
+                        </button>
+                        <button class="btn-fb btn-fb-secondary" onclick="openNotificationsModal()" id="headerNotifBtn" title="الإشعارات">
+                            <i class="fas fa-bell"></i> <span>الإشعارات</span>
+                            <span class="msg-unread-badge" id="visitorUnreadNotifBadge">0</span>
                         </button>
                         <button class="btn-fb btn-fb-secondary" onclick="toggleMessengerWidget()" id="headerMsgBtn">
                             <i class="fas fa-comments"></i> <span>رسالة</span>
@@ -1627,6 +1691,19 @@
                 <button class="modal-close-btn" onclick="closeReactionsModal()"><i class="fas fa-times"></i></button>
             </div>
             <div id="reactionsModalBody" style="display: flex; flex-direction: column; gap: 6px;"></div>
+        </div>
+    </div>
+
+    <!-- نافذة الإشعارات -->
+    <div class="reactions-details-modal" id="notificationsModal" onclick="if(event.target===this) closeNotificationsModal()">
+        <div class="reactions-details-box">
+            <div class="modal-header">
+                <h3 style="color: var(--text-main);"><i class="fas fa-bell" style="color: var(--primary);"></i> مركز الإشعارات</h3>
+                <button class="modal-close-btn" onclick="closeNotificationsModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="notificationsModalBody" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;">
+                <p style="text-align: center; color: var(--text-muted); padding: 12px; font-size: 0.84rem;">لا توجد إشعارات جديدة حالياً.</p>
+            </div>
         </div>
     </div>
 
@@ -2131,7 +2208,6 @@
             }
         }
 
-        // منشورات فورية افتراضية لعرض المحتوى في 0 ثانية لأي زائر جديد
         const DEFAULT_PRELOADED_POSTS = [
             {
                 id: "initial_welcome_post",
@@ -2162,7 +2238,6 @@
                     </div>
                 </div>
 
-                <!-- صورة الإعلان فقط -->
                 <div class="match-banner-img-wrap" onclick="openLightbox('https://d.top4top.io/p_3880w4dj50.jpg', event, ['https://d.top4top.io/p_3880w4dj50.jpg'], 0)">
                     <img src="https://d.top4top.io/p_3880w4dj50.jpg" alt="إعلان">
                 </div>
@@ -2189,7 +2264,6 @@
                 const postElement = createPostElement(postData.id, postData);
                 feed.appendChild(postElement);
                 
-                // إضافة الإعلان المميز بعد البوست الأول مباشرة
                 if (index === 0) {
                     const promoBanner = createMatchPromoElement();
                     feed.appendChild(promoBanner);
@@ -2233,9 +2307,7 @@
                 .where("status", "==", "approved")
                 .limit(25)
                 .onSnapshot((snapshot) => {
-                    if (snapshot.empty) {
-                        return;
-                    }
+                    if (snapshot.empty) return;
 
                     let freshPosts = [];
                     allCloudPostsData = {};
@@ -2588,6 +2660,176 @@
             document.getElementById('reactionsModal').style.display = 'none';
         }
 
+        /* ================== Notifications Center System ================== */
+        let visitorNotificationsList = [];
+
+        function listenToVisitorNotifications() {
+            const lastReadNotifTime = localStorage.getItem(`last_read_notif_${visitorId}`) || '1970-01-01T00:00:00.000Z';
+
+            // 1. مراقبة المنشورات الخاصة بالزائر وتحديثات الأدمن عليها
+            db.collection("posts")
+                .where("visitorId", "==", visitorId)
+                .onSnapshot((snapshot) => {
+                    rebuildNotificationsFeed();
+                });
+
+            // 2. مراقبة تعليقات الزائر وردود الأدمن عليها
+            db.collection("comments_pending")
+                .where("visitorId", "==", visitorId)
+                .onSnapshot((snapshot) => {
+                    rebuildNotificationsFeed();
+                });
+
+            // 3. مراقبة المنشورات العامة الجديدة
+            db.collection("posts")
+                .where("status", "==", "approved")
+                .limit(10)
+                .onSnapshot((snapshot) => {
+                    rebuildNotificationsFeed();
+                });
+        }
+
+        async function rebuildNotificationsFeed() {
+            const lastReadNotifTime = localStorage.getItem(`last_read_notif_${visitorId}`) || '1970-01-01T00:00:00.000Z';
+            let allNotifs = [];
+
+            try {
+                // جلب منشورات العميل
+                const myPostsSnap = await db.collection("posts").where("visitorId", "==", visitorId).get();
+                myPostsSnap.forEach(doc => {
+                    const data = doc.data();
+                    const postTime = (data.createdAt && data.createdAt.toDate) ? data.createdAt.toDate().toISOString() : new Date().toISOString();
+
+                    if (data.status === 'approved') {
+                        allNotifs.push({
+                            id: `post_approved_${doc.id}`,
+                            type: 'approved',
+                            iconClass: 'notif-icon-approved',
+                            icon: 'fas fa-check-circle',
+                            title: 'تمت الموافقة على منشورك بنجاح ✅',
+                            desc: `تمت مراجعة منشورك الخاص بجهاز (${data.deviceType || 'ريسيفر'}) ونشره في الصفحة الرئيسية.`,
+                            time: postTime,
+                            isUnread: new Date(postTime) > new Date(lastReadNotifTime)
+                        });
+                    }
+
+                    if (data.adminSolutionComment) {
+                        allNotifs.push({
+                            id: `post_reply_${doc.id}`,
+                            type: 'reply',
+                            iconClass: 'notif-icon-reply',
+                            icon: 'fas fa-tools',
+                            title: 'رد جديد بالحل المعتمد من المهندس محمد السعيد 🛠️',
+                            desc: `تم الرد على مشكلتك: "${data.adminSolutionComment.substring(0, 75)}..."`,
+                            time: postTime,
+                            isUnread: new Date(postTime) > new Date(lastReadNotifTime)
+                        });
+                    }
+                });
+
+                // جلب تعليقات العميل
+                const myCommentsSnap = await db.collection("comments_pending").where("visitorId", "==", visitorId).get();
+                myCommentsSnap.forEach(doc => {
+                    const data = doc.data();
+                    const commTime = (data.createdAt && data.createdAt.toDate) ? data.createdAt.toDate().toISOString() : new Date().toISOString();
+
+                    if (data.status === 'approved') {
+                        allNotifs.push({
+                            id: `comm_approved_${doc.id}`,
+                            type: 'approved',
+                            iconClass: 'notif-icon-approved',
+                            icon: 'fas fa-comment-check',
+                            title: 'تمت الموافقة على تعليقك 💬',
+                            desc: `تم اعتماد ونشر تعليقك: "${data.text ? data.text.substring(0, 60) : ''}"`,
+                            time: commTime,
+                            isUnread: new Date(commTime) > new Date(lastReadNotifTime)
+                        });
+                    }
+
+                    if (data.replyText) {
+                        allNotifs.push({
+                            id: `comm_reply_${doc.id}`,
+                            type: 'reply',
+                            iconClass: 'notif-icon-reply',
+                            icon: 'fas fa-reply',
+                            title: 'رد رسمي من المهندس محمد السعيد على تعليقك ✍️',
+                            desc: `الرد: "${data.replyText.substring(0, 75)}..."`,
+                            time: commTime,
+                            isUnread: new Date(commTime) > new Date(lastReadNotifTime)
+                        });
+                    }
+                });
+
+                // جلب المنشورات الرسمية الجديدة
+                const officialPostsSnap = await db.collection("posts").where("status", "==", "approved").where("isVisitorPost", "==", false).limit(5).get();
+                officialPostsSnap.forEach(doc => {
+                    const data = doc.data();
+                    const pTime = (data.createdAt && data.createdAt.toDate) ? data.createdAt.toDate().toISOString() : new Date().toISOString();
+                    allNotifs.push({
+                        id: `official_post_${doc.id}`,
+                        type: 'post',
+                        iconClass: 'notif-icon-post',
+                        icon: 'fas fa-bullhorn',
+                        title: 'منشور جديد من المهندس محمد السعيد 📢',
+                        desc: data.text ? data.text.substring(0, 80) + '...' : 'تحديث جديد متاح على الصفحة',
+                        time: pTime,
+                        isUnread: new Date(pTime) > new Date(lastReadNotifTime)
+                    });
+                });
+
+                // ترتيب الإشعارات من الأحدث للأقدم
+                allNotifs.sort((a, b) => new Date(b.time) - new Date(a.time));
+                visitorNotificationsList = allNotifs;
+
+                // تحديث العداد الأحمر للإشعارات
+                const unreadCount = allNotifs.filter(n => n.isUnread).length;
+                const badge = document.getElementById('visitorUnreadNotifBadge');
+                if (badge) {
+                    if (unreadCount > 0) {
+                        badge.textContent = unreadCount > 99 ? '+99' : unreadCount;
+                        badge.style.display = 'flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            } catch (err) {
+                console.error("Notifications fetch error:", err);
+            }
+        }
+
+        function openNotificationsModal() {
+            const modal = document.getElementById('notificationsModal');
+            const body = document.getElementById('notificationsModalBody');
+            
+            // تصفير عداد الإشعارات وتحديد وقت القراءة
+            localStorage.setItem(`last_read_notif_${visitorId}`, new Date().toISOString());
+            const badge = document.getElementById('visitorUnreadNotifBadge');
+            if (badge) badge.style.display = 'none';
+
+            if (visitorNotificationsList.length === 0) {
+                body.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 18px; font-size: 0.86rem;">لا توجد أي إشعارات جديدة حالياً.</p>`;
+            } else {
+                body.innerHTML = visitorNotificationsList.map(n => `
+                    <div class="notif-item ${n.isUnread ? 'unread' : ''}">
+                        <div class="notif-icon-wrap ${n.iconClass}">
+                            <i class="${n.icon}"></i>
+                        </div>
+                        <div class="notif-content">
+                            <div class="notif-title">${escapeHtml(n.title)}</div>
+                            <div class="notif-desc">${escapeHtml(n.desc)}</div>
+                            <div class="notif-time">${new Date(n.time).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeNotificationsModal() {
+            document.getElementById('notificationsModal').style.display = 'none';
+        }
+
         function toggleCommentsSection(postId) {
             const section = document.getElementById(`comments-section-${postId}`);
             if (section) section.classList.toggle('open');
@@ -2782,7 +3024,7 @@
                     container.innerHTML = '';
                     
                     const lastReadTime = localStorage.getItem(`last_read_time_${visitorId}`) || '1970-01-01T00:00:00.000Z';
-                    let unreadCount = 0;
+                    let unreadAdminRepliesCount = 0;
 
                     msgs.forEach(m => {
                         const div = document.createElement('div');
@@ -2793,7 +3035,7 @@
                         if (m.sender === 'admin') {
                             const msgTime = m.time || new Date().toISOString();
                             if (new Date(msgTime) > new Date(lastReadTime)) {
-                                unreadCount++;
+                                unreadAdminRepliesCount++;
                             }
                         }
                     });
@@ -2803,8 +3045,8 @@
                     if (isChatOpen) {
                         markMessagesAsReadByVisitor();
                     } else if (badge) {
-                        if (unreadCount > 0) {
-                            badge.textContent = unreadCount > 99 ? '+99' : unreadCount;
+                        if (unreadAdminRepliesCount > 0) {
+                            badge.textContent = unreadAdminRepliesCount > 99 ? '+99' : unreadAdminRepliesCount;
                             badge.style.display = 'flex';
                         } else {
                             badge.style.display = 'none';
@@ -2865,6 +3107,7 @@
             updateAvatarUI();
             listenToFollowers();
             listenToVisitorMessages();
+            listenToVisitorNotifications();
             loadInitialCachedFeed();
             listenToCloudPosts();
         });
