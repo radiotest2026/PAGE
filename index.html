@@ -292,7 +292,6 @@
 
         .trusted-gold-icon { color: #ffb703; font-size: 0.8rem; }
 
-        /* تعديل ظهور الدائرة الحمراء كاملة ونقية بدون أي خط أبيض */
         .msg-unread-badge {
             position: absolute;
             top: -4px;
@@ -2189,10 +2188,10 @@
             renderPostsFeed();
         }
 
+        /* جلب المنشورات بشكل مباشر ومرن لتفادي أي خطأ في الفهرسة */
         function listenToCloudPosts() {
             db.collection("posts")
-                .where("status", "==", "approved")
-                .limit(25)
+                .limit(50)
                 .onSnapshot((snapshot) => {
                     if (snapshot.empty) return;
 
@@ -2202,9 +2201,15 @@
                     snapshot.forEach((doc) => {
                         const postData = doc.data();
                         allCloudPostsData[doc.id] = postData;
-                        freshPosts.push({ id: doc.id, ...postData });
+
+                        const status = (postData.status || '').toString().toLowerCase();
+                        // اعتماد المنشور إذا كانت حالته approved أو عليه رد حل معتمد
+                        if (status === 'approved' || postData.adminSolutionComment) {
+                            freshPosts.push({ id: doc.id, ...postData });
+                        }
                     });
 
+                    // الترتيب البرمجي داخل المتصفح من الأحدث للأقدم
                     freshPosts.sort((a, b) => {
                         const timeA = (a.createdAt && a.createdAt.toDate) ? a.createdAt.toDate().getTime() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
                         const timeB = (b.createdAt && b.createdAt.toDate) ? b.createdAt.toDate().getTime() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
