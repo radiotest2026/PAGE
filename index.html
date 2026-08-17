@@ -2188,7 +2188,6 @@
             renderPostsFeed();
         }
 
-        /* جلب المنشورات بشكل مباشر ومرن لتفادي أي خطأ في الفهرسة */
         function listenToCloudPosts() {
             db.collection("posts")
                 .limit(50)
@@ -2203,13 +2202,11 @@
                         allCloudPostsData[doc.id] = postData;
 
                         const status = (postData.status || '').toString().toLowerCase();
-                        // اعتماد المنشور إذا كانت حالته approved أو عليه رد حل معتمد
                         if (status === 'approved' || postData.adminSolutionComment) {
                             freshPosts.push({ id: doc.id, ...postData });
                         }
                     });
 
-                    // الترتيب البرمجي داخل المتصفح من الأحدث للأقدم
                     freshPosts.sort((a, b) => {
                         const timeA = (a.createdAt && a.createdAt.toDate) ? a.createdAt.toDate().getTime() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
                         const timeB = (b.createdAt && b.createdAt.toDate) ? b.createdAt.toDate().getTime() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
@@ -2550,115 +2547,131 @@
 
         function closeReactionsModal() { document.getElementById('reactionsModal').style.display = 'none'; }
 
-        /* Notifications Center System */
-        let visitorNotificationsList = [];
+        /* Notifications Center System (Real-time Live Sync) */
+        let myPostsNotifs = [];
+        let myCommentsNotifs = [];
+        let globalPostsNotifs = [];
 
         function listenToVisitorNotifications() {
-            db.collection("posts").where("visitorId", "==", visitorId).onSnapshot(() => rebuildNotificationsFeed());
-            db.collection("comments_pending").where("visitorId", "==", visitorId).onSnapshot(() => rebuildNotificationsFeed());
-            db.collection("posts").where("status", "==", "approved").limit(10).onSnapshot(() => rebuildNotificationsFeed());
-        }
+            // مراقبة حية لمنشورات الزائر والردود عليها
+            db.collection("posts").where("visitorId", "==", visitorId).onSnapshot((snapshot) => {
+                const lastReadNotifTime = localStorage.getItem(`last_read_notif_${visitorId}`) || '1970-01-01T00:00:00.000Z';
+                myPostsNotifs = [];
 
-        async function rebuildNotificationsFeed() {
-            const lastReadNotifTime = localStorage.getItem(`last_read_notif_${visitorId}`) || '1970-01-01T00:00:00.000Z';
-            let allNotifs = [];
-
-            try {
-                const myPostsSnap = await db.collection("posts").where("visitorId", "==", visitorId).get();
-                myPostsSnap.forEach(doc => {
+                snapshot.forEach(doc => {
                     const data = doc.data();
                     const postTime = (data.createdAt && data.createdAt.toDate) ? data.createdAt.toDate().toISOString() : new Date().toISOString();
+                    const status = (data.status || '').toString().toLowerCase();
 
-                    if (data.status === 'approved') {
-                        allNotifs.push({
-                            id: `post_approved_${doc.id}`,
-                            type: 'approved',
-                            iconClass: 'notif-icon-approved',
-                            icon: 'fas fa-check-circle',
+                    if (status === 'approved') {
+                        myPostsNotifs.push({
+                            id: `post_app_${doc.id}`,
                             title: 'تمت الموافقة على منشورك بنجاح ✅',
-                            desc: `تمت مراجعة منشورك الخاص بجهاز (${data.deviceType || 'ريسيفر'}) ونشره في الصفحة الرئيسية.`,
+                            desc: `تمت مراجعة منشورك الخاص بجهاز (${data.deviceType || 'ريسيفر'}) ونشره في الصفحة.`,
                             time: postTime,
+                            icon: 'fas fa-check-circle',
+                            iconClass: 'notif-icon-approved',
                             isUnread: new Date(postTime) > new Date(lastReadNotifTime)
                         });
                     }
 
                     if (data.adminSolutionComment) {
-                        allNotifs.push({
-                            id: `post_reply_${doc.id}`,
-                            type: 'reply',
-                            iconClass: 'notif-icon-reply',
-                            icon: 'fas fa-tools',
+                        myPostsNotifs.push({
+                            id: `post_sol_${doc.id}`,
                             title: 'رد جديد بالحل المعتمد من المهندس محمد السعيد 🛠️',
-                            desc: `تم الرد على مشكلتك: "${data.adminSolutionComment.substring(0, 75)}..."`,
+                            desc: `تم الرد على استفسارك: "${data.adminSolutionComment.substring(0, 75)}..."`,
                             time: postTime,
+                            icon: 'fas fa-tools',
+                            iconClass: 'notif-icon-reply',
                             isUnread: new Date(postTime) > new Date(lastReadNotifTime)
                         });
                     }
                 });
+                renderCombinedNotifications();
+            });
 
-                const myCommentsSnap = await db.collection("comments_pending").where("visitorId", "==", visitorId).get();
-                myCommentsSnap.forEach(doc => {
+            // مراقبة حية لتعليقات الزائر والردود عليها
+            db.collection("comments_pending").where("visitorId", "==", visitorId).onSnapshot((snapshot) => {
+                const lastReadNotifTime = localStorage.getItem(`last_read_notif_${visitorId}`) || '1970-01-01T00:00:00.000Z';
+                myCommentsNotifs = [];
+
+                snapshot.forEach(doc => {
                     const data = doc.data();
                     const commTime = (data.createdAt && data.createdAt.toDate) ? data.createdAt.toDate().toISOString() : new Date().toISOString();
+                    const status = (data.status || '').toString().toLowerCase();
 
-                    if (data.status === 'approved') {
-                        allNotifs.push({
-                            id: `comm_approved_${doc.id}`,
-                            type: 'approved',
-                            iconClass: 'notif-icon-approved',
-                            icon: 'fas fa-comment-check',
+                    if (status === 'approved') {
+                        myCommentsNotifs.push({
+                            id: `comm_app_${doc.id}`,
                             title: 'تمت الموافقة على تعليقك 💬',
                             desc: `تم اعتماد ونشر تعليقك: "${data.text ? data.text.substring(0, 60) : ''}"`,
                             time: commTime,
+                            icon: 'fas fa-comment-check',
+                            iconClass: 'notif-icon-approved',
                             isUnread: new Date(commTime) > new Date(lastReadNotifTime)
                         });
                     }
 
                     if (data.replyText) {
-                        allNotifs.push({
-                            id: `comm_reply_${doc.id}`,
-                            type: 'reply',
-                            iconClass: 'notif-icon-reply',
-                            icon: 'fas fa-reply',
+                        myCommentsNotifs.push({
+                            id: `comm_rep_${doc.id}`,
                             title: 'رد رسمي من المهندس محمد السعيد على تعليقك ✍️',
                             desc: `الرد: "${data.replyText.substring(0, 75)}..."`,
                             time: commTime,
+                            icon: 'fas fa-reply',
+                            iconClass: 'notif-icon-reply',
                             isUnread: new Date(commTime) > new Date(lastReadNotifTime)
                         });
                     }
                 });
+                renderCombinedNotifications();
+            });
 
-                const officialPostsSnap = await db.collection("posts").where("status", "==", "approved").where("isVisitorPost", "==", false).limit(5).get();
-                officialPostsSnap.forEach(doc => {
+            // مراقبة حية لكل المنشورات المعتمدة الجديدة على الصفحة
+            db.collection("posts").limit(25).onSnapshot((snapshot) => {
+                const lastReadNotifTime = localStorage.getItem(`last_read_notif_${visitorId}`) || '1970-01-01T00:00:00.000Z';
+                globalPostsNotifs = [];
+
+                snapshot.forEach(doc => {
                     const data = doc.data();
                     const pTime = (data.createdAt && data.createdAt.toDate) ? data.createdAt.toDate().toISOString() : new Date().toISOString();
-                    allNotifs.push({
-                        id: `official_post_${doc.id}`,
-                        type: 'post',
-                        iconClass: 'notif-icon-post',
-                        icon: 'fas fa-bullhorn',
-                        title: 'منشور جديد من المهندس محمد السعيد 📢',
-                        desc: data.text ? data.text.substring(0, 80) + '...' : 'تحديث جديد متاح على الصفحة',
-                        time: pTime,
-                        isUnread: new Date(pTime) > new Date(lastReadNotifTime)
-                    });
-                });
+                    const status = (data.status || '').toString().toLowerCase();
 
-                allNotifs.sort((a, b) => new Date(b.time) - new Date(a.time));
-                visitorNotificationsList = allNotifs;
-
-                const unreadCount = allNotifs.filter(n => n.isUnread).length;
-                const badge = document.getElementById('visitorUnreadNotifBadge');
-                if (badge) {
-                    if (unreadCount > 0) {
-                        badge.textContent = unreadCount > 99 ? '+99' : unreadCount;
-                        badge.style.display = 'flex';
-                    } else {
-                        badge.style.display = 'none';
+                    if (status === 'approved' || data.adminSolutionComment) {
+                        globalPostsNotifs.push({
+                            id: `global_post_${doc.id}`,
+                            title: `منشور جديد: ${escapeHtml(data.authorName || 'المهندس محمد السعيد')} 📢`,
+                            desc: data.text ? data.text.substring(0, 80) + '...' : 'تحديث جديد متاح على الصفحة',
+                            time: pTime,
+                            icon: 'fas fa-bullhorn',
+                            iconClass: 'notif-icon-post',
+                            isUnread: new Date(pTime) > new Date(lastReadNotifTime)
+                        });
                     }
+                });
+                renderCombinedNotifications();
+            });
+        }
+
+        function renderCombinedNotifications() {
+            let combined = [...myPostsNotifs, ...myCommentsNotifs, ...globalPostsNotifs];
+
+            // إزالة التكرار إن وجد والترتيب من الأحدث للأقدم
+            const uniqueMap = new Map();
+            combined.forEach(item => uniqueMap.set(item.id, item));
+            visitorNotificationsList = Array.from(uniqueMap.values());
+
+            visitorNotificationsList.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+            const unreadCount = visitorNotificationsList.filter(n => n.isUnread).length;
+            const badge = document.getElementById('visitorUnreadNotifBadge');
+            if (badge) {
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount > 99 ? '+99' : unreadCount;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
                 }
-            } catch (err) {
-                console.error("Notifications fetch error:", err);
             }
         }
 
