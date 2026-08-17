@@ -95,7 +95,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* حاوية موحدة بتنسيق الموبايل على كل الشاشات */
         .main-container {
             max-width: 580px;
             width: 100%;
@@ -221,15 +220,13 @@
             display: flex;
             align-items: center;
             flex-wrap: nowrap;
-            gap: 5px;
+            gap: 6px;
             margin-bottom: 2px;
-            overflow-x: auto;
+            overflow-x: visible;
             max-width: 100%;
+            padding-top: 6px;
             padding-bottom: 2px;
-            scrollbar-width: none;
         }
-
-        .profile-actions::-webkit-scrollbar { display: none; }
 
         .btn-fb {
             padding: 6px 10px;
@@ -247,6 +244,7 @@
             white-space: nowrap;
             flex-shrink: 0;
             user-select: none;
+            overflow: visible;
         }
 
         .btn-fb:active { transform: scale(0.96); }
@@ -294,29 +292,34 @@
 
         .trusted-gold-icon { color: #ffb703; font-size: 0.8rem; }
 
+        /* تعديل ظهور الدائرة الحمراء كاملة ونقية بدون أي خط أبيض */
         .msg-unread-badge {
             position: absolute;
-            top: -5px;
-            left: -5px;
+            top: -4px;
+            left: -4px;
+            background: #ff0055;
             background: linear-gradient(135deg, #ff0055, #ff4757);
-            color: #fff;
-            font-size: 0.62rem;
+            color: #ffffff;
+            font-size: 0.65rem;
             font-weight: 900;
-            min-width: 17px;
-            height: 17px;
-            border-radius: 50%;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 4px;
+            border-radius: 20px;
             display: none;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 10px rgba(255, 0, 85, 0.85);
+            box-shadow: 0 2px 8px rgba(255, 0, 85, 0.7);
             font-family: monospace, 'Cairo', sans-serif;
-            border: 2px solid var(--card-bg);
+            border: none;
+            z-index: 20;
+            pointer-events: none;
             animation: pulseUnread 1.8s infinite;
         }
 
         @keyframes pulseUnread {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(255, 0, 85, 0.8); }
-            50% { transform: scale(1.18); box-shadow: 0 0 16px rgba(255, 0, 85, 1); }
+            0%, 100% { transform: scale(1); box-shadow: 0 2px 8px rgba(255, 0, 85, 0.7); }
+            50% { transform: scale(1.15); box-shadow: 0 2px 14px rgba(255, 0, 85, 1); }
         }
 
         .profile-text h1 {
@@ -613,7 +616,7 @@
             width: 100%;
         }
 
-        /* ================== Pure Image Ad Banner Card ================== */
+        /* Pure Image Ad Banner Card */
         .match-promo-card {
             background: var(--card-bg);
             border: 1px solid rgba(255, 183, 3, 0.35);
