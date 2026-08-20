@@ -99,10 +99,10 @@
             max-width: 580px;
             width: 100%;
             margin: 0 auto;
-            padding: 10px 10px;
+            padding: 8px 8px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             position: relative;
         }
 
@@ -170,12 +170,12 @@
         }
 
         .profile-info-section {
-            padding: 0 14px 14px;
+            padding: 0 14px 12px;
             display: flex;
             flex-direction: column;
             position: relative;
             margin-top: -48px;
-            gap: 8px;
+            gap: 6px;
         }
 
         .avatar-row {
@@ -333,8 +333,8 @@
         .profile-text p {
             color: var(--text-muted);
             font-size: 0.84rem;
-            margin-top: 2px;
-            line-height: 1.4;
+            margin-top: 1px;
+            line-height: 1.35;
         }
 
         .page-stats-bar {
@@ -343,7 +343,7 @@
             font-size: 0.8rem;
             color: var(--text-muted);
             border-top: 1px solid var(--border-color);
-            padding-top: 8px;
+            padding-top: 6px;
             margin-top: 2px;
             user-select: none;
         }
@@ -357,17 +357,17 @@
         .post-trigger-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 10px 12px;
-            box-shadow: 0 4px 15px var(--shadow-color);
+            border-radius: 14px;
+            padding: 8px 10px;
+            box-shadow: 0 3px 10px var(--shadow-color);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
         .post-trigger-avatar-wrap {
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             border: 2px solid var(--primary);
             flex-shrink: 0;
@@ -377,7 +377,7 @@
             justify-content: center;
             overflow: hidden;
             color: var(--primary);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             user-select: none;
         }
 
@@ -392,9 +392,9 @@
             background: var(--card-sub);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            padding: 8px 12px;
+            padding: 6px 12px;
             color: var(--text-muted);
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 600;
             text-align: right;
             cursor: pointer;
@@ -423,7 +423,7 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 18px;
-            padding: 16px;
+            padding: 14px;
             max-width: 500px;
             width: 100%;
             max-height: 90vh;
@@ -431,7 +431,7 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             position: relative;
             animation: modalFadeIn 0.25s ease-out;
         }
@@ -446,11 +446,11 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
+            padding-bottom: 6px;
         }
 
         .modal-header h3 {
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-weight: 900;
             color: var(--text-main);
             display: flex;
@@ -462,8 +462,8 @@
             background: var(--card-sub);
             border: 1px solid var(--border-color);
             color: var(--text-muted);
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -476,7 +476,7 @@
         .form-grid-fields {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 8px;
+            gap: 6px;
         }
 
         .avatar-uploader-row {
@@ -484,16 +484,16 @@
             align-items: center;
             gap: 8px;
             background: var(--card-sub);
-            padding: 8px 10px;
-            border-radius: 12px;
+            padding: 6px 8px;
+            border-radius: 10px;
             border: 1px dashed var(--border-color);
             cursor: pointer;
             user-select: none;
         }
 
         .avatar-preview-circle {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: var(--card-bg);
             border: 2px solid var(--primary);
@@ -503,7 +503,7 @@
             color: var(--primary);
             overflow: hidden;
             flex-shrink: 0;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .avatar-preview-circle img { width: 100%; height: 100%; object-fit: cover; }
@@ -512,10 +512,10 @@
             width: 100%;
             background: var(--card-sub);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 9px 12px;
+            border-radius: 8px;
+            padding: 7px 10px;
             color: var(--text-main);
-            font-size: 0.84rem;
+            font-size: 0.82rem;
             outline: none;
         }
 
@@ -525,13 +525,15 @@
             width: 100%;
             background: var(--card-sub);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 9px 12px;
+            border-radius: 8px;
+            padding: 7px 10px;
             color: var(--text-main);
-            font-size: 0.86rem;
+            font-size: 0.84rem;
             outline: none;
             resize: none;
-            min-height: 80px;
+            min-height: 70px;
+            white-space: pre-line;
+            line-height: 1.45;
         }
 
         .visitor-textarea-field:focus { border-color: var(--primary); }
@@ -543,7 +545,7 @@
             flex-wrap: wrap;
             gap: 6px;
             border-top: 1px solid var(--border-color);
-            padding-top: 8px;
+            padding-top: 6px;
         }
 
         .attach-btn-label {
@@ -552,10 +554,10 @@
             gap: 5px;
             cursor: pointer;
             color: var(--text-muted);
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             font-weight: 700;
-            padding: 5px 10px;
-            border-radius: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
             background: var(--card-sub);
             user-select: none;
         }
@@ -564,9 +566,9 @@
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: #fff;
             border: none;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 0.86rem;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.84rem;
             font-weight: 800;
             cursor: pointer;
             display: flex;
@@ -581,14 +583,14 @@
 
         .post-images-preview-strip {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-            gap: 5px;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 4px;
         }
 
         .thumb-preview-box {
             position: relative;
-            height: 60px;
-            border-radius: 8px;
+            height: 50px;
+            border-radius: 6px;
             overflow: hidden;
             border: 1px solid var(--border-color);
         }
@@ -602,91 +604,23 @@
             color: #fff;
             border: none;
             border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            font-size: 0.6rem;
+            width: 14px;
+            height: 14px;
+            font-size: 0.55rem;
             cursor: pointer;
         }
 
         .feed-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             width: 100%;
         }
-
-        /* Pure Image Ad Banner Card */
-        .match-promo-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 183, 3, 0.35);
-            border-right: 4px solid #ffb703;
-            border-radius: 16px;
-            padding: 10px;
-            box-shadow: 0 4px 15px var(--shadow-color);
-            position: relative;
-            user-select: none;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            contain: content;
-        }
-
-        [data-theme="light"] .match-promo-card {
-            border: 1px solid rgba(217, 119, 6, 0.35);
-            border-right: 4px solid #d97706;
-        }
-
-        .match-promo-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 2px;
-        }
-
-        .match-sponsored-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: rgba(255, 183, 3, 0.12);
-            border: 1px solid rgba(255, 183, 3, 0.35);
-            color: #ffb703;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.72rem;
-            font-weight: 800;
-            white-space: nowrap;
-        }
-
-        [data-theme="light"] .match-sponsored-badge {
-            background: rgba(217, 119, 6, 0.1);
-            color: #d97706;
-            border-color: rgba(217, 119, 6, 0.35);
-        }
-
-        .match-banner-img-wrap {
-            width: 100%;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            box-shadow: 0 2px 8px var(--shadow-color);
-        }
-
-        .match-banner-img-wrap img {
-            width: 100%;
-            height: auto;
-            max-height: 480px;
-            object-fit: cover;
-            display: block;
-            transition: opacity 0.2s ease;
-        }
-
-        .match-banner-img-wrap img:hover { opacity: 0.95; }
 
         .load-more-posts-container {
             display: flex;
             justify-content: center;
-            margin: 8px 0 14px 0;
+            margin: 6px 0 10px 0;
             width: 100%;
         }
 
@@ -694,23 +628,17 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.86rem;
+            padding: 6px 16px;
+            border-radius: 16px;
+            font-size: 0.82rem;
             font-weight: 800;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 12px var(--shadow-color);
+            gap: 5px;
+            box-shadow: 0 3px 10px var(--shadow-color);
             transition: all 0.2s ease;
             user-select: none;
-        }
-
-        .load-more-posts-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            box-shadow: 0 4px 15px var(--accent-glow);
         }
 
         .load-more-posts-btn:active { transform: scale(0.96); }
@@ -718,24 +646,24 @@
         .post-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 12px 14px;
-            box-shadow: 0 3px 12px var(--shadow-color);
+            border-radius: 14px;
+            padding: 10px 12px;
+            box-shadow: 0 2px 8px var(--shadow-color);
             position: relative;
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
 
         .post-card.highlight-target {
             border-color: var(--primary) !important;
-            box-shadow: 0 0 20px var(--accent-glow) !important;
-            transform: scale(1.02);
+            box-shadow: 0 0 16px var(--accent-glow) !important;
+            transform: scale(1.01);
         }
 
         .post-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             user-select: none;
         }
 
@@ -746,15 +674,15 @@
         }
 
         .post-author-img {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--primary);
+            border: 1.5px solid var(--primary);
         }
 
         .author-meta h3 {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: 800;
             color: var(--text-main);
             display: flex;
@@ -764,7 +692,7 @@
         }
 
         .author-meta span {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
             display: flex;
             align-items: center;
@@ -780,117 +708,85 @@
             background: rgba(255, 193, 7, 0.12);
             border: 1px solid rgba(255, 193, 7, 0.3);
             color: var(--gold);
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-size: 0.72rem;
+            padding: 1px 6px;
+            border-radius: 5px;
+            font-size: 0.7rem;
             font-weight: 800;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             user-select: none;
         }
 
         .post-body-text {
             color: var(--text-main);
-            font-size: 0.9rem;
-            line-height: 1.5;
-            white-space: pre-wrap;
-            margin-bottom: 6px;
+            font-size: 0.88rem;
+            line-height: 1.45;
+            white-space: pre-line;
+            margin: 2px 0 6px 0;
             word-break: break-word;
         }
 
         .smart-link-badge {
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             background: linear-gradient(135deg, #e11d48, #9333ea);
             color: #ffffff !important;
-            padding: 3px 10px;
-            border-radius: 14px;
+            padding: 2px 8px;
+            border-radius: 12px;
             font-weight: 700;
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             text-decoration: none;
             margin: 2px 0;
-            box-shadow: 0 2px 8px rgba(225, 29, 72, 0.25);
+            box-shadow: 0 2px 6px rgba(225, 29, 72, 0.25);
             transition: all 0.2s ease;
             vertical-align: middle;
             user-select: none;
         }
 
-        .smart-link-badge:active {
-            transform: scale(0.96);
-            filter: brightness(1.1);
+        .smart-link-badge:active { transform: scale(0.96); }
+
+        .post-images-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 6px;
+            width: 100%;
+            border-radius: 12px;
+            background: transparent;
         }
 
-        .smart-link-badge i { font-size: 0.72rem; }
-
-        /* Arc Rounded Images Grid */
-        .post-images-grid {
+        .post-images-grid.multi-images-layout {
             display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 6px;
-            margin-bottom: 8px;
+        }
+
+        .fb-img-item {
+            position: relative;
             width: 100%;
-            border-radius: 14px;
+            border-radius: 12px;
             overflow: hidden;
-            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-sub);
+            border: 1px solid var(--border-color);
         }
 
         .post-images-grid img {
             width: 100%;
-            height: 100%;
-            border-radius: 14px;
-            border: 1px solid var(--border-color);
+            height: auto;
+            max-height: 520px;
+            object-fit: contain;
+            border-radius: 12px;
             cursor: pointer;
             transition: opacity 0.2s ease;
             user-select: none;
             display: block;
         }
 
-        .post-images-grid img:hover { opacity: 0.94; }
+        .post-images-grid img:hover { opacity: 0.95; }
 
-        .fb-grid-1 { grid-template-columns: 1fr; }
-        .fb-grid-1 img { width: 100%; height: auto; max-height: 480px; object-fit: cover; border-radius: 14px; }
-        .fb-grid-2 { grid-template-columns: 1fr 1fr; height: 220px; }
-        .fb-grid-2 .fb-img-item img { object-fit: cover; }
-        .fb-grid-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 170px 110px; }
-        .fb-grid-3 .fb-img-item:first-child { grid-column: span 2; }
-        .fb-grid-3 .fb-img-item img { object-fit: cover; }
-        .fb-grid-4plus { grid-template-columns: repeat(3, 1fr); grid-template-rows: 180px 100px; }
-        .fb-grid-4plus .fb-img-item:first-child { grid-column: span 3; }
-        .fb-grid-4plus .fb-img-item img { object-fit: cover; }
-
-        .fb-img-item {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            border-radius: 14px;
-            overflow: hidden;
-        }
-
-        .more-images-overlay-box {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            border-radius: 14px;
-            overflow: hidden;
-            cursor: pointer;
-            user-select: none;
-        }
-        .more-images-overlay-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
-        .more-count-tag {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.72);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 1.4rem;
-            font-weight: 900;
-            font-family: monospace, sans-serif;
-            border-radius: 14px;
-            backdrop-filter: blur(2px);
-        }
-
-        /* Lightbox Overlay */
         .image-lightbox-overlay {
             position: fixed;
             inset: 0;
@@ -1011,8 +907,8 @@
             display: flex;
             justify-content: space-between;
             color: var(--text-muted);
-            font-size: 0.76rem;
-            padding: 5px 2px;
+            font-size: 0.74rem;
+            padding: 4px 2px;
             border-bottom: 1px solid var(--border-color);
             font-family: 'Cairo', sans-serif;
             user-select: none;
@@ -1032,7 +928,7 @@
         .post-interactions-row {
             display: flex;
             justify-content: space-around;
-            padding-top: 3px;
+            padding-top: 2px;
             position: relative;
             user-select: none;
         }
@@ -1048,13 +944,13 @@
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 6px 10px;
-            border-radius: 8px;
+            padding: 5px 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.15s ease;
             width: 100%;
@@ -1071,16 +967,16 @@
 
         .reactions-box {
             position: absolute;
-            bottom: 40px;
+            bottom: 36px;
             right: 5px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 30px;
-            padding: 4px 10px;
+            padding: 3px 8px;
             display: none;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 8px 25px var(--shadow-color);
+            box-shadow: 0 6px 20px var(--shadow-color);
             z-index: 99;
             animation: reactPop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             user-select: none;
@@ -1094,19 +990,19 @@
         }
 
         .reaction-icon {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             cursor: pointer;
             transition: transform 0.15s ease;
             user-select: none;
-            padding: 1px 3px;
+            padding: 1px 2px;
         }
 
-        .reaction-icon:active { transform: scale(1.35) translateY(-5px); }
+        .reaction-icon:active { transform: scale(1.35) translateY(-4px); }
 
         .comments-section {
             display: none;
-            margin-top: 8px;
-            padding-top: 8px;
+            margin-top: 6px;
+            padding-top: 6px;
             border-top: 1px solid var(--border-color);
         }
 
@@ -1115,17 +1011,17 @@
         .comment-input-wrap {
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            margin-bottom: 8px;
+            gap: 4px;
+            margin-bottom: 6px;
         }
 
         .comment-name-field, .comment-text-field {
             background: var(--card-sub);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 7px 10px;
+            border-radius: 6px;
+            padding: 6px 8px;
             color: var(--text-main);
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             outline: none;
         }
 
@@ -1134,9 +1030,9 @@
             background: var(--primary);
             border: none;
             color: #fff;
-            padding: 5px 12px;
-            border-radius: 14px;
-            font-size: 0.76rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.74rem;
             font-weight: 700;
             cursor: pointer;
             user-select: none;
@@ -1147,15 +1043,15 @@
         .comments-list {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
             max-height: 280px;
             overflow-y: auto;
         }
 
         .comment-item {
             background: var(--card-sub);
-            padding: 8px 10px;
-            border-radius: 10px;
+            padding: 6px 8px;
+            border-radius: 8px;
             border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
@@ -1166,7 +1062,7 @@
 
         .comment-author-name {
             font-weight: 800;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: var(--text-main);
             display: flex;
             align-items: center;
@@ -1174,80 +1070,107 @@
         }
 
         .comment-body {
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             color: var(--text-main);
-            line-height: 1.35;
+            line-height: 1.4;
             opacity: 0.9;
             word-break: break-word;
+            white-space: pre-line;
         }
 
         .comment-time {
-            font-size: 0.68rem;
+            font-size: 0.66rem;
             color: var(--text-muted);
             margin-top: 1px;
             font-family: monospace, 'Cairo', sans-serif;
         }
 
         .admin-reply-box {
-            margin-top: 5px;
-            padding: 6px 8px;
+            margin-top: 4px;
+            padding: 4px 6px;
             background: rgba(255, 0, 85, 0.08);
-            border-right: 3px solid var(--primary);
-            border-radius: 5px;
+            border-right: 2.5px solid var(--primary);
+            border-radius: 4px;
         }
 
         .admin-reply-author {
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             font-weight: 800;
             color: var(--primary);
             display: flex;
             align-items: center;
             gap: 3px;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
 
         .admin-reply-text {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             color: var(--text-main);
-            line-height: 1.3;
+            line-height: 1.4;
             word-break: break-word;
+            white-space: pre-line;
         }
 
+        /* ================== تعديل وتصغير كارت الرد المعتمد ليكون مدمجاً ومريحاً ================== */
         .exclusive-admin-comment-card {
-            margin-top: 8px;
-            padding: 10px;
-            background: rgba(255, 0, 85, 0.06);
-            border: 1px solid rgba(255, 0, 85, 0.25);
-            border-right: 3.5px solid var(--primary);
-            border-radius: 10px;
+            margin-top: 6px;
+            padding: 6px 10px;
+            background: rgba(255, 0, 85, 0.05);
+            border: 1px solid rgba(255, 0, 85, 0.2);
+            border-right: 3px solid var(--primary);
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 2px;
         }
 
         .admin-comment-header {
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 800;
             color: var(--primary);
         }
 
         .admin-comment-header img {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
-            border: 1.5px solid var(--primary);
+            border: 1px solid var(--primary);
         }
 
         .admin-comment-body {
-            font-size: 0.86rem;
+            font-size: 0.84rem;
             color: var(--text-main);
-            line-height: 1.4;
-            padding-right: 25px;
+            line-height: 1.45;
+            padding-right: 2px;
             word-break: break-word;
+            white-space: pre-line;
+            position: relative;
         }
+
+        .collapsible-text-content.collapsed {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .read-more-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 0.76rem;
+            cursor: pointer;
+            padding: 0;
+            margin-top: 2px;
+            display: inline-block;
+            user-select: none;
+        }
+
+        .read-more-btn:hover { text-decoration: underline; }
 
         .reactions-details-modal {
             position: fixed;
@@ -1265,16 +1188,16 @@
         .reactions-details-box {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 14px;
-            max-width: 400px;
+            border-radius: 14px;
+            padding: 12px;
+            max-width: 380px;
             width: 100%;
             max-height: 80vh;
             overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             animation: modalFadeIn 0.2s ease-out;
         }
 
@@ -1282,11 +1205,11 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 6px 10px;
+            padding: 5px 8px;
             background: var(--card-sub);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 0.82rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
             font-weight: 700;
         }
 
@@ -1294,10 +1217,10 @@
             display: flex;
             align-items: flex-start;
             gap: 8px;
-            padding: 8px 10px;
+            padding: 6px 8px;
             background: var(--card-sub);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 8px;
             transition: background-color 0.2s ease, transform 0.15s ease;
             cursor: pointer;
         }
@@ -1310,13 +1233,13 @@
         }
 
         .notif-icon-wrap {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.88rem;
+            font-size: 0.8rem;
             flex-shrink: 0;
             color: #fff;
         }
@@ -1326,22 +1249,21 @@
         .notif-icon-reply { background: linear-gradient(135deg, #e11d48, #ff0055); }
 
         .notif-content { flex: 1; display: flex; flex-direction: column; gap: 1px; }
-        .notif-title { font-size: 0.82rem; font-weight: 800; color: var(--text-main); }
-        .notif-desc { font-size: 0.76rem; color: var(--text-muted); line-height: 1.35; word-break: break-word; }
-        .notif-time { font-size: 0.65rem; color: var(--text-muted); margin-top: 1px; font-family: monospace, 'Cairo', sans-serif; }
+        .notif-title { font-size: 0.8rem; font-weight: 800; color: var(--text-main); }
+        .notif-desc { font-size: 0.74rem; color: var(--text-muted); line-height: 1.3; word-break: break-word; }
+        .notif-time { font-size: 0.62rem; color: var(--text-muted); margin-top: 1px; font-family: monospace, 'Cairo', sans-serif; }
 
-        /* Messenger Enlarged Styles */
         .messenger-widget {
             position: fixed;
-            bottom: 12px;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
-            width: calc(100% - 20px);
+            width: calc(100% - 16px);
             max-width: 540px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 18px;
-            box-shadow: 0 12px 35px var(--shadow-color);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px var(--shadow-color);
             z-index: 999;
             display: none;
             flex-direction: column;
@@ -1350,39 +1272,39 @@
         }
 
         @keyframes chatSlide {
-            from { transform: translateX(-50%) translateY(50px) scale(0.9); opacity: 0; }
+            from { transform: translateX(-50%) translateY(40px) scale(0.9); opacity: 0; }
             to { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
         }
 
         .messenger-header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 10px 14px;
+            padding: 8px 12px;
             color: #fff;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-weight: 800;
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             user-select: none;
         }
 
         .messenger-body {
-            height: 380px;
-            max-height: 60vh;
+            height: 360px;
+            max-height: 55vh;
             overflow-y: auto;
-            padding: 12px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             background: var(--bg-color);
         }
 
         .chat-bubble {
             max-width: 84%;
-            padding: 8px 12px;
-            border-radius: 12px;
-            font-size: 0.84rem;
-            line-height: 1.4;
+            padding: 6px 10px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            line-height: 1.35;
             word-break: break-word;
         }
 
@@ -1401,21 +1323,21 @@
         }
 
         .messenger-footer {
-            padding: 8px 10px;
+            padding: 6px 8px;
             background: var(--card-bg);
             border-top: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
         }
 
         .chat-input {
             background: var(--card-sub);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 8px 12px;
+            border-radius: 8px;
+            padding: 7px 10px;
             color: var(--text-main);
-            font-size: 0.84rem;
+            font-size: 0.82rem;
             outline: none;
         }
 
@@ -1425,19 +1347,19 @@
             background: var(--card-sub);
             border: 1px solid var(--border-color);
             color: var(--text-muted);
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: all 0.2s ease;
             flex-shrink: 0;
         }
 
-        .chat-action-btn:hover, .chat-action-btn:active {
+        .chat-action-btn:active {
             color: var(--primary);
             border-color: var(--primary);
             background: rgba(225, 29, 72, 0.1);
@@ -1447,16 +1369,16 @@
             background: var(--primary);
             border: none;
             color: #fff;
-            padding: 0 16px;
-            height: 36px;
-            border-radius: 10px;
-            font-size: 0.85rem;
+            padding: 0 14px;
+            height: 34px;
+            border-radius: 8px;
+            font-size: 0.82rem;
             font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 4px;
             user-select: none;
         }
 
@@ -1465,16 +1387,16 @@
         .chat-attached-preview-strip {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             overflow-x: auto;
             padding-bottom: 2px;
         }
 
         .chat-attached-thumb {
             position: relative;
-            width: 48px;
-            height: 48px;
-            border-radius: 8px;
+            width: 44px;
+            height: 44px;
+            border-radius: 6px;
             overflow: hidden;
             border: 1.5px solid var(--primary);
             flex-shrink: 0;
@@ -1489,8 +1411,8 @@
             color: #fff;
             border: none;
             border-radius: 50%;
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
             font-size: 0.55rem;
             cursor: pointer;
             display: flex;
@@ -1505,22 +1427,22 @@
             transform: translateX(-50%) translateY(100px);
             background: var(--card-bg);
             color: var(--text-main);
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 6px 14px;
+            border-radius: 16px;
             border: 1px solid var(--primary);
             box-shadow: 0 4px 15px var(--shadow-color);
             font-weight: 700;
             z-index: 10000;
             opacity: 0;
             transition: all 0.3s ease;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             user-select: none;
             pointer-events: none;
         }
 
         .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        footer { text-align: center; padding: 12px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.75rem; margin-top: 14px; user-select: none; }
+        footer { text-align: center; padding: 10px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.72rem; margin-top: 10px; user-select: none; }
     </style>
 </head>
 <body>
@@ -1533,7 +1455,7 @@
 
         <!-- Profile Section -->
         <section class="page-profile-card">
-            <div class="cover-photo-wrapper" style="background-image: url('https://b.top4top.io/p_38788xjki0.jpg');">
+            <div class="cover-photo-wrapper" id="coverPhotoWrapper" style="background-image: url('https://iili.io/CQUs2WP.jpg'), linear-gradient(135deg, #1f112e, #111424, #270f20);">
                 <div class="cover-photo-overlay"></div>
                 <div class="header-official-badge" title="حساب رسمي ومعتمد من شركة ستار نت">
                     <i class="fas fa-shield-alt trusted-gold-icon"></i> 
@@ -1544,7 +1466,7 @@
             <div class="profile-info-section">
                 <div class="avatar-row">
                     <div class="profile-avatar-container">
-                        <img src="https://e.top4top.io/p_3878z3lii0.jpg" alt="المهندس محمد السعيد" class="profile-avatar">
+                        <img src="https://e.top4top.io/p_3878z3lii0.jpg" alt="المهندس محمد السعيد" class="profile-avatar" onerror="this.src='https://ui-avatars.com/api/?name=محمد+السعيد&background=e11d48&color=fff&size=150'">
                         <div class="profile-badge-verified"><i class="fas fa-check"></i></div>
                     </div>
 
@@ -1614,8 +1536,8 @@
                         <img id="visitorAvatarPreviewImg" src="" style="display:none;" alt="Avatar">
                     </div>
                     <div style="flex:1;">
-                        <div style="font-size:0.8rem; font-weight:800; color:var(--text-main);">3. اختيار صورة البروفايل الشخصي (إجباري)</div>
-                        <div style="font-size:0.7rem; color:var(--text-muted);" id="avatarStatusLabel">اضغط هنا لتحديد صورتك من الجهاز</div>
+                        <div style="font-size:0.78rem; font-weight:800; color:var(--text-main);">3. اختيار صورة البروفايل الشخصي (إجباري)</div>
+                        <div style="font-size:0.68rem; color:var(--text-muted);" id="avatarStatusLabel">اضغط هنا لتحديد صورتك من الجهاز</div>
                     </div>
                     <input type="file" id="visitorProfileImgFile" accept="image/*" style="display: none;" onchange="handleVisitorProfileImage(event)">
                 </div>
@@ -1859,6 +1781,19 @@
             }
 
             return parts.join('');
+        }
+
+        function toggleExpandText(id, btn) {
+            const container = document.getElementById(id);
+            if (!container) return;
+            const isCollapsed = container.classList.contains('collapsed');
+            if (isCollapsed) {
+                container.classList.remove('collapsed');
+                btn.innerText = 'عرض أقل';
+            } else {
+                container.classList.add('collapsed');
+                btn.innerText = 'عرض المزيد';
+            }
         }
 
         /* Lightbox Gallery with Arrows & Touch Swipe */
@@ -2222,24 +2157,6 @@
         let allApprovedPostsList = [...DEFAULT_PRELOADED_POSTS];
         let visiblePostsCount = 10;
 
-        function createMatchPromoElement() {
-            const promoDiv = document.createElement('article');
-            promoDiv.className = 'match-promo-card';
-            promoDiv.innerHTML = `
-                <div class="match-promo-top">
-                    <div class="match-sponsored-badge">
-                        <i class="fas fa-bullhorn"></i>
-                        <span>إعلان مميز</span>
-                    </div>
-                </div>
-
-                <div class="match-banner-img-wrap" onclick="openLightbox('https://d.top4top.io/p_3880w4dj50.jpg', event, ['https://d.top4top.io/p_3880w4dj50.jpg'], 0)">
-                    <img src="https://d.top4top.io/p_3880w4dj50.jpg" alt="إعلان">
-                </div>
-            `;
-            return promoDiv;
-        }
-
         function renderPostsFeed() {
             const feed = document.getElementById('feedContainer');
             const loadMoreBtnContainer = document.getElementById('loadMoreContainer');
@@ -2255,14 +2172,9 @@
             feed.innerHTML = '';
             const postsToRender = allApprovedPostsList.slice(0, visiblePostsCount);
 
-            postsToRender.forEach((postData, index) => {
+            postsToRender.forEach((postData) => {
                 const postElement = createPostElement(postData.id, postData);
                 feed.appendChild(postElement);
-                
-                if (index === 0) {
-                    const promoBanner = createMatchPromoElement();
-                    feed.appendChild(promoBanner);
-                }
 
                 if (!postData.isVisitorPost && postData.id !== "initial_welcome_post") {
                     listenToPostApprovedComments(postData.id);
@@ -2438,49 +2350,15 @@
             if (images.length > 0) {
                 window[`post_gallery_${postId}`] = images;
 
-                if (images.length === 1) {
-                    imagesHtml = `
-                        <div class="post-images-grid fb-grid-1">
+                imagesHtml = `
+                    <div class="post-images-grid ${images.length > 1 ? 'multi-images-layout' : ''}">
+                        ${images.map((imgSrc, i) => `
                             <div class="fb-img-item">
-                                <img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)">
+                                <img src="${imgSrc}" alt="صورة المنشور" onclick="openLightbox('${imgSrc}', event, window['post_gallery_${postId}'], ${i})" onerror="this.style.display='none'">
                             </div>
-                        </div>
-                    `;
-                } else if (images.length === 2) {
-                    imagesHtml = `
-                        <div class="post-images-grid fb-grid-2">
-                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)"></div>
-                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" onclick="openLightbox('${images[1]}', event, window['post_gallery_${postId}'], 1)"></div>
-                        </div>
-                    `;
-                } else if (images.length === 3) {
-                    imagesHtml = `
-                        <div class="post-images-grid fb-grid-3">
-                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)"></div>
-                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" onclick="openLightbox('${images[1]}', event, window['post_gallery_${postId}'], 1)"></div>
-                            <div class="fb-img-item"><img src="${images[2]}" alt="Post" onclick="openLightbox('${images[2]}', event, window['post_gallery_${postId}'], 2)"></div>
-                        </div>
-                    `;
-                } else {
-                    let remainingCount = images.length - 4;
-                    imagesHtml = `
-                        <div class="post-images-grid fb-grid-4plus">
-                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)"></div>
-                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" onclick="openLightbox('${images[1]}', event, window['post_gallery_${postId}'], 1)"></div>
-                            <div class="fb-img-item"><img src="${images[2]}" alt="Post" onclick="openLightbox('${images[2]}', event, window['post_gallery_${postId}'], 2)"></div>
-                            <div class="fb-img-item">
-                                ${remainingCount > 0 ? `
-                                    <div class="more-images-overlay-box" onclick="openLightbox('${images[3]}', event, window['post_gallery_${postId}'], 3)">
-                                        <img src="${images[3]}" alt="Post">
-                                        <div class="more-count-tag">+${remainingCount}</div>
-                                    </div>
-                                ` : `
-                                    <img src="${images[3]}" alt="Post" onclick="openLightbox('${images[3]}', event, window['post_gallery_${postId}'], 3)">
-                                `}
-                            </div>
-                        </div>
-                    `;
-                }
+                        `).join('')}
+                    </div>
+                `;
             }
 
             const totalReactions = Number(postData.totalReactions || 0).toLocaleString('en-US');
@@ -2498,30 +2376,36 @@
                     
                     if (media.type === 'audio') {
                         solutionMediaHtml = `
-                            <div class="mt-2.5 p-2 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-2">
-                                <i class="fas fa-volume-high text-rose-500"></i>
-                                <audio controls class="w-full h-8"><source src="${media.url}" type="audio/mpeg"></audio>
+                            <div style="margin-top: 6px; padding: 5px; background: rgba(0,0,0,0.25); border-radius: 8px; display: flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-volume-high" style="color: var(--primary); font-size: 0.85rem;"></i>
+                                <audio controls style="width: 100%; height: 28px;"><source src="${media.url}" type="audio/mpeg"></audio>
                             </div>`;
                     } else if (media.type === 'image') {
                         solutionMediaHtml = `
-                            <div class="mt-2.5">
-                                <img src="${media.url}" class="rounded-xl max-h-60 border border-slate-800 object-cover">
+                            <div style="margin-top: 6px;">
+                                <img src="${media.url}" style="border-radius: 8px; max-height: 400px; width: 100%; height: auto; border: 1px solid var(--border-color); object-fit: contain; cursor: pointer;" onclick="openLightbox('${media.url}', event)">
                             </div>`;
                     } else if (media.type === 'video') {
                         solutionMediaHtml = `
-                            <div class="mt-2.5">
-                                <video controls class="rounded-xl max-h-60 border border-slate-800 w-full"><source src="${media.url}"></video>
+                            <div style="margin-top: 6px;">
+                                <video controls style="border-radius: 8px; max-height: 400px; border: 1px solid var(--border-color); width: 100%;"><source src="${media.url}"></video>
                             </div>`;
                     }
                 }
 
+                const rawCommentText = postData.adminSolutionComment || '';
+                const isLongComment = rawCommentText.length > 180 || (rawCommentText.match(/\n/g) || []).length > 3;
+
                 exclusiveCommentHtml = `
                     <div class="exclusive-admin-comment-card">
                         <div class="admin-comment-header">
-                            <img src="https://e.top4top.io/p_3878z3lii0.jpg" alt="Admin">
-                            <span>المهندس محمد السعيد (الرد والحل المعتمد) <i class="fas fa-check-circle" style="color:var(--fb-blue);"></i></span>
+                            <img src="https://e.top4top.io/p_3878z3lii0.jpg" alt="Admin" onerror="this.src='https://ui-avatars.com/api/?name=محمد+السعيد&background=e11d48&color=fff&size=150'">
+                            <span>المهندس محمد السعيد (الرد والحل المعتمد) <i class="fas fa-check-circle" style="color:var(--fb-blue); font-size: 0.72rem;"></i></span>
                         </div>
-                        <div class="admin-comment-body">${formatSmartPostText(postData.adminSolutionComment || '')}</div>
+                        <div class="admin-comment-body">
+                            <div id="comment-text-${postId}" class="collapsible-text-content ${isLongComment ? 'collapsed' : ''}">${formatSmartPostText(rawCommentText)}</div>
+                            ${isLongComment ? `<button type="button" class="read-more-btn" onclick="toggleExpandText('comment-text-${postId}', this)">عرض المزيد</button>` : ''}
+                        </div>
                         ${solutionMediaHtml}
                     </div>
                 `;
@@ -2544,18 +2428,24 @@
                 `;
             }
 
+            const rawPostText = postData.text || '';
+            const isLongPost = rawPostText.length > 220 || (rawPostText.match(/\n/g) || []).length > 4;
+
             article.innerHTML = `
                 <div class="post-header" onclick="handlePost5Clicks('${postId}')" title="اضغط 5 ضغطات متتالية لإرجاع المنشور للوحة الأدمن">
                     <div class="post-author-info">
-                        <img src="${authorImg}" class="post-author-img" alt="${escapeHtml(authorName)}">
+                        <img src="${authorImg}" class="post-author-img" alt="${escapeHtml(authorName)}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=e11d48&color=fff&size=150'">
                         <div class="author-meta">
-                            <h3>${escapeHtml(authorName)} ${isOfficial ? '<i class="fas fa-check-circle" style="color: var(--fb-blue); font-size: 0.78rem;"></i>' : ''}</h3>
-                            <span>${timeAgo} • <i class="far fa-clock" style="font-size: 0.68rem; opacity: 0.8;"></i></span>
+                            <h3>${escapeHtml(authorName)} ${isOfficial ? '<i class="fas fa-check-circle" style="color: var(--fb-blue); font-size: 0.76rem;"></i>' : ''}</h3>
+                            <span>${timeAgo} • <i class="far fa-clock" style="font-size: 0.65rem; opacity: 0.8;"></i></span>
                         </div>
                     </div>
                 </div>
                 ${deviceBadge}
-                <div class="post-body-text" onclick="handlePost5Clicks('${postId}')">${formatSmartPostText(postData.text || '')}</div>
+                <div class="post-body-text" onclick="handlePost5Clicks('${postId}')">
+                    <div id="post-text-${postId}" class="collapsible-text-content ${isLongPost ? 'collapsed' : ''}">${formatSmartPostText(rawPostText)}</div>
+                    ${isLongPost ? `<button type="button" class="read-more-btn" onclick="toggleExpandText('post-text-${postId}', this); event.stopPropagation();">عرض المزيد</button>` : ''}
+                </div>
                 ${imagesHtml}
                 
                 <div class="post-metrics-bar">
@@ -2669,12 +2559,12 @@
             `;
 
             if (reactors.length > 0) {
-                rowsHtml += `<div style="font-size: 0.78rem; font-weight: 800; color: var(--text-muted); margin-top: 6px;">آخر المتفاعلين مع المنشور:</div>`;
+                rowsHtml += `<div style="font-size: 0.76rem; font-weight: 800; color: var(--text-muted); margin-top: 4px;">آخر المتفاعلين مع المنشور:</div>`;
                 reactors.slice(-8).reverse().forEach(r => {
                     rowsHtml += `
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px 8px; background: var(--card-sub); border-radius: 8px;">
-                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-main);"><i class="fas fa-user-circle" style="color: var(--text-muted);"></i> ${escapeHtml(r.userName)}</span>
-                            <span style="font-size: 0.95rem;">${r.icon || '❤️'}</span>
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 6px; background: var(--card-sub); border-radius: 6px;">
+                            <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-main);"><i class="fas fa-user-circle" style="color: var(--text-muted);"></i> ${escapeHtml(r.userName)}</span>
+                            <span style="font-size: 0.9rem;">${r.icon || '❤️'}</span>
                         </div>
                     `;
                 });
@@ -3111,14 +3001,14 @@
                         let mediaHtml = '';
                         if (m.media) {
                             if (m.media.type === 'image') {
-                                mediaHtml = `<img src="${m.media.url}" class="rounded-xl mt-1.5 max-h-48 border border-white/10 object-cover" style="max-height: 180px; width: auto; border-radius: 10px; margin-top: 6px; display: block;" onclick="openLightbox('${m.media.url}', event)">`;
+                                mediaHtml = `<img src="${m.media.url}" class="rounded-xl mt-1.5 max-h-48 border border-white/10 object-cover" style="max-height: 240px; width: auto; border-radius: 10px; margin-top: 6px; display: block;" onclick="openLightbox('${m.media.url}', event)">`;
                             } else if (m.media.type === 'audio') {
                                 mediaHtml = `
                                     <div class="mt-1.5 p-1.5 bg-black/20 rounded-xl flex items-center gap-2" style="margin-top: 6px;">
                                         <audio controls class="h-7 max-w-[200px]" style="height: 32px; width: 100%;"><source src="${m.media.url}" type="audio/mpeg"></audio>
                                     </div>`;
                             } else if (m.media.type === 'video') {
-                                mediaHtml = `<video controls class="rounded-xl mt-1.5 max-h-48 border border-white/10 max-w-full" style="max-height: 180px; width: 100%; border-radius: 10px; margin-top: 6px;"><source src="${m.media.url}"></video>`;
+                                mediaHtml = `<video controls class="rounded-xl mt-1.5 max-h-48 border border-white/10 max-w-full" style="max-height: 240px; width: 100%; border-radius: 10px; margin-top: 6px;"><source src="${m.media.url}"></video>`;
                             }
                         }
 
@@ -3126,15 +3016,15 @@
                         if (m.images && Array.isArray(m.images) && m.images.length > 0) {
                             attachedImagesHtml = `
                                 <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px;">
-                                    ${m.images.map(imgSrc => `<img src="${imgSrc}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2);" onclick="openLightbox('${imgSrc}', event)">`).join('')}
+                                    ${m.images.map(imgSrc => `<img src="${imgSrc}" style="width: 75px; height: 75px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2);" onclick="openLightbox('${imgSrc}', event)">`).join('')}
                                 </div>`;
                         } else if (m.imageUrl && !m.media) {
-                            attachedImagesHtml = `<img src="${m.imageUrl}" style="max-height: 180px; width: auto; border-radius: 10px; margin-top: 6px; display: block; cursor: pointer;" onclick="openLightbox('${m.imageUrl}', event)">`;
+                            attachedImagesHtml = `<img src="${m.imageUrl}" style="max-height: 240px; width: auto; border-radius: 10px; margin-top: 6px; display: block; cursor: pointer;" onclick="openLightbox('${m.imageUrl}', event)">`;
                         }
 
                         const div = document.createElement('div');
                         div.className = `chat-bubble ${m.sender === 'admin' ? 'bubble-admin' : 'bubble-visitor'}`;
-                        div.innerHTML = `<strong>${escapeHtml(m.senderName)}:</strong><br>${m.text ? `<div class="leading-relaxed break-words">${formatMessageText(m.text)}</div>` : ''}${mediaHtml}${attachedImagesHtml}`;
+                        div.innerHTML = `<strong>${escapeHtml(m.senderName)}:</strong><br>${m.text ? `<div class="leading-relaxed break-words" style="white-space: pre-line;">${formatMessageText(m.text)}</div>` : ''}${mediaHtml}${attachedImagesHtml}`;
                         container.appendChild(div);
 
                         if (m.sender === 'admin') {
