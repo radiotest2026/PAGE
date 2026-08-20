@@ -2225,7 +2225,6 @@
                         }
                     });
 
-                    // الترتيب حسب وقت وتاريخ الموافقة ليكون في المقدمة
                     freshPosts.sort((a, b) => getPostEffectiveTime(b) - getPostEffectiveTime(a));
 
                     if (freshPosts.length > 0) {
@@ -2392,14 +2391,39 @@
             const currentUserReact = userReactionsMap[visitorId];
 
             let exclusiveCommentHtml = '';
-            if (postData.adminSolutionComment) {
+            if (postData.adminSolutionComment || postData.adminSolutionMedia) {
+                let solutionMediaHtml = '';
+
+                if (postData.adminSolutionMedia) {
+                    const media = postData.adminSolutionMedia;
+                    
+                    if (media.type === 'audio') {
+                        solutionMediaHtml = `
+                            <div class="mt-2.5 p-2 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-2">
+                                <i class="fas fa-volume-high text-rose-500"></i>
+                                <audio controls class="w-full h-8"><source src="${media.url}" type="audio/mpeg"></audio>
+                            </div>`;
+                    } else if (media.type === 'image') {
+                        solutionMediaHtml = `
+                            <div class="mt-2.5">
+                                <img src="${media.url}" class="rounded-xl max-h-60 border border-slate-800 object-cover">
+                            </div>`;
+                    } else if (media.type === 'video') {
+                        solutionMediaHtml = `
+                            <div class="mt-2.5">
+                                <video controls class="rounded-xl max-h-60 border border-slate-800 w-full"><source src="${media.url}"></video>
+                            </div>`;
+                    }
+                }
+
                 exclusiveCommentHtml = `
                     <div class="exclusive-admin-comment-card">
                         <div class="admin-comment-header">
                             <img src="https://e.top4top.io/p_3878z3lii0.jpg" alt="Admin">
                             <span>المهندس محمد السعيد (الرد والحل المعتمد) <i class="fas fa-check-circle" style="color:var(--fb-blue);"></i></span>
                         </div>
-                        <div class="admin-comment-body">${formatSmartPostText(postData.adminSolutionComment)}</div>
+                        <div class="admin-comment-body">${formatSmartPostText(postData.adminSolutionComment || '')}</div>
+                        ${solutionMediaHtml}
                     </div>
                 `;
             }
@@ -2440,7 +2464,7 @@
                         ❤️ ${totalReactions} تفاعل
                     </span>
                     <span class="clickable-metric" id="comm-count-badge-${postId}" onclick="${isOfficial ? `toggleCommentsSection('${postId}')` : ''}">
-                        ${isOfficial ? `${commentsCount} تعليقات` : (postData.adminSolutionComment ? '1 رد معتمد' : 'بانتظار رد المهندس')}
+                        ${isOfficial ? `${commentsCount} تعليقات` : ((postData.adminSolutionComment || postData.adminSolutionMedia) ? '1 رد معتمد' : 'بانتظار رد المهندس')}
                     </span>
                 </div>
 
@@ -2592,13 +2616,13 @@
                         });
                     }
 
-                    if (data.adminSolutionComment) {
+                    if (data.adminSolutionComment || data.adminSolutionMedia) {
                         myPostsNotifs.push({
                             id: `post_sol_${doc.id}`,
                             postId: doc.id,
                             targetType: 'post',
                             title: 'رد جديد بالحل المعتمد من المهندس محمد السعيد 🛠️',
-                            desc: `تم الرد على استفسارك: "${data.adminSolutionComment.substring(0, 75)}...". اضغط لفتح الحل.`,
+                            desc: `تم الرد على استفسارك: "${(data.adminSolutionComment || 'مرفق وسائط جديد').substring(0, 75)}...". اضغط لفتح الحل.`,
                             time: postTime,
                             icon: 'fas fa-tools',
                             iconClass: 'notif-icon-reply',
@@ -2658,7 +2682,7 @@
                     const pTime = (data.approvedAt && data.approvedAt.toDate) ? data.approvedAt.toDate().toISOString() : ((data.createdAt && data.createdAt.toDate) ? data.createdAt.toDate().toISOString() : new Date().toISOString());
                     const status = (data.status || '').toString().toLowerCase();
 
-                    if (status === 'approved' || data.adminSolutionComment) {
+                    if (status === 'approved' || data.adminSolutionComment || data.adminSolutionMedia) {
                         globalPostsNotifs.push({
                             id: `global_post_${doc.id}`,
                             postId: doc.id,
