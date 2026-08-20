@@ -1330,57 +1330,59 @@
         .notif-desc { font-size: 0.76rem; color: var(--text-muted); line-height: 1.35; word-break: break-word; }
         .notif-time { font-size: 0.65rem; color: var(--text-muted); margin-top: 1px; font-family: monospace, 'Cairo', sans-serif; }
 
+        /* ================== Messenger Enlarged Styles ================== */
         .messenger-widget {
             position: fixed;
-            bottom: 15px;
+            bottom: 12px;
             left: 50%;
             transform: translateX(-50%);
-            width: calc(100% - 24px);
-            max-width: 480px;
+            width: calc(100% - 20px);
+            max-width: 540px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: 0 8px 25px var(--shadow-color);
+            border-radius: 18px;
+            box-shadow: 0 12px 35px var(--shadow-color);
             z-index: 999;
             display: none;
             flex-direction: column;
             overflow: hidden;
-            animation: chatSlide 0.3s ease-out;
+            animation: chatSlide 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         @keyframes chatSlide {
-            from { transform: translateX(-50%) translateY(40px) scale(0.9); opacity: 0; }
+            from { transform: translateX(-50%) translateY(50px) scale(0.9); opacity: 0; }
             to { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
         }
 
         .messenger-header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 8px 12px;
+            padding: 10px 14px;
             color: #fff;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-weight: 800;
-            font-size: 0.85rem;
+            font-size: 0.92rem;
             user-select: none;
         }
 
         .messenger-body {
-            height: 240px;
+            height: 380px;
+            max-height: 60vh;
             overflow-y: auto;
-            padding: 8px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             background: var(--bg-color);
         }
 
         .chat-bubble {
-            max-width: 85%;
-            padding: 6px 9px;
-            border-radius: 10px;
-            font-size: 0.78rem;
-            line-height: 1.3;
+            max-width: 84%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.84rem;
+            line-height: 1.4;
             word-break: break-word;
         }
 
@@ -1399,22 +1401,101 @@
         }
 
         .messenger-footer {
-            padding: 6px;
+            padding: 8px 10px;
             background: var(--card-bg);
             border-top: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
         }
 
         .chat-input {
             background: var(--card-sub);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 6px 8px;
+            border-radius: 10px;
+            padding: 8px 12px;
             color: var(--text-main);
-            font-size: 0.78rem;
+            font-size: 0.84rem;
             outline: none;
+        }
+
+        .chat-input:focus { border-color: var(--primary); }
+
+        .chat-action-btn {
+            background: var(--card-sub);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .chat-action-btn:hover, .chat-action-btn:active {
+            color: var(--primary);
+            border-color: var(--primary);
+            background: rgba(225, 29, 72, 0.1);
+        }
+
+        .chat-send-btn-main {
+            background: var(--primary);
+            border: none;
+            color: #fff;
+            padding: 0 16px;
+            height: 36px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            user-select: none;
+        }
+
+        .chat-send-btn-main:active { transform: scale(0.96); }
+
+        .chat-attached-preview-strip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+
+        .chat-attached-thumb {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1.5px solid var(--primary);
+            flex-shrink: 0;
+        }
+
+        .chat-attached-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .chat-attached-thumb button {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(255, 0, 0, 0.85);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            font-size: 0.55rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .toast-notification {
@@ -1618,20 +1699,29 @@
         </div>
     </div>
 
-    <!-- Live Chat Widget -->
+    <!-- Live Messenger Widget (Enlarged + Multi-Image Attachment Only) -->
     <div class="messenger-widget" id="messengerWidget">
         <div class="messenger-header">
             <div><i class="fas fa-comments"></i> رسائل المهندس محمد السعيد</div>
             <i class="fas fa-times" style="cursor: pointer;" onclick="toggleMessengerWidget()"></i>
         </div>
         <div class="messenger-body" id="chatMessagesContainer">
-            <div class="chat-bubble bubble-admin">مرحباً بك! تواصل معنا عبر إرسال رسالتك وسيرد عليك المهندس محمد السعيد هنا فوراً. 👋</div>
+            <div class="chat-bubble bubble-admin">مرحباً بك! تواصل معنا عبر إرسال رسالتك أو صور الاستفسار وسيرد عليك المهندس محمد السعيد هنا فوراً. 👋</div>
         </div>
         <div class="messenger-footer">
+            <div id="chatAttachedPreviewStrip" class="chat-attached-preview-strip" style="display: none;"></div>
             <input type="text" id="chatSenderName" class="chat-input" placeholder="اسمك الكريم (مثال: أحمد محمود)...">
-            <div style="display: flex; gap: 5px;">
+            <div style="display: flex; gap: 5px; align-items: center;">
                 <input type="text" id="chatMessageText" class="chat-input" style="flex: 1;" placeholder="اكتب رسالتك هنا..." onkeypress="if(event.key==='Enter') sendVisitorMessage()">
-                <button class="comment-send-btn" onclick="sendVisitorMessage()"><i class="fas fa-paper-plane"></i></button>
+                
+                <input type="file" id="chatImagesInput" accept="image/*" multiple style="display: none;" onchange="handleChatImagesAttachment(event)">
+                <button type="button" class="chat-action-btn" onclick="document.getElementById('chatImagesInput').click()" title="إرفاق صور فقط">
+                    <i class="fas fa-image"></i>
+                </button>
+
+                <button class="chat-send-btn-main" onclick="sendVisitorMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -1717,6 +1807,15 @@
                         </div>
                     `;
                 }
+            });
+        }
+
+        function formatMessageText(text) {
+            if (!text) return '';
+            const safeText = escapeHtml(text);
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            return safeText.replace(urlRegex, function(url) {
+                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-sky-400 underline hover:text-sky-200 font-bold break-all">${url}</a>`;
             });
         }
 
@@ -2957,6 +3056,45 @@
             localStorage.setItem(`last_read_time_${visitorId}`, new Date().toISOString());
         }
 
+        /* إدارة إرفاق الصور في الشات */
+        let chatAttachedImagesList = [];
+
+        async function handleChatImagesAttachment(event) {
+            const files = Array.from(event.target.files);
+            const remaining = 5 - chatAttachedImagesList.length;
+            if (files.length > remaining) {
+                showToast(`يمكنك إرفاق ${remaining} صور كحد أقصى.`);
+            }
+            const allowed = files.slice(0, remaining);
+            for (const file of allowed) {
+                const base64 = await compressImage(file, 1600, 0.88);
+                chatAttachedImagesList.push(base64);
+            }
+            event.target.value = '';
+            renderChatAttachedThumbnails();
+        }
+
+        function removeChatAttachedImage(index) {
+            chatAttachedImagesList.splice(index, 1);
+            renderChatAttachedThumbnails();
+        }
+
+        function renderChatAttachedThumbnails() {
+            const strip = document.getElementById('chatAttachedPreviewStrip');
+            if (chatAttachedImagesList.length === 0) {
+                strip.style.display = 'none';
+                strip.innerHTML = '';
+                return;
+            }
+            strip.style.display = 'flex';
+            strip.innerHTML = chatAttachedImagesList.map((src, i) => `
+                <div class="chat-attached-thumb">
+                    <img src="${src}" alt="Attached">
+                    <button type="button" onclick="removeChatAttachedImage(${i})">&times;</button>
+                </div>
+            `).join('');
+        }
+
         function listenToVisitorMessages() {
             db.collection("messages").doc(visitorId).onSnapshot((doc) => {
                 const container = document.getElementById('chatMessagesContainer');
@@ -2973,20 +3111,28 @@
                         let mediaHtml = '';
                         if (m.media) {
                             if (m.media.type === 'image') {
-                                mediaHtml = `<img src="${m.media.url}" class="rounded-xl mt-1.5 max-h-48 border border-white/10 object-cover">`;
+                                mediaHtml = `<img src="${m.media.url}" class="rounded-xl mt-1.5 max-h-48 border border-white/10 object-cover" style="max-height: 180px; width: auto; border-radius: 10px; margin-top: 6px; display: block;" onclick="openLightbox('${m.media.url}', event)">`;
                             } else if (m.media.type === 'audio') {
                                 mediaHtml = `
-                                    <div class="mt-1.5 p-1.5 bg-black/20 rounded-xl flex items-center gap-2">
-                                        <audio controls class="h-7 max-w-[200px]"><source src="${m.media.url}" type="audio/mpeg"></audio>
+                                    <div class="mt-1.5 p-1.5 bg-black/20 rounded-xl flex items-center gap-2" style="margin-top: 6px;">
+                                        <audio controls class="h-7 max-w-[200px]" style="height: 32px; width: 100%;"><source src="${m.media.url}" type="audio/mpeg"></audio>
                                     </div>`;
                             } else if (m.media.type === 'video') {
-                                mediaHtml = `<video controls class="rounded-xl mt-1.5 max-h-48 border border-white/10 max-w-full"><source src="${m.media.url}"></video>`;
+                                mediaHtml = `<video controls class="rounded-xl mt-1.5 max-h-48 border border-white/10 max-w-full" style="max-height: 180px; width: 100%; border-radius: 10px; margin-top: 6px;"><source src="${m.media.url}"></video>`;
                             }
+                        }
+
+                        let attachedImagesHtml = '';
+                        if (m.images && Array.isArray(m.images) && m.images.length > 0) {
+                            attachedImagesHtml = `
+                                <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px;">
+                                    ${m.images.map(imgSrc => `<img src="${imgSrc}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2);" onclick="openLightbox('${imgSrc}', event)">`).join('')}
+                                </div>`;
                         }
 
                         const div = document.createElement('div');
                         div.className = `chat-bubble ${m.sender === 'admin' ? 'bubble-admin' : 'bubble-visitor'}`;
-                        div.innerHTML = `<strong>${escapeHtml(m.senderName)}:</strong><br>${formatSmartPostText(m.text || '')}${mediaHtml}`;
+                        div.innerHTML = `<strong>${escapeHtml(m.senderName)}:</strong><br>${m.text ? `<div class="leading-relaxed break-words">${formatMessageText(m.text)}</div>` : ''}${mediaHtml}${attachedImagesHtml}`;
                         container.appendChild(div);
 
                         if (m.sender === 'admin') {
@@ -3024,12 +3170,13 @@
                 return;
             }
 
-            if (!text) return;
+            if (!text && chatAttachedImagesList.length === 0) return;
 
             const msgData = {
                 sender: 'visitor',
                 senderName: senderName,
                 text: text,
+                images: [...chatAttachedImagesList],
                 time: new Date().toISOString()
             };
 
@@ -3037,14 +3184,16 @@
             await docRef.set({
                 visitorId: visitorId,
                 visitorName: senderName,
-                lastMessage: text,
+                lastMessage: text || '[صورة مرفقة]',
                 isReadByAdmin: false,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 messages: firebase.firestore.FieldValue.arrayUnion(msgData)
             }, { merge: true });
 
             textInput.value = '';
-            showToast("تم إرسال رسالتك للمهندس محمد السعيد!");
+            chatAttachedImagesList = [];
+            renderChatAttachedThumbnails();
+            showToast("تم إرسال رسالتك بنجاح!");
         }
 
         function showToast(message) {
