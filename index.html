@@ -1330,7 +1330,7 @@
         .notif-desc { font-size: 0.76rem; color: var(--text-muted); line-height: 1.35; word-break: break-word; }
         .notif-time { font-size: 0.65rem; color: var(--text-muted); margin-top: 1px; font-family: monospace, 'Cairo', sans-serif; }
 
-        /* ================== Messenger Enlarged Styles ================== */
+        /* Messenger Enlarged Styles */
         .messenger-widget {
             position: fixed;
             bottom: 12px;
@@ -3128,6 +3128,8 @@
                                 <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px;">
                                     ${m.images.map(imgSrc => `<img src="${imgSrc}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2);" onclick="openLightbox('${imgSrc}', event)">`).join('')}
                                 </div>`;
+                        } else if (m.imageUrl && !m.media) {
+                            attachedImagesHtml = `<img src="${m.imageUrl}" style="max-height: 180px; width: auto; border-radius: 10px; margin-top: 6px; display: block; cursor: pointer;" onclick="openLightbox('${m.imageUrl}', event)">`;
                         }
 
                         const div = document.createElement('div');
@@ -3172,10 +3174,17 @@
 
             if (!text && chatAttachedImagesList.length === 0) return;
 
+            const userSelectedImage = chatAttachedImagesList.length > 0 ? chatAttachedImagesList[0] : null;
+
             const msgData = {
                 sender: 'visitor',
-                senderName: senderName,
+                senderName: senderName || 'العميل',
                 text: text,
+                media: userSelectedImage ? {
+                    type: 'image',
+                    url: userSelectedImage
+                } : null,
+                imageUrl: userSelectedImage || null,
                 images: [...chatAttachedImagesList],
                 time: new Date().toISOString()
             };
@@ -3184,7 +3193,7 @@
             await docRef.set({
                 visitorId: visitorId,
                 visitorName: senderName,
-                lastMessage: text || '[صورة مرفقة]',
+                lastMessage: userSelectedImage ? '🖼️ [صورة]' : msgData.text,
                 isReadByAdmin: false,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 messages: firebase.firestore.FieldValue.arrayUnion(msgData)
