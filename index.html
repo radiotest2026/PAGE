@@ -2970,9 +2970,23 @@
                     let unreadAdminRepliesCount = 0;
 
                     msgs.forEach(m => {
+                        let mediaHtml = '';
+                        if (m.media) {
+                            if (m.media.type === 'image') {
+                                mediaHtml = `<img src="${m.media.url}" class="rounded-xl mt-1.5 max-h-48 border border-white/10 object-cover">`;
+                            } else if (m.media.type === 'audio') {
+                                mediaHtml = `
+                                    <div class="mt-1.5 p-1.5 bg-black/20 rounded-xl flex items-center gap-2">
+                                        <audio controls class="h-7 max-w-[200px]"><source src="${m.media.url}" type="audio/mpeg"></audio>
+                                    </div>`;
+                            } else if (m.media.type === 'video') {
+                                mediaHtml = `<video controls class="rounded-xl mt-1.5 max-h-48 border border-white/10 max-w-full"><source src="${m.media.url}"></video>`;
+                            }
+                        }
+
                         const div = document.createElement('div');
                         div.className = `chat-bubble ${m.sender === 'admin' ? 'bubble-admin' : 'bubble-visitor'}`;
-                        div.innerHTML = `<strong>${escapeHtml(m.senderName)}:</strong><br>${formatSmartPostText(m.text)}`;
+                        div.innerHTML = `<strong>${escapeHtml(m.senderName)}:</strong><br>${formatSmartPostText(m.text || '')}${mediaHtml}`;
                         container.appendChild(div);
 
                         if (m.sender === 'admin') {
