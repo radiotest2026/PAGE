@@ -1150,7 +1150,6 @@
             white-space: pre-line;
         }
 
-        /* ================== كارت الرد المعتمد بحجم مطابق للنص بالضبط ================== */
         .exclusive-admin-comment-wrapper {
             display: flex;
             flex-direction: column;
@@ -1831,6 +1830,25 @@
             return parts.join('');
         }
 
+        /* دالة تنسيق التاريخ والأرقام بالإنجليزية المختصرة: 21 Aug, 5:00 PM */
+        function formatEnglishDateTime(dateObj) {
+            if (!dateObj) return "Just now";
+            const date = (dateObj.toDate) ? dateObj.toDate() : new Date(dateObj);
+            if (isNaN(date.getTime())) return "Just now";
+
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            
+            let hours = date.getHours();
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+
+            return `${day} ${month}, ${hours}:${minutes} ${ampm}`;
+        }
+
         function toggleExpandText(id, btn) {
             const container = document.getElementById(id);
             if (!container) return;
@@ -2376,11 +2394,8 @@
             article.className = 'post-card';
             article.id = `post-${postId}`;
 
-            let timeAgo = "الآن";
             const effectiveDate = postData.approvedAt || postData.updatedAt || postData.createdAt;
-            if (effectiveDate && effectiveDate.toDate) {
-                timeAgo = effectiveDate.toDate().toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-            }
+            const timeAgo = formatEnglishDateTime(effectiveDate);
 
             const authorName = postData.authorName || 'المهندس محمد السعيد';
             const authorImg = postData.authorAvatar || 'https://e.top4top.io/p_3878z3lii0.jpg';
@@ -2806,7 +2821,7 @@
                         <div class="notif-content">
                             <div class="notif-title">${escapeHtml(n.title)}</div>
                             <div class="notif-desc">${escapeHtml(n.desc)}</div>
-                            <div class="notif-time">${new Date(n.time).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
+                            <div class="notif-time">${formatEnglishDateTime(n.time)}</div>
                         </div>
                     </div>
                 `).join('');
@@ -2937,7 +2952,7 @@
                                 <i class="fas fa-user-circle" style="color:var(--text-muted);"></i> ${escapeHtml(cData.userName || 'زائر')}
                             </div>
                             <div class="comment-body">${formatSmartPostText(cData.text || '')}</div>
-                            <div class="comment-time">معتمد • الآن</div>
+                            <div class="comment-time">${formatEnglishDateTime(cData.createdAt)}</div>
                             ${replyHtml}
                         `;
                         list.appendChild(item);
@@ -3085,7 +3100,7 @@
                                         <audio controls class="h-7 max-w-[200px]" style="height: 32px; width: 100%;"><source src="${m.media.url}" type="audio/mpeg"></audio>
                                     </div>`;
                             } else if (m.media.type === 'video') {
-                                mediaHtml = `<video controls class="rounded-xl mt-1.5 max-h-48 border border-white/10 max-w-full" style="max-height: 240px; width: 100%; border-radius: 10px; margin-top: 6px;"><source src="${m.media.url}"></video>`;
+                                mediaHtml = `<video controls class="rounded-xl mt-1.5 max-h-48 border border-white/10 max-w-full" style="max-height: 180px; width: 100%; border-radius: 10px; margin-top: 6px;"><source src="${m.media.url}"></video>`;
                             }
                         }
 
