@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <meta property="og:type" content="profile">
     <meta property="og:title" content="المهندس محمد السعيد - الصفحة الرسمية">
@@ -32,7 +32,7 @@
             --accent-glow: rgba(225, 29, 72, 0.2);
             --fb-blue: #1877f2;
             --whatsapp-green: #25d366;
-            --whatsapp-glow: rgba(37, 211, 102, 0.25);
+            --whatsapp-glow: rgba(37, 211, 102, 0.35);
             --trusted-gold: #d97706;
             --trusted-glow: rgba(217, 119, 6, 0.25);
             --text-main: #111827;
@@ -270,15 +270,15 @@
         }
 
         .btn-fb-whatsapp {
-            background: rgba(37, 211, 102, 0.12);
-            color: #25d366;
-            border: 1px solid rgba(37, 211, 102, 0.35);
+            background: #25d366 !important;
+            color: #ffffff !important;
+            border: 1px solid #20ba5a !important;
+            box-shadow: 0 2px 10px var(--whatsapp-glow);
         }
 
         .btn-fb-whatsapp:hover, .btn-fb-whatsapp:active {
-            background: #25d366;
-            color: #fff;
-            box-shadow: 0 4px 15px var(--whatsapp-glow);
+            background: #20ba5a !important;
+            box-shadow: 0 4px 14px var(--whatsapp-glow);
         }
 
         .trusted-gold-text {
@@ -358,7 +358,7 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 14px;
-            padding: 8px 10px;
+            padding: 7px 10px;
             box-shadow: 0 3px 10px var(--shadow-color);
             display: flex;
             align-items: center;
@@ -532,8 +532,8 @@
             outline: none;
             resize: none;
             min-height: 70px;
-            white-space: pre-line;
-            line-height: 1.45;
+            white-space: pre-wrap;
+            line-height: 1.55;
         }
 
         .visitor-textarea-field:focus { border-color: var(--primary); }
@@ -613,14 +613,14 @@
         .feed-container {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
         }
 
         .load-more-posts-container {
             display: flex;
             justify-content: center;
-            margin: 6px 0 10px 0;
+            margin: 4px 0 8px 0;
             width: 100%;
         }
 
@@ -628,15 +628,15 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 6px 16px;
-            border-radius: 16px;
-            font-size: 0.82rem;
+            padding: 5px 15px;
+            border-radius: 14px;
+            font-size: 0.8rem;
             font-weight: 800;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            box-shadow: 0 3px 10px var(--shadow-color);
+            box-shadow: 0 2px 8px var(--shadow-color);
             transition: all 0.2s ease;
             user-select: none;
         }
@@ -647,8 +647,8 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 14px;
-            padding: 8px 12px 6px 12px;
-            box-shadow: 0 2px 8px var(--shadow-color);
+            padding: 8px 10px 4px 10px;
+            box-shadow: 0 2px 6px var(--shadow-color);
             position: relative;
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
@@ -670,19 +670,19 @@
         .post-author-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 7px;
         }
 
         .post-author-img {
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             object-fit: cover;
             border: 1.5px solid var(--primary);
         }
 
         .author-meta h3 {
-            font-size: 0.88rem;
+            font-size: 0.86rem;
             font-weight: 800;
             color: var(--text-main);
             display: flex;
@@ -692,7 +692,7 @@
         }
 
         .author-meta span {
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             color: var(--text-muted);
             display: flex;
             align-items: center;
@@ -708,9 +708,9 @@
             background: rgba(255, 193, 7, 0.12);
             border: 1px solid rgba(255, 193, 7, 0.3);
             color: var(--gold);
-            padding: 1px 6px;
-            border-radius: 5px;
-            font-size: 0.7rem;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 0.68rem;
             font-weight: 800;
             margin-bottom: 2px;
             user-select: none;
@@ -718,11 +718,20 @@
 
         .post-body-text {
             color: var(--text-main);
-            font-size: 0.96rem;
-            line-height: 1.5;
-            white-space: pre-line;
-            margin: 2px 0 0 0;
+            font-size: 0.94rem;
+            line-height: 1.55;
+            margin: 0;
+            padding: 0;
             word-break: break-word;
+        }
+
+        .post-paragraph-item {
+            margin: 0 0 6px 0;
+            line-height: 1.55;
+        }
+
+        .post-paragraph-item:last-child {
+            margin-bottom: 0;
         }
 
         .smart-link-badge {
@@ -945,12 +954,12 @@
             display: flex;
             justify-content: space-between;
             color: var(--text-muted);
-            font-size: 0.74rem;
-            padding: 3px 2px 2px 2px;
+            font-size: 0.72rem;
+            padding: 3px 2px 1px 2px;
             border-bottom: 1px solid var(--border-color);
             font-family: 'Cairo', sans-serif;
             user-select: none;
-            margin-top: 3px;
+            margin-top: 2px;
         }
 
         .clickable-metric {
@@ -967,7 +976,7 @@
         .post-interactions-row {
             display: flex;
             justify-content: space-around;
-            padding: 2px 0 0 0;
+            padding: 1px 0 0 0;
             position: relative;
             user-select: none;
         }
@@ -983,12 +992,12 @@
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 4px 6px;
+            padding: 3px 6px;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.15s ease;
@@ -1006,7 +1015,7 @@
 
         .reactions-box {
             position: absolute;
-            bottom: 34px;
+            bottom: 30px;
             right: 5px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -1040,8 +1049,8 @@
 
         .comments-section {
             display: none;
-            margin-top: 4px;
-            padding-top: 4px;
+            margin-top: 3px;
+            padding-top: 3px;
             border-top: 1px solid var(--border-color);
         }
 
@@ -1114,7 +1123,6 @@
             line-height: 1.4;
             opacity: 0.9;
             word-break: break-word;
-            white-space: pre-line;
         }
 
         .comment-time {
@@ -1147,59 +1155,57 @@
             color: var(--text-main);
             line-height: 1.4;
             word-break: break-word;
-            white-space: pre-line;
         }
 
         .exclusive-admin-comment-wrapper {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            margin-top: 5px;
+            margin-top: 3px;
             width: 100%;
         }
 
         .exclusive-admin-comment-card {
             display: inline-block;
             width: auto;
-            max-width: 95%;
-            padding: 4px 9px 5px 9px;
-            background: rgba(255, 0, 85, 0.06);
-            border: 1px solid rgba(255, 0, 85, 0.22);
+            max-width: 100%;
+            padding: 5px 8px;
+            background: rgba(255, 0, 85, 0.05);
+            border: 1px solid rgba(255, 0, 85, 0.2);
             border-right: 3px solid var(--primary);
-            border-radius: 10px;
-            border-top-right-radius: 3px;
+            border-radius: 8px;
+            border-top-right-radius: 2px;
         }
 
         .admin-comment-header {
             display: flex;
             align-items: center;
             gap: 4px;
-            font-size: 0.76rem;
+            font-size: 0.78rem;
             font-weight: 800;
             color: var(--primary);
-            margin-bottom: 1px;
+            margin-bottom: 3px;
         }
 
         .admin-comment-header img {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             border: 1px solid var(--primary);
         }
 
         .admin-comment-body {
-            font-size: 0.86rem;
+            font-size: 0.88rem;
             color: var(--text-main);
-            line-height: 1.35;
+            line-height: 1.55;
             word-break: break-word;
-            white-space: pre-line;
             padding: 0;
             margin: 0;
         }
 
         .collapsible-text-content.collapsed {
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 4;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -1212,7 +1218,7 @@
             font-size: 0.76rem;
             cursor: pointer;
             padding: 0;
-            margin-top: 2px;
+            margin-top: 3px;
             display: inline-block;
             user-select: none;
         }
@@ -1300,58 +1306,84 @@
         .notif-desc { font-size: 0.74rem; color: var(--text-muted); line-height: 1.3; word-break: break-word; }
         .notif-time { font-size: 0.62rem; color: var(--text-muted); margin-top: 1px; font-family: monospace, 'Cairo', sans-serif; }
 
+        /* ================== تطبيق شاشة المحادثة الكاملة الاحترافية ================== */
         .messenger-widget {
             position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 16px);
-            max-width: 540px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px var(--shadow-color);
-            z-index: 999;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            max-width: 100%;
+            background: var(--bg-color);
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            z-index: 99999;
             display: none;
             flex-direction: column;
             overflow: hidden;
-            animation: chatSlide 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fullChatSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes chatSlide {
-            from { transform: translateX(-50%) translateY(40px) scale(0.9); opacity: 0; }
-            to { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+        @keyframes fullChatSlide {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .messenger-header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 8px 12px;
-            color: #fff;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 14px;
+            color: var(--text-main);
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-weight: 800;
-            font-size: 0.88rem;
+            font-size: 0.95rem;
             user-select: none;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            flex-shrink: 0;
+        }
+
+        .chat-back-btn {
+            background: rgba(225, 29, 72, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(225, 29, 72, 0.25);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chat-back-btn:active {
+            background: var(--primary);
+            color: #fff;
+            transform: scale(0.94);
         }
 
         .messenger-body {
-            height: 360px;
-            max-height: 55vh;
+            flex: 1;
+            height: auto;
+            max-height: none;
             overflow-y: auto;
-            padding: 10px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             background: var(--bg-color);
         }
 
         .chat-bubble {
-            max-width: 84%;
-            padding: 6px 10px;
-            border-radius: 10px;
-            font-size: 0.82rem;
-            line-height: 1.35;
+            max-width: 82%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.86rem;
+            line-height: 1.45;
             word-break: break-word;
         }
 
@@ -1359,6 +1391,7 @@
             align-self: flex-start;
             background: var(--card-sub);
             color: var(--text-main);
+            border: 1px solid var(--border-color);
             border-bottom-right-radius: 2px;
         }
 
@@ -1370,21 +1403,22 @@
         }
 
         .messenger-footer {
-            padding: 6px 8px;
+            padding: 8px 10px;
             background: var(--card-bg);
             border-top: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
+            flex-shrink: 0;
         }
 
         .chat-input {
             background: var(--card-sub);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 7px 10px;
+            padding: 8px 12px;
             color: var(--text-main);
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             outline: none;
         }
 
@@ -1394,14 +1428,14 @@
             background: var(--card-sub);
             border: 1px solid var(--border-color);
             color: var(--text-muted);
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             transition: all 0.2s ease;
             flex-shrink: 0;
         }
@@ -1416,10 +1450,10 @@
             background: var(--primary);
             border: none;
             color: #fff;
-            padding: 0 14px;
-            height: 34px;
+            padding: 0 16px;
+            height: 36px;
             border-radius: 8px;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 700;
             cursor: pointer;
             display: flex;
@@ -1441,8 +1475,8 @@
 
         .chat-attached-thumb {
             position: relative;
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             border-radius: 6px;
             overflow: hidden;
             border: 1.5px solid var(--primary);
@@ -1479,7 +1513,7 @@
             border: 1px solid var(--primary);
             box-shadow: 0 4px 15px var(--shadow-color);
             font-weight: 700;
-            z-index: 10000;
+            z-index: 100000;
             opacity: 0;
             transition: all 0.3s ease;
             font-size: 0.78rem;
@@ -1525,7 +1559,7 @@
                             <i class="fas fa-bell"></i> <span>الإشعارات</span>
                             <span class="msg-unread-badge" id="visitorUnreadNotifBadge">0</span>
                         </button>
-                        <button class="btn-fb btn-fb-secondary" onclick="toggleMessengerWidget()" id="headerMsgBtn">
+                        <button class="btn-fb btn-fb-secondary" onclick="openMessengerWidget()" id="headerMsgBtn">
                             <i class="fas fa-comments"></i> <span>رسالة</span>
                             <span class="msg-unread-badge" id="visitorUnreadMsgBadge">0</span>
                         </button>
@@ -1668,11 +1702,17 @@
         </div>
     </div>
 
-    <!-- Live Messenger Widget (Enlarged + Multi-Image Attachment Only) -->
+    <!-- Live Messenger Fullscreen App View -->
     <div class="messenger-widget" id="messengerWidget">
         <div class="messenger-header">
-            <div><i class="fas fa-comments"></i> رسائل المهندس محمد السعيد</div>
-            <i class="fas fa-times" style="cursor: pointer;" onclick="toggleMessengerWidget()"></i>
+            <button class="chat-back-btn" onclick="closeMessengerWidget()">
+                <i class="fas fa-arrow-right"></i>
+                <span>الرجوع للصفحة</span>
+            </button>
+            <div style="display:flex; align-items:center; gap:6px;">
+                <span>محادثة المهندس محمد السعيد</span>
+                <i class="fas fa-check-circle" style="color:var(--fb-blue); font-size:0.8rem;"></i>
+            </div>
         </div>
         <div class="messenger-body" id="chatMessagesContainer">
             <div class="chat-bubble bubble-admin">مرحباً بك! تواصل معنا عبر إرسال رسالتك أو صور الاستفسار وسيرد عليك المهندس محمد السعيد هنا فوراً. 👋</div>
@@ -1790,47 +1830,57 @@
 
         function formatSmartPostText(text) {
             if (!text) return '';
-            
+
+            let rawLines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
+
+            if (rawLines.length === 1 && /(1️⃣|2️⃣|3️⃣|4️⃣|5️⃣|6️⃣|7️⃣|8️⃣|9️⃣|🔟)/.test(text)) {
+                rawLines = text.split(/(?=(?:1️⃣|2️⃣|3️⃣|4️⃣|5️⃣|6️⃣|7️⃣|8️⃣|9️⃣|🔟))/).filter(l => l.trim().length > 0);
+            }
+
             const urlPattern = /(https?:\/\/[^\s<>]+|(?:www\.)[^\s<>]+|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\/[^\s<>]*)?)/gi;
-            
-            let parts = [];
-            let lastIndex = 0;
-            let match;
 
-            while ((match = urlPattern.exec(text)) !== null) {
-                let rawMatch = match[0];
-                let isLikelyUrl = rawMatch.startsWith('http://') || 
-                                  rawMatch.startsWith('https://') || 
-                                  rawMatch.startsWith('www.') || 
-                                  /\.(com|net|org|app|io|me|info|site|online|tv|link|co|top|eg|sa|ae|xyz|store|shop)([\/?#]|$)/i.test(rawMatch);
+            let formattedParagraphs = rawLines.map(line => {
+                let trimmedLine = line.trim();
+                let parts = [];
+                let lastIndex = 0;
+                let match;
 
-                if (!isLikelyUrl) continue;
+                while ((match = urlPattern.exec(trimmedLine)) !== null) {
+                    let rawMatch = match[0];
+                    let isLikelyUrl = rawMatch.startsWith('http://') || 
+                                      rawMatch.startsWith('https://') || 
+                                      rawMatch.startsWith('www.') || 
+                                      /\.(com|net|org|app|io|me|info|site|online|tv|link|co|top|eg|sa|ae|xyz|store|shop)([\/?#]|$)/i.test(rawMatch);
 
-                if (match.index > lastIndex) {
-                    parts.push(escapeHtml(text.substring(lastIndex, match.index)));
+                    if (!isLikelyUrl) continue;
+
+                    if (match.index > lastIndex) {
+                        parts.push(escapeHtml(trimmedLine.substring(lastIndex, match.index)));
+                    }
+
+                    let targetHref = rawMatch;
+                    if (!/^https?:\/\//i.test(targetHref)) {
+                        targetHref = 'https://' + targetHref;
+                    }
+
+                    parts.push(`<a href="${escapeHtml(targetHref)}" target="_blank" rel="noopener noreferrer nofollow" class="smart-link-badge" onclick="event.stopPropagation();">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>اضغط هنا لفتح الرابط مباشرة</span>
+                    </a>`);
+
+                    lastIndex = urlPattern.lastIndex;
                 }
 
-                let targetHref = rawMatch;
-                if (!/^https?:\/\//i.test(targetHref)) {
-                    targetHref = 'https://' + targetHref;
+                if (lastIndex < trimmedLine.length) {
+                    parts.push(escapeHtml(trimmedLine.substring(lastIndex)));
                 }
 
-                parts.push(`<a href="${escapeHtml(targetHref)}" target="_blank" rel="noopener noreferrer nofollow" class="smart-link-badge" onclick="event.stopPropagation();">
-                    <i class="fas fa-external-link-alt"></i>
-                    <span>اضغط هنا لفتح الرابط مباشرة</span>
-                </a>`);
+                return `<div class="post-paragraph-item">${parts.join('')}</div>`;
+            });
 
-                lastIndex = urlPattern.lastIndex;
-            }
-
-            if (lastIndex < text.length) {
-                parts.push(escapeHtml(text.substring(lastIndex)));
-            }
-
-            return parts.join('');
+            return formattedParagraphs.join('');
         }
 
-        /* دالة تنسيق التاريخ والأرقام بالإنجليزية المختصرة: 21 Aug, 5:00 PM */
         function formatEnglishDateTime(dateObj) {
             if (!dateObj) return "Just now";
             const date = (dateObj.toDate) ? dateObj.toDate() : new Date(dateObj);
@@ -1862,7 +1912,6 @@
             }
         }
 
-        /* Lightbox Gallery with Arrows & Touch Swipe */
         let currentLightboxImagesList = [];
         let currentLightboxImageIndex = 0;
         let isLightboxOpenState = false;
@@ -1974,15 +2023,6 @@
             isLightboxOpenState = false;
             if (history.state && history.state.lightboxOpen) history.back();
         }
-
-        window.addEventListener('popstate', () => {
-            if (isLightboxOpenState) {
-                const overlay = document.getElementById('lightboxOverlay');
-                overlay.classList.remove('active');
-                setTimeout(() => { overlay.style.display = 'none'; }, 300);
-                isLightboxOpenState = false;
-            }
-        });
 
         async function downloadActiveLightboxImage() {
             const currentImg = currentLightboxImagesList[currentLightboxImageIndex];
@@ -2484,14 +2524,14 @@
                 }
 
                 const rawCommentText = postData.adminSolutionComment || '';
-                const isLongComment = rawCommentText.length > 180 || (rawCommentText.match(/\n/g) || []).length > 3;
+                const isLongComment = rawCommentText.length > 200 || (rawCommentText.match(/\n/g) || []).length > 4;
 
                 exclusiveCommentHtml = `
                     <div class="exclusive-admin-comment-wrapper">
                         <div class="exclusive-admin-comment-card">
                             <div class="admin-comment-header">
                                 <img src="https://e.top4top.io/p_3878z3lii0.jpg" alt="Admin" onerror="this.src='https://ui-avatars.com/api/?name=محمد+السعيد&background=e11d48&color=fff&size=150'">
-                                <span>المهندس محمد السعيد (الرد والحل المعتمد) <i class="fas fa-check-circle" style="color:var(--fb-blue); font-size: 0.7rem;"></i></span>
+                                <span>المهندس محمد السعيد (الرد والحل المعتمد) <i class="fas fa-check-circle" style="color:var(--fb-blue); font-size: 0.72rem;"></i></span>
                             </div>
                             <div class="admin-comment-body">
                                 <div id="comment-text-${postId}" class="collapsible-text-content ${isLongComment ? 'collapsed' : ''}">${formatSmartPostText(rawCommentText)}</div>
@@ -2668,7 +2708,7 @@
 
         function closeReactionsModal() { document.getElementById('reactionsModal').style.display = 'none'; }
 
-        /* Notifications Center System (Real-time Live Sync + Click to Open Target Post/Chat) */
+        /* Notifications Center System */
         let myPostsNotifs = [];
         let myCommentsNotifs = [];
         let globalPostsNotifs = [];
@@ -2834,7 +2874,7 @@
             closeNotificationsModal();
 
             if (targetType === 'chat') {
-                toggleMessengerWidget();
+                openMessengerWidget();
                 return;
             }
 
@@ -3022,15 +3062,40 @@
             }
         }
 
+        /* إدارة شاشة الشات الكاملة والرجوع المباشر بزر الموبايل أو زر الصفحة */
         let isChatOpen = false;
 
-        function toggleMessengerWidget() {
+        function openMessengerWidget() {
             const chat = document.getElementById('messengerWidget');
-            isChatOpen = (chat.style.display !== 'flex');
-            chat.style.display = isChatOpen ? 'flex' : 'none';
-
-            if (isChatOpen) markMessagesAsReadByVisitor();
+            chat.style.display = 'flex';
+            isChatOpen = true;
+            markMessagesAsReadByVisitor();
+            history.pushState({ chatOpen: true }, "");
         }
+
+        function closeMessengerWidget() {
+            if (!isChatOpen) return;
+            const chat = document.getElementById('messengerWidget');
+            chat.style.display = 'none';
+            isChatOpen = false;
+            if (history.state && history.state.chatOpen) {
+                history.back();
+            }
+        }
+
+        window.addEventListener('popstate', () => {
+            if (isChatOpen) {
+                const chat = document.getElementById('messengerWidget');
+                chat.style.display = 'none';
+                isChatOpen = false;
+            }
+            if (isLightboxOpenState) {
+                const overlay = document.getElementById('lightboxOverlay');
+                overlay.classList.remove('active');
+                setTimeout(() => { overlay.style.display = 'none'; }, 300);
+                isLightboxOpenState = false;
+            }
+        });
 
         function markMessagesAsReadByVisitor() {
             const badge = document.getElementById('visitorUnreadMsgBadge');
@@ -3038,7 +3103,6 @@
             localStorage.setItem(`last_read_time_${visitorId}`, new Date().toISOString());
         }
 
-        /* إدارة إرفاق الصور في الشات */
         let chatAttachedImagesList = [];
 
         async function handleChatImagesAttachment(event) {
@@ -3100,7 +3164,7 @@
                                         <audio controls class="h-7 max-w-[200px]" style="height: 32px; width: 100%;"><source src="${m.media.url}" type="audio/mpeg"></audio>
                                     </div>`;
                             } else if (m.media.type === 'video') {
-                                mediaHtml = `<video controls class="rounded-xl mt-1.5 max-h-48 border border-white/10 max-w-full" style="max-height: 180px; width: 100%; border-radius: 10px; margin-top: 6px;"><source src="${m.media.url}"></video>`;
+                                mediaHtml = `<video controls class="rounded-xl mt-1.5 max-h-48 border border-white/10 max-w-full" style="max-height: 240px; width: 100%; border-radius: 10px; margin-top: 6px;"><source src="${m.media.url}"></video>`;
                             }
                         }
 
