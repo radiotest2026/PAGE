@@ -1645,7 +1645,7 @@
 
         <!-- زر مشاهدة المزيد من المنشورات -->
         <div class="load-more-posts-container" id="loadMoreContainer" style="display: none;">
-            <button class="load-more-posts-btn" onclick="showMorePosts()">
+            <button class="load-more-posts-btn" id="loadMoreBtn" onclick="showMorePosts()">
                 <i class="fas fa-spinner"></i>
                 <span>مشاهدة المزيد من المنشورات</span>
             </button>
@@ -1775,6 +1775,12 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+
+        try {
+            db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+                console.warn("Firebase Persistence unavailable:", err.code);
+            });
+        } catch (e) {}
 
         let visitorId = localStorage.getItem("fb_visitor_id");
         if (!visitorId) {
@@ -2259,7 +2265,9 @@
 
         let allCloudPostsData = {};
         let allApprovedPostsList = [...DEFAULT_PRELOADED_POSTS];
-        let visiblePostsCount = 10;
+        let allSortedApprovedPosts = [];
+        let currentFeedLimit = 10;
+        let postsFeedUnsubscribe = null;
 
         function renderPostsFeed() {
             const feed = document.getElementById('feedContainer');
@@ -2274,9 +2282,7 @@
             }
 
             feed.innerHTML = '';
-            const postsToRender = allApprovedPostsList.slice(0, visiblePostsCount);
-
-            postsToRender.forEach((postData) => {
+            allApprovedPostsList.forEach((postData) => {
                 const postElement = createPostElement(postData.id, postData);
                 feed.appendChild(postElement);
 
@@ -2286,16 +2292,13 @@
             });
 
             if (loadMoreBtnContainer) {
-                if (allApprovedPostsList.length > visiblePostsCount) {
-                    loadMoreBtnContainer.style.display = 'flex';
-                } else {
-                    loadMoreBtnContainer.style.display = 'none';
-                }
+                loadMoreBtnContainer.style.display = (allSortedApprovedPosts.length > allApprovedPostsList.length) ? 'flex' : 'none';
             }
         }
 
         function showMorePosts() {
-            visiblePostsCount += 10;
+            currentFeedLimit += 10;
+            allApprovedPostsList = allSortedApprovedPosts.slice(0, currentFeedLimit);
             renderPostsFeed();
         }
 
@@ -2316,16 +2319,26 @@
         function getPostEffectiveTime(post) {
             const timeObj = post.approvedAt || post.updatedAt || post.createdAt;
             if (timeObj && timeObj.toDate) return timeObj.toDate().getTime();
-            if (timeObj) return new Date(timeObj).getTime();
+            if (timeObj) {
+                const parsed = new Date(timeObj).getTime();
+                if (!isNaN(parsed)) return parsed;
+            }
             return 0;
         }
 
-        /* جلب ونشر فوري وسريع بلحظتها */
+        /* جلب مباشر فائق السرعة مع ترتيب المنشورات فوراً من الأحدث للأقدم */
         function listenToCloudPosts() {
-            db.collection("posts")
-                .limit(40)
+            if (postsFeedUnsubscribe) {
+                postsFeedUnsubscribe();
+            }
+
+            postsFeedUnsubscribe = db.collection("posts")
                 .onSnapshot((snapshot) => {
-                    if (snapshot.empty) return;
+                    if (snapshot.empty) {
+                        allSortedApprovedPosts = [];
+                        renderPostsFeed();
+                        return;
+                    }
 
                     let freshPosts = [];
                     allCloudPostsData = {};
@@ -2342,11 +2355,13 @@
 
                     freshPosts.sort((a, b) => getPostEffectiveTime(b) - getPostEffectiveTime(a));
 
-                    if (freshPosts.length > 0) {
-                        allApprovedPostsList = freshPosts;
+                    allSortedApprovedPosts = freshPosts;
+
+                    if (allSortedApprovedPosts.length > 0) {
+                        allApprovedPostsList = allSortedApprovedPosts.slice(0, currentFeedLimit);
                         renderPostsFeed();
                         try {
-                            localStorage.setItem("cached_posts_feed", JSON.stringify(freshPosts.slice(0, 15)));
+                            localStorage.setItem("cached_posts_feed", JSON.stringify(allApprovedPostsList.slice(0, 10)));
                         } catch (err) {}
                     }
                 }, (error) => {
@@ -2455,34 +2470,34 @@
                     imagesHtml = `
                         <div class="post-images-grid grid-1">
                             <div class="fb-img-item">
-                                <img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)">
+                                <img src="${images[0]}" alt="Post" loading="lazy" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)">
                             </div>
                         </div>
                     `;
                 } else if (images.length === 2) {
                     imagesHtml = `
                         <div class="post-images-grid grid-2">
-                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)"></div>
-                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" onclick="openLightbox('${images[1]}', event, window['post_gallery_${postId}'], 1)"></div>
+                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" loading="lazy" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)"></div>
+                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" loading="lazy" onclick="openLightbox('${images[1]}', event, window['post_gallery_${postId}'], 1)"></div>
                         </div>
                     `;
                 } else if (images.length === 3) {
                     imagesHtml = `
                         <div class="post-images-grid grid-3">
-                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)"></div>
-                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" onclick="openLightbox('${images[1]}', event, window['post_gallery_${postId}'], 1)"></div>
-                            <div class="fb-img-item"><img src="${images[2]}" alt="Post" onclick="openLightbox('${images[2]}', event, window['post_gallery_${postId}'], 2)"></div>
+                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" loading="lazy" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)"></div>
+                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" loading="lazy" onclick="openLightbox('${images[1]}', event, window['post_gallery_${postId}'], 1)"></div>
+                            <div class="fb-img-item"><img src="${images[2]}" alt="Post" loading="lazy" onclick="openLightbox('${images[2]}', event, window['post_gallery_${postId}'], 2)"></div>
                         </div>
                     `;
                 } else {
                     let remainingCount = images.length - 4;
                     imagesHtml = `
                         <div class="post-images-grid grid-4plus">
-                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)"></div>
-                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" onclick="openLightbox('${images[1]}', event, window['post_gallery_${postId}'], 1)"></div>
-                            <div class="fb-img-item"><img src="${images[2]}" alt="Post" onclick="openLightbox('${images[2]}', event, window['post_gallery_${postId}'], 2)"></div>
+                            <div class="fb-img-item"><img src="${images[0]}" alt="Post" loading="lazy" onclick="openLightbox('${images[0]}', event, window['post_gallery_${postId}'], 0)"></div>
+                            <div class="fb-img-item"><img src="${images[1]}" alt="Post" loading="lazy" onclick="openLightbox('${images[1]}', event, window['post_gallery_${postId}'], 1)"></div>
+                            <div class="fb-img-item"><img src="${images[2]}" alt="Post" loading="lazy" onclick="openLightbox('${images[2]}', event, window['post_gallery_${postId}'], 2)"></div>
                             <div class="fb-img-item" onclick="openLightbox('${images[3]}', event, window['post_gallery_${postId}'], 3)">
-                                <img src="${images[3]}" alt="Post">
+                                <img src="${images[3]}" alt="Post" loading="lazy">
                                 ${remainingCount > 0 ? `<div class="more-overlay-count">+${remainingCount}</div>` : ''}
                             </div>
                         </div>
@@ -2512,7 +2527,7 @@
                     } else if (media.type === 'image') {
                         solutionMediaHtml = `
                             <div style="margin-top: 4px;">
-                                <img src="${media.url}" style="border-radius: 8px; max-height: 280px; width: 100%; height: auto; border: 1px solid var(--border-color); object-fit: contain; cursor: pointer;" onclick="openLightbox('${media.url}', event)">
+                                <img src="${media.url}" loading="lazy" style="border-radius: 8px; max-height: 280px; width: 100%; height: auto; border: 1px solid var(--border-color); object-fit: contain; cursor: pointer;" onclick="openLightbox('${media.url}', event)">
                             </div>`;
                     } else if (media.type === 'video') {
                         solutionMediaHtml = `
@@ -2711,9 +2726,10 @@
         let myPostsNotifs = [];
         let myCommentsNotifs = [];
         let globalPostsNotifs = [];
+        let visitorNotificationsList = [];
 
         function listenToVisitorNotifications() {
-            db.collection("posts").where("visitorId", "==", visitorId).onSnapshot((snapshot) => {
+            db.collection("posts").where("visitorId", "==", visitorId).limit(10).onSnapshot((snapshot) => {
                 const lastReadNotifTime = localStorage.getItem(`last_read_notif_${visitorId}`) || '1970-01-01T00:00:00.000Z';
                 myPostsNotifs = [];
 
@@ -2753,7 +2769,7 @@
                 renderCombinedNotifications();
             });
 
-            db.collection("comments_pending").where("visitorId", "==", visitorId).onSnapshot((snapshot) => {
+            db.collection("comments_pending").where("visitorId", "==", visitorId).limit(10).onSnapshot((snapshot) => {
                 const lastReadNotifTime = localStorage.getItem(`last_read_notif_${visitorId}`) || '1970-01-01T00:00:00.000Z';
                 myCommentsNotifs = [];
 
@@ -2793,7 +2809,7 @@
                 renderCombinedNotifications();
             });
 
-            db.collection("posts").limit(25).onSnapshot((snapshot) => {
+            db.collection("posts").limit(10).onSnapshot((snapshot) => {
                 const lastReadNotifTime = localStorage.getItem(`last_read_notif_${visitorId}`) || '1970-01-01T00:00:00.000Z';
                 globalPostsNotifs = [];
 
@@ -2948,6 +2964,7 @@
             db.collection("comments_pending")
                 .where("postId", "==", postId)
                 .where("status", "==", "approved")
+                .limit(15)
                 .onSnapshot((snapshot) => {
                     let approvedComments = [];
                     snapshot.forEach(doc => {
@@ -3003,11 +3020,17 @@
         let isFollowProcessing = false;
 
         function listenToFollowers() {
+            const cachedFollowers = localStorage.getItem("cached_followers_count");
+            if (cachedFollowers !== null) {
+                document.getElementById('followersCountDisplay').textContent = Number(cachedFollowers).toLocaleString('en-US');
+            }
+
             db.collection("page_meta").doc("stats").onSnapshot((doc) => {
                 let count = 0;
                 if (doc.exists && doc.data().followersCount !== undefined) {
                     count = Math.max(0, doc.data().followersCount);
                 }
+                localStorage.setItem("cached_followers_count", count);
                 document.getElementById('followersCountDisplay').textContent = Number(count).toLocaleString('en-US');
             });
 
