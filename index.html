@@ -99,10 +99,10 @@
             max-width: 580px;
             width: 100%;
             margin: 0 auto;
-            padding: 6px 8px;
+            padding: 8px 10px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 10px;
             position: relative;
         }
 
@@ -358,16 +358,17 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 14px;
-            padding: 7px 10px;
-            box-shadow: 0 3px 10px var(--shadow-color);
+            padding: 8px 12px;
+            box-shadow: 0 2px 8px var(--shadow-color);
             display: flex;
             align-items: center;
             gap: 8px;
+            margin-bottom: 2px;
         }
 
         .post-trigger-avatar-wrap {
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             border: 2px solid var(--primary);
             flex-shrink: 0;
@@ -392,9 +393,9 @@
             background: var(--card-sub);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            padding: 6px 12px;
+            padding: 7px 14px;
             color: var(--text-muted);
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             font-weight: 600;
             text-align: right;
             cursor: pointer;
@@ -613,14 +614,14 @@
         .feed-container {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 12px;
             width: 100%;
         }
 
         .load-more-posts-container {
             display: flex;
             justify-content: center;
-            margin: 4px 0 8px 0;
+            margin: 6px 0 10px 0;
             width: 100%;
         }
 
@@ -628,14 +629,14 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 5px 15px;
-            border-radius: 14px;
-            font-size: 0.8rem;
+            padding: 6px 18px;
+            border-radius: 16px;
+            font-size: 0.82rem;
             font-weight: 800;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             box-shadow: 0 2px 8px var(--shadow-color);
             transition: all 0.2s ease;
             user-select: none;
@@ -646,11 +647,11 @@
         .post-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 8px 10px 4px 10px;
-            box-shadow: 0 2px 6px var(--shadow-color);
+            border-radius: 16px;
+            padding: 12px 14px 10px 14px;
+            box-shadow: 0 2px 8px var(--shadow-color);
             position: relative;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
         }
 
         .post-card.highlight-target {
@@ -663,26 +664,26 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2px;
+            margin-bottom: 6px;
             user-select: none;
         }
 
         .post-author-info {
             display: flex;
             align-items: center;
-            gap: 7px;
+            gap: 8px;
         }
 
         .post-author-img {
-            width: 34px;
-            height: 34px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             object-fit: cover;
             border: 1.5px solid var(--primary);
         }
 
         .author-meta h3 {
-            font-size: 0.86rem;
+            font-size: 0.88rem;
             font-weight: 800;
             color: var(--text-main);
             display: flex;
@@ -692,13 +693,13 @@
         }
 
         .author-meta span {
-            font-size: 0.68rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
             display: flex;
             align-items: center;
             gap: 3px;
             font-family: monospace, 'Cairo', sans-serif;
-            margin-top: 1px;
+            margin-top: 2px;
         }
 
         .device-badge-tag {
@@ -708,26 +709,26 @@
             background: rgba(255, 193, 7, 0.12);
             border: 1px solid rgba(255, 193, 7, 0.3);
             color: var(--gold);
-            padding: 1px 5px;
+            padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.68rem;
+            font-size: 0.7rem;
             font-weight: 800;
-            margin-bottom: 2px;
+            margin-bottom: 6px;
             user-select: none;
         }
 
         .post-body-text {
             color: var(--text-main);
             font-size: 0.94rem;
-            line-height: 1.55;
+            line-height: 1.6;
             margin: 0;
-            padding: 0;
+            padding: 2px 0 4px 0;
             word-break: break-word;
         }
 
         .post-paragraph-item {
             margin: 0 0 6px 0;
-            line-height: 1.55;
+            line-height: 1.6;
         }
 
         .post-paragraph-item:last-child {
@@ -757,7 +758,7 @@
         .post-images-grid {
             display: grid;
             gap: 4px;
-            margin: 4px 0 2px 0;
+            margin: 6px 0 4px 0;
             width: 100%;
             border-radius: 12px;
             overflow: hidden;
@@ -954,12 +955,12 @@
             display: flex;
             justify-content: space-between;
             color: var(--text-muted);
-            font-size: 0.72rem;
-            padding: 3px 2px 1px 2px;
+            font-size: 0.74rem;
+            padding: 6px 2px 4px 2px;
             border-bottom: 1px solid var(--border-color);
             font-family: 'Cairo', sans-serif;
             user-select: none;
-            margin-top: 2px;
+            margin-top: 4px;
         }
 
         .clickable-metric {
@@ -976,7 +977,7 @@
         .post-interactions-row {
             display: flex;
             justify-content: space-around;
-            padding: 1px 0 0 0;
+            padding: 4px 0 0 0;
             position: relative;
             user-select: none;
         }
@@ -997,7 +998,7 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 3px 6px;
+            padding: 4px 6px;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.15s ease;
@@ -1015,12 +1016,12 @@
 
         .reactions-box {
             position: absolute;
-            bottom: 30px;
+            bottom: 34px;
             right: 5px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 30px;
-            padding: 3px 8px;
+            padding: 4px 10px;
             display: none;
             align-items: center;
             gap: 6px;
@@ -1049,8 +1050,8 @@
 
         .comments-section {
             display: none;
-            margin-top: 3px;
-            padding-top: 3px;
+            margin-top: 6px;
+            padding-top: 6px;
             border-top: 1px solid var(--border-color);
         }
 
@@ -1060,16 +1061,16 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .comment-name-field, .comment-text-field {
             background: var(--card-sub);
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            padding: 5px 8px;
+            padding: 6px 10px;
             color: var(--text-main);
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             outline: none;
         }
 
@@ -1078,9 +1079,9 @@
             background: var(--primary);
             border: none;
             color: #fff;
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 12px;
-            font-size: 0.74rem;
+            font-size: 0.76rem;
             font-weight: 700;
             cursor: pointer;
             user-select: none;
@@ -1091,14 +1092,14 @@
         .comments-list {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
             max-height: 280px;
             overflow-y: auto;
         }
 
         .comment-item {
             background: var(--card-sub);
-            padding: 5px 8px;
+            padding: 6px 10px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
             display: flex;
@@ -1118,9 +1119,9 @@
         }
 
         .comment-body {
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             color: var(--text-main);
-            line-height: 1.4;
+            line-height: 1.45;
             opacity: 0.9;
             word-break: break-word;
         }
@@ -1133,8 +1134,8 @@
         }
 
         .admin-reply-box {
-            margin-top: 3px;
-            padding: 4px 6px;
+            margin-top: 4px;
+            padding: 5px 8px;
             background: rgba(255, 0, 85, 0.08);
             border-right: 2.5px solid var(--primary);
             border-radius: 4px;
@@ -1161,7 +1162,7 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            margin-top: 3px;
+            margin-top: 6px;
             width: 100%;
         }
 
@@ -1169,7 +1170,7 @@
             display: inline-block;
             width: auto;
             max-width: 100%;
-            padding: 5px 8px;
+            padding: 6px 10px;
             background: rgba(255, 0, 85, 0.05);
             border: 1px solid rgba(255, 0, 85, 0.2);
             border-right: 3px solid var(--primary);
@@ -2326,7 +2327,6 @@
             return 0;
         }
 
-        /* جلب مباشر فائق السرعة مع ترتيب المنشورات فوراً من الأحدث للأقدم */
         function listenToCloudPosts() {
             if (postsFeedUnsubscribe) {
                 postsFeedUnsubscribe();
@@ -2722,7 +2722,6 @@
 
         function closeReactionsModal() { document.getElementById('reactionsModal').style.display = 'none'; }
 
-        /* Notifications Center System */
         let myPostsNotifs = [];
         let myCommentsNotifs = [];
         let globalPostsNotifs = [];
