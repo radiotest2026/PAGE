@@ -1378,6 +1378,13 @@
             background: var(--bg-color);
         }
 
+        .chat-bubble-row {
+            display: flex;
+            width: 100%;
+            position: relative;
+            touch-action: pan-y;
+        }
+
         .chat-bubble {
             max-width: 82%;
             padding: 8px 12px;
@@ -1385,6 +1392,9 @@
             font-size: 0.86rem;
             line-height: 1.45;
             word-break: break-word;
+            position: relative;
+            transition: transform 0.1s ease-out;
+            user-select: none;
         }
 
         .bubble-visitor {
@@ -1400,6 +1410,49 @@
             background: var(--primary);
             color: #fff;
             border-bottom-left-radius: 2px;
+        }
+
+        .chat-quoted-reply-box {
+            background: rgba(0, 0, 0, 0.15);
+            border-right: 3px solid #fff;
+            padding: 3px 6px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-size: 0.74rem;
+        }
+
+        .bubble-visitor .chat-quoted-reply-box {
+            background: rgba(0, 0, 0, 0.05);
+            border-right: 3px solid var(--primary);
+        }
+
+        .chat-reply-preview-bar {
+            display: none;
+            background: var(--card-sub);
+            border-right: 3px solid var(--primary);
+            padding: 5px 10px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            font-size: 0.78rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-reply-preview-bar span {
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 85%;
+        }
+
+        .chat-reply-close-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.9rem;
         }
 
         .messenger-footer {
@@ -1607,6 +1660,9 @@
                         <input type="text" id="visitorFullName" class="visitor-input-field" placeholder="1. اكتب اسمك ثنائياً (مثال: أحمد محمود)...">
                     </div>
                     <div>
+                        <input type="tel" id="visitorPhoneNumber" class="visitor-input-field" placeholder="رقم الهاتف للمتابعة (اختياري)...">
+                    </div>
+                    <div>
                         <input type="text" id="visitorDeviceType" class="visitor-input-field" placeholder="2. نوع وموديل جهازك (مثال: ستار نت 2080)...">
                     </div>
                 </div>
@@ -1715,13 +1771,24 @@
             </div>
         </div>
         <div class="messenger-body" id="chatMessagesContainer">
-            <div class="chat-bubble bubble-admin">مرحباً بك! تواصل معنا عبر إرسال رسالتك أو صور الاستفسار وسيرد عليك المهندس محمد السعيد هنا فوراً. 👋</div>
+            <div class="chat-bubble-row">
+                <div class="chat-bubble bubble-admin">مرحباً بك! تواصل معنا عبر إرسال رسالتك أو صور الاستفسار وسيرد عليك المهندس محمد السعيد هنا فوراً. 👋</div>
+            </div>
         </div>
         <div class="messenger-footer">
+            <div id="chatReplyPreviewBar" class="chat-reply-preview-bar">
+                <span id="chatReplyPreviewText">الرد على: ...</span>
+                <button type="button" class="chat-reply-close-btn" onclick="cancelChatReply()">&times;</button>
+            </div>
             <div id="chatAttachedPreviewStrip" class="chat-attached-preview-strip" style="display: none;"></div>
-            <input type="text" id="chatSenderName" class="chat-input" placeholder="اسمك الكريم (مثال: أحمد محمود)...">
+            
+            <div style="display: flex; gap: 5px;">
+                <input type="text" id="chatSenderName" class="chat-input" style="flex: 1;" placeholder="اسمك الكريم (مثال: أحمد محمود)...">
+                <input type="tel" id="chatSenderPhone" class="chat-input" style="flex: 1;" placeholder="رقم الهاتف للمتابعة (اختياري)...">
+            </div>
+
             <div style="display: flex; gap: 5px; align-items: center;">
-                <input type="text" id="chatMessageText" class="chat-input" style="flex: 1;" placeholder="اكتب رسالتك هنا..." onkeypress="if(event.key==='Enter') sendVisitorMessage()">
+                <input type="text" id="chatMessageText" class="chat-input" style="flex: 1;" placeholder="اكتب رسالتك هنا (اسحب أي رسالة للرد)..." onkeypress="if(event.key==='Enter') sendVisitorMessage()">
                 
                 <input type="file" id="chatImagesInput" accept="image/*" multiple style="display: none;" onchange="handleChatImagesAttachment(event)">
                 <button type="button" class="chat-action-btn" onclick="document.getElementById('chatImagesInput').click()" title="إرفاق صور فقط">
@@ -2182,11 +2249,13 @@
 
         async function submitProblemPost() {
             const nameInput = document.getElementById('visitorFullName');
+            const phoneInput = document.getElementById('visitorPhoneNumber');
             const deviceInput = document.getElementById('visitorDeviceType');
             const problemInput = document.getElementById('visitorProblemDescription');
             const submitBtn = document.getElementById('submitProblemPostBtn');
 
             const name = nameInput.value.trim();
+            const phone = phoneInput ? phoneInput.value.trim() : '';
             const device = deviceInput.value.trim();
             const problem = problemInput.value.trim();
 
@@ -2216,6 +2285,7 @@
             try {
                 await db.collection("posts").add({
                     authorName: name,
+                    authorPhone: phone,
                     authorAvatar: visitorAvatarBase64,
                     deviceType: device,
                     visitorId: visitorId,
@@ -2233,6 +2303,7 @@
                 });
 
                 nameInput.value = '';
+                if (phoneInput) phoneInput.value = '';
                 deviceInput.value = '';
                 problemInput.value = '';
                 problemImagesArray = [];
@@ -3084,6 +3155,7 @@
         }
 
         let isChatOpen = false;
+        let activeChatReplyData = null;
 
         function openMessengerWidget() {
             const chat = document.getElementById('messengerWidget');
@@ -3121,6 +3193,59 @@
             const badge = document.getElementById('visitorUnreadMsgBadge');
             if (badge) badge.style.display = 'none';
             localStorage.setItem(`last_read_time_${visitorId}`, new Date().toISOString());
+        }
+
+        function setChatReply(authorName, text) {
+            activeChatReplyData = {
+                replyToName: authorName,
+                replyToText: text ? text.substring(0, 70) : 'مرفق'
+            };
+            const previewBar = document.getElementById('chatReplyPreviewBar');
+            const previewText = document.getElementById('chatReplyPreviewText');
+            if (previewBar && previewText) {
+                previewText.textContent = `الرد على (${authorName}): "${activeChatReplyData.replyToText}..."`;
+                previewBar.style.display = 'flex';
+            }
+            const input = document.getElementById('chatMessageText');
+            if (input) input.focus();
+        }
+
+        function cancelChatReply() {
+            activeChatReplyData = null;
+            const previewBar = document.getElementById('chatReplyPreviewBar');
+            if (previewBar) previewBar.style.display = 'none';
+        }
+
+        function makeBubbleSwipeable(bubbleEl, authorName, text) {
+            let startX = 0;
+            let currentX = 0;
+            let isSwiping = false;
+
+            bubbleEl.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                isSwiping = true;
+            }, { passive: true });
+
+            bubbleEl.addEventListener('touchmove', (e) => {
+                if (!isSwiping) return;
+                currentX = e.touches[0].clientX;
+                let diff = currentX - startX;
+                if (Math.abs(diff) < 90) {
+                    bubbleEl.style.transform = `translateX(${diff}px)`;
+                }
+            }, { passive: true });
+
+            bubbleEl.addEventListener('touchend', () => {
+                if (!isSwiping) return;
+                isSwiping = false;
+                let diff = currentX - startX;
+                bubbleEl.style.transform = 'translateX(0px)';
+                if (Math.abs(diff) > 40) {
+                    setChatReply(authorName, text);
+                }
+                startX = 0;
+                currentX = 0;
+            });
         }
 
         let chatAttachedImagesList = [];
@@ -3198,10 +3323,27 @@
                             attachedImagesHtml = `<img src="${m.imageUrl}" style="max-height: 240px; width: auto; border-radius: 10px; margin-top: 6px; display: block; cursor: pointer;" onclick="openLightbox('${m.imageUrl}', event)">`;
                         }
 
+                        let quotedHtml = '';
+                        if (m.quotedReply) {
+                            quotedHtml = `
+                                <div class="chat-quoted-reply-box">
+                                    <div style="font-weight: 800; font-size: 0.68rem; opacity: 0.85;">${escapeHtml(m.quotedReply.replyToName || '')}</div>
+                                    <div style="font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(m.quotedReply.replyToText || '')}</div>
+                                </div>
+                            `;
+                        }
+
+                        const rowDiv = document.createElement('div');
+                        rowDiv.className = 'chat-bubble-row';
+                        rowDiv.style.justifyContent = m.sender === 'admin' ? 'flex-end' : 'flex-start';
+
                         const div = document.createElement('div');
                         div.className = `chat-bubble ${m.sender === 'admin' ? 'bubble-admin' : 'bubble-visitor'}`;
-                        div.innerHTML = `<strong>${escapeHtml(m.senderName)}:</strong><br>${m.text ? `<div class="leading-relaxed break-words" style="white-space: pre-line;">${formatMessageText(m.text)}</div>` : ''}${mediaHtml}${attachedImagesHtml}`;
-                        container.appendChild(div);
+                        div.innerHTML = `${quotedHtml}<strong>${escapeHtml(m.senderName)}:</strong><br>${m.text ? `<div class="leading-relaxed break-words" style="white-space: pre-line;">${formatMessageText(m.text)}</div>` : ''}${mediaHtml}${attachedImagesHtml}`;
+                        
+                        makeBubbleSwipeable(div, m.senderName, m.text);
+                        rowDiv.appendChild(div);
+                        container.appendChild(rowDiv);
 
                         if (m.sender === 'admin') {
                             const msgTime = m.time || new Date().toISOString();
@@ -3229,9 +3371,12 @@
 
         async function sendVisitorMessage() {
             const nameInput = document.getElementById('chatSenderName');
+            const phoneInput = document.getElementById('chatSenderPhone');
             const textInput = document.getElementById('chatMessageText');
+            
             const text = textInput.value.trim();
             const senderName = nameInput.value.trim();
+            const senderPhone = phoneInput ? phoneInput.value.trim() : '';
 
             if (!validateRealName(senderName)) {
                 showToast("يرجى كتابة اسمك الحقيقي (ثنائي) للتواصل مع الإدارة");
@@ -3245,7 +3390,9 @@
             const msgData = {
                 sender: 'visitor',
                 senderName: senderName || 'العميل',
+                senderPhone: senderPhone,
                 text: text,
+                quotedReply: activeChatReplyData ? { ...activeChatReplyData } : null,
                 media: userSelectedImage ? {
                     type: 'image',
                     url: userSelectedImage
@@ -3259,6 +3406,7 @@
             await docRef.set({
                 visitorId: visitorId,
                 visitorName: senderName,
+                visitorPhone: senderPhone,
                 lastMessage: userSelectedImage ? '🖼️ [صورة]' : msgData.text,
                 isReadByAdmin: false,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -3268,6 +3416,7 @@
             textInput.value = '';
             chatAttachedImagesList = [];
             renderChatAttachedThumbnails();
+            cancelChatReply();
             showToast("تم إرسال رسالتك بنجاح!");
         }
 
