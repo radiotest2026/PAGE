@@ -3402,12 +3402,19 @@
                 time: new Date().toISOString()
             };
 
+            let summaryText = msgData.text;
+            if (activeChatReplyData) {
+                summaryText = `↩️ [رد على: ${activeChatReplyData.replyToName}]: ${msgData.text}`;
+            } else if (userSelectedImage) {
+                summaryText = '🖼️ [صورة]';
+            }
+
             const docRef = db.collection("messages").doc(visitorId);
             await docRef.set({
                 visitorId: visitorId,
                 visitorName: senderName,
                 visitorPhone: senderPhone,
-                lastMessage: userSelectedImage ? '🖼️ [صورة]' : msgData.text,
+                lastMessage: summaryText,
                 isReadByAdmin: false,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 messages: firebase.firestore.FieldValue.arrayUnion(msgData)
